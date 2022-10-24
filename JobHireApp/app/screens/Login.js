@@ -9,11 +9,11 @@ function LoginScreen({ navigation }) {
  <View style={styles.image}>  
 <Image style={{width: 150, height: 150, margin: 20}} 
 //change path to yours for picture
-source={require("C:/Users/adam (College)/GitHub/Major-Group-Project/JobHireApp/app/assets/login_symbol.png")}/>
+source={require("C:/Users/joela/Documents/GitHub/Major-Group-Project/JobHireApp/app/assets/login_symbol.png")}/>
 </View>
 
 <View style={styles.title}>
-<Text style={{fontSize:30, letterSpacing: 1}}>Job Hire Application</Text>
+<Text style={{fontSize:30, letterSpacing: 1}}>Log In</Text>
 </View>
 
 <KeyboardAvoidingView style={styles.textInput}>
@@ -38,8 +38,8 @@ source={require("C:/Users/adam (College)/GitHub/Major-Group-Project/JobHireApp/a
 
 
 <View style={styles.footer}>
-<Text style={{fontSize:15, marginBottom: 5}}>Forget password</Text>
-<Text style={{fontSize:15}}>Dont have an account? <Text style={{textDecorationLine: 'underline'}}  onPress={() => navigation.navigate('Register')}>Register</Text></Text>
+<Text style={{fontSize:15, marginBottom: 5}}>Forgot password?</Text>
+<Text style={{fontSize:15}}>Don't have an account? <Text style={{textDecorationLine: 'underline'}}  onPress={() => navigation.navigate('Register')}>Register</Text></Text>
 </View>
 
 
