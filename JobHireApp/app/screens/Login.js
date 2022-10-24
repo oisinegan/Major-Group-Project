@@ -8,8 +8,8 @@ function LoginScreen({ navigation }) {
 
  <View style={styles.image}>  
 <Image style={{width: 150, height: 150, margin: 20}} 
-//change path to yours for picture
-source={require("C:/Users/joela/Documents/GitHub/Major-Group-Project/JobHireApp/app/assets/login_symbol.png")}/>
+
+source={require("../assets/login_symbol.png")}/>
 </View>
 
 <View style={styles.title}>

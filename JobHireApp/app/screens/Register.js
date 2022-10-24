@@ -8,8 +8,8 @@ function RegisterScreen({ navigation }) {
 
  <View style={styles.image}>  
 <Image style={{width: 150, height: 150, margin: 20}} 
-//Change path to your directory for image
-source={require("C:/Users/joela/Documents/GitHub/Major-Group-Project/JobHireApp/app/assets/login_symbol.png")}/>
+
+source={require("../assets/login_symbol.png")}/>
 </View>
 
 <View style={styles.title}>
@@ -38,7 +38,6 @@ source={require("C:/Users/joela/Documents/GitHub/Major-Group-Project/JobHireApp/
 
 
 <View style={styles.footer}>
-<Text style={{fontSize:15, marginBottom: 5}}>Forgot password?</Text>
 <Text style={{fontSize:15}}>Already have an account? <Text style={{textDecorationLine: 'underline'}}  onPress={() => navigation.navigate('Login')}>Login</Text></Text>
 </View>
 
