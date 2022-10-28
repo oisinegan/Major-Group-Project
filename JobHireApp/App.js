@@ -5,6 +5,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen  from "./app/screens/Login";
 import RegisterScreen from './app/screens/Register';
 import CompanyHomeScreen from './app/screens/CompanyHome';
+import UserHomeScreen from './app/screens/UserHomeScreen';
+
+
+
 
 function Home({ navigation }) {
   return (
@@ -21,6 +25,10 @@ function Home({ navigation }) {
         title="Go to Register screen"
         onPress={() => navigation.navigate('Register')}
       />
+     <Button
+       title="Go to User Home screen"
+        //onPress={() => navigation.navigate('UserHome')}
+      />
     </View>
   );
 }
@@ -36,6 +44,7 @@ export default function App() {
       <Stack.Screen name="CompanyHome" component={CompanyHomeScreen}/>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
+
     </Stack.Navigator>
   </NavigationContainer>
   

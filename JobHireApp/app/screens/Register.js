@@ -69,8 +69,6 @@ const styles = StyleSheet.create({
     },
     textInput: {
       marginBottom: 50,
-      
-
 
     },
     input: {
@@ -89,7 +87,6 @@ const styles = StyleSheet.create({
     footer: {
       fontSize:30, 
       letterSpacing: 1
-
     },
   
   });
