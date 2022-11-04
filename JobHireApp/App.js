@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,Button } from 'react-native';
+import { StyleSheet, Text, View,Button,Alert, TextInput } from 'react-native';
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -9,27 +9,15 @@ import UserHomeScreen from './app/screens/UserHomeScreen';
 import UserMessage from './app/screens/UserMessage';
 import UserNotification from './app/screens/UserNotifcation';
 import UserProfile from './app/screens/UserProfile';
-import JobScreen from './app/screens/JobScreen';
 import CompanyProfileScreen from './app/screens/CompanyProfileScreen';
 import CompanyPostJob from './app/screens/CompanyPostJob';
 import CompanyMessages from './app/screens/CompanyMessages';
-import CompanyEditJobScreen from './app/screens/CompanyEditJobSceen';
-
-
-
-
-
-
 
 
 
 function Home({navigation}) {
   return (
     <View style={styles.container}>
-      <Button
-        title="Go to Company home screen"
-        onPress={() => navigation.navigate('CompanyHome')}
-      />
        <Button
         title="Go to Login screen"
         onPress={() => navigation.navigate('Login')}
@@ -55,24 +43,20 @@ function Home({navigation}) {
         onPress={() => navigation.navigate('UserProfile')}
       />
       <Button
-        title="Go to job screen screen"
-        onPress={() => navigation.navigate('JobScreen')}
+        title="Go to Company home screen"
+        onPress={() => navigation.navigate('CompanyHome')}
       />
       <Button
         title="Go to company profile screen"
         onPress={() => navigation.navigate('CompanyProfileScreen')}
       />
       <Button
-        title="Go to company post job screen"
+        title="Go to company post screen"
         onPress={() => navigation.navigate('CompanyPostJob')}
       />
       <Button
-        title="Go to company messages job screen"
+        title="Go to company messages screen"
         onPress={() => navigation.navigate('CompanyMessages')}
-      />
-      <Button
-        title="Go to company edit job screen"
-        onPress={() => navigation.navigate('CompanyEditJobScreen')}
       />
   </View>
   );
@@ -81,7 +65,9 @@ function Home({navigation}) {
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
   
+ 
   return (
     <NavigationContainer>
     <Stack.Navigator>
@@ -93,20 +79,11 @@ export default function App() {
   <Stack.Screen name="UserMessage" component={UserMessage} />
     <Stack.Screen name="UserNotification" component={UserNotification} />
   <Stack.Screen name="UserProfile" component={UserProfile} />
-    <Stack.Screen name="JobScreen" component={JobScreen} />
   <Stack.Screen name="CompanyProfileScreen" component={CompanyProfileScreen} />
     <Stack.Screen name="CompanyPostJob" component={CompanyPostJob} />
   <Stack.Screen name="CompanyMessages" component={CompanyMessages} />
-    <Stack.Screen name="CompanyEditJobScreen" component={CompanyEditJobScreen} />
-
-
-
-
-
-
     </Stack.Navigator>
-  </NavigationContainer>
-
+  </NavigationContainer> 
   );
 }
 
