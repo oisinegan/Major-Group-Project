@@ -1,5 +1,9 @@
 import { StyleSheet, Text, View,Button, ScrollView } from 'react-native';
 import * as React from 'react';
+//Database imports
+import { useState } from 'react/cjs/react.development';
+import { doc, setDoc } from "firebase/firestore"; 
+import { db } from '../database/config';
 
 
 function UserHomeScreen({ navigation }) {
@@ -106,6 +110,17 @@ function UserHomeScreen({ navigation }) {
     );
   }
 
+  return (
+    <View style={styles.container}>
+      <Text>User home screen</Text>
+      <Text>Test: Writing to database</Text>
+        <TextInput value={username} onChangeText= {(username) => (setUsername(username))} placeholder='Username' style={{borderWidth: 1, borderColor: '#777',padding:5, width:250, marginBottom: 20}}></TextInput>
+        <TextInput value={email} onChangeText= {(email) => (setEmail(email))} placeholder='Email' style={{borderWidth: 1, borderColor: '#777',padding:5, width:250, marginBottom: 20}}></TextInput>
+        <TextInput value={pass} onChangeText= {(pass) => (setPass(pass))} placeholder='Password' secureTextEntry={true}  style={{borderWidth: 1, borderColor: '#777',padding:5, width:250, marginBottom: 20}}></TextInput>
+        <Button title="Submit" onPress={create}></Button>
+    </View>
+    );
+  
 
   const styles = StyleSheet.create({
 
@@ -152,9 +167,11 @@ function UserHomeScreen({ navigation }) {
     },
     container: {
       flex: 1,
-      backgroundColor: 'white',
+      padding: 10,
+      backgroundColor: '#fff',
       alignItems: 'center',
-      justifyContent: 'center',
+
+      textAlign: 'left'
     },
     navBar:{
       flexDirection: 'row',
