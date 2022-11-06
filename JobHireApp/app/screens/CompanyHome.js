@@ -3,6 +3,30 @@ import * as React from 'react';
 
 function CompanyHomeScreen({ navigation }) {
     return (
+//navbar wont appear on app unless at top for this page, easy fix i'd imagine
+
+        <View style={styles.container}>
+
+<View style={styles.navBar}>
+<Button
+        title="Home"
+        onPress={() => navigation.navigate('CompanyHome')}
+      />
+         <Button
+        title="Post"
+        onPress={() => navigation.navigate('CompanyPostJob')}
+      />
+      <Button
+        title="Notifications"
+        onPress={() => navigation.navigate('CompanyNotifications')}
+      />
+      
+      <Button
+        title="Profile"
+        onPress={() => navigation.navigate('CompanyProfileScreen')}
+      />
+
+  </View>   
       <View style={styles.outerContainer}>
         <ScrollView> 
             <Text style={styles.mainTitle}>Active Job posts (6)</Text>
@@ -13,7 +37,9 @@ function CompanyHomeScreen({ navigation }) {
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
                 </View>
                 <View style={styles.buttons}> 
-                    <Button title='Edit'></Button>
+                    <Button title='Edit'
+                    onPress={() => navigation.navigate('CompanyEditJobScreen')}
+                    />
                     <Button title='View'></Button>
                 </View>
             </View>
@@ -24,7 +50,9 @@ function CompanyHomeScreen({ navigation }) {
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
                 </View>                
                 <View style={styles.buttons}> 
-                    <Button title='Edit'></Button>
+                <Button title='Edit'
+                    onPress={() => navigation.navigate('CompanyEditJobScreen')}
+                    />
                     <Button title='View'></Button>
                 </View>
             </View>
@@ -35,7 +63,9 @@ function CompanyHomeScreen({ navigation }) {
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
                 </View>                
                 <View style={styles.buttons}> 
-                    <Button title='Edit'></Button>
+                <Button title='Edit'
+                    onPress={() => navigation.navigate('CompanyEditJobScreen')}
+                    />
                     <Button title='View'></Button>
                 </View>
             </View>
@@ -46,7 +76,9 @@ function CompanyHomeScreen({ navigation }) {
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
                 </View>                
                 <View style={styles.buttons}> 
-                    <Button title='Edit'></Button>
+                <Button title='Edit'
+                    onPress={() => navigation.navigate('CompanyEditJobScreen')}
+                    />
                     <Button title='View'></Button>
                 </View>
             </View>
@@ -57,23 +89,35 @@ function CompanyHomeScreen({ navigation }) {
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
                 </View>                
                 <View style={styles.buttons}> 
-                    <Button title='Edit'></Button>
+                <Button title='Edit'
+                    onPress={() => navigation.navigate('CompanyEditJobScreen')}
+                    />
                     <Button title='View'></Button>
                 </View>
             </View>
+            
 
             <View style={styles.innerContainer}>
                 <Text style={styles.title}>Job title 6</Text>
                 <View style={styles.textContainer}>
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
-                </View>                
+                </View>  
+                              
                 <View style={styles.buttons}> 
-                    <Button title='Edit'></Button>
+                <Button title='Edit'
+                    onPress={() => navigation.navigate('CompanyEditJobScreen')}
+                    />
                     <Button title='View'></Button>
                 </View>
+
             </View>
         </ScrollView>
+        
       </View>
+
+         </View>
+
+      
      
     );
   }
@@ -118,7 +162,16 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "flex-end",
         paddingRight: 20,
-    }
+    },
+    navBar:{
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 5,
+
+          
+      },
   });
 
   export default CompanyHomeScreen;

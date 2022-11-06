@@ -1,28 +1,22 @@
 import { StyleSheet, Text, View,Button } from 'react-native';
 import * as React from 'react';
+import CompanyNotificationScreen from './CompanyNotificationScreen';
 
 
-function CompanyProfileScreen({ navigation }) {
+function CompanyNotifications({ navigation }) {
   return (
     <View style={styles.container}>
-  <Text>Company Profile Screen</Text>
+  <Text>company notification page</Text>
 
-
-
-  <View style={styles.navBar}>
-<Button
-        title="About"
-        onPress={() => navigation.navigate('CompanyAbout')}
+  <View>
+  <Button
+        title="clicks on notification screen"
+        onPress={() => navigation.navigate('CompanyNotificationScreen')}
       />
-         <Button
-        title="Jobs"
-        onPress={() => navigation.navigate('CompanyPostedJobs')}
-      />
-      </View>
+</View>
 
 
-
-  <View style={styles.navBar}>
+<View style={styles.navBar}>
 <Button
         title="Home"
         onPress={() => navigation.navigate('CompanyHome')}
@@ -41,7 +35,7 @@ function CompanyProfileScreen({ navigation }) {
         onPress={() => navigation.navigate('CompanyProfileScreen')}
       />
 
-  </View>  
+  </View> 
 
   </View>
     );
@@ -55,15 +49,16 @@ function CompanyProfileScreen({ navigation }) {
       alignItems: 'center',
       justifyContent: 'center',
     },
+
     navBar:{
       flexDirection: 'row',
       backgroundColor: 'white',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 5,
 
-        
+      
+  
     },
   });
 
-  export default CompanyProfileScreen;
+  export default CompanyNotifications;

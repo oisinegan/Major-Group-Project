@@ -12,16 +12,15 @@ import UserProfile from './app/screens/UserProfile';
 import JobScreen from './app/screens/JobScreen';
 import CompanyProfileScreen from './app/screens/CompanyProfileScreen';
 import CompanyPostJob from './app/screens/CompanyPostJob';
-import CompanyMessages from './app/screens/CompanyMessages';
 import CompanyEditJobScreen from './app/screens/CompanyEditJobSceen';
-
-
-
-
-
-
-
-
+import CompanyNotifications from './app/screens/CompanyNotifications';
+import UserMessageScreen from './app/screens/UserMessageScreen';
+import UserNotificationScreen from './app/screens/UserNotificationScreen';
+import CompanyNotificationScreen from './app/screens/CompanyNotificationScreen';
+import CompanyAbout from './app/screens/CompanyAbout';
+import CompanyPostedJobs from './app/screens/CompanyPostedJobs';
+import UserAbout from './app/screens/UserAbout';
+import UserViewJobs from './app/screens/UserViewJobs';
 
 function Home({navigation}) {
   return (
@@ -42,38 +41,7 @@ function Home({navigation}) {
         title="Go to user home screen"
         onPress={() => navigation.navigate('UserHomeScreen')}
       />
-      <Button
-        title="Go to user message screen"
-        onPress={() => navigation.navigate('UserMessage')}
-      />
-      <Button
-        title="Go to user notification screen"
-        onPress={() => navigation.navigate('UserNotification')}
-      />
-      <Button
-        title="Go to user profile screen"
-        onPress={() => navigation.navigate('UserProfile')}
-      />
-      <Button
-        title="Go to job screen screen"
-        onPress={() => navigation.navigate('JobScreen')}
-      />
-      <Button
-        title="Go to company profile screen"
-        onPress={() => navigation.navigate('CompanyProfileScreen')}
-      />
-      <Button
-        title="Go to company post job screen"
-        onPress={() => navigation.navigate('CompanyPostJob')}
-      />
-      <Button
-        title="Go to company messages job screen"
-        onPress={() => navigation.navigate('CompanyMessages')}
-      />
-      <Button
-        title="Go to company edit job screen"
-        onPress={() => navigation.navigate('CompanyEditJobScreen')}
-      />
+    
   </View>
   );
 }
@@ -96,8 +64,17 @@ export default function App() {
     <Stack.Screen name="JobScreen" component={JobScreen} />
   <Stack.Screen name="CompanyProfileScreen" component={CompanyProfileScreen} />
     <Stack.Screen name="CompanyPostJob" component={CompanyPostJob} />
-  <Stack.Screen name="CompanyMessages" component={CompanyMessages} />
     <Stack.Screen name="CompanyEditJobScreen" component={CompanyEditJobScreen} />
+    <Stack.Screen name="CompanyNotifications" component={CompanyNotifications} />
+    <Stack.Screen name="UserMessageScreen" component={UserMessageScreen} />
+    <Stack.Screen name="UserNotificationScreen" component={UserNotificationScreen} />
+    <Stack.Screen name="CompanyNotificationScreen" component={CompanyNotificationScreen} />
+    <Stack.Screen name="CompanyAbout" component={CompanyAbout} />
+    <Stack.Screen name="CompanyPostedJobs" component={CompanyPostedJobs} />
+    <Stack.Screen name="UserAbout" component={UserAbout} />
+    <Stack.Screen name="UserViewJobs" component={UserViewJobs} />
+
+
 
 
 

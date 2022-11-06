@@ -5,7 +5,7 @@ import * as React from 'react';
 function CompanyEditJobScreen({ navigation }) {
   return (
     <View style={styles.container}>
-  <Text>Company Profile Screen</Text>
+  <Text>Company edit job Screen</Text>
 
   </View>
     );

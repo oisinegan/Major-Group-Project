@@ -2,10 +2,12 @@ import { StyleSheet, Text, View,Button } from 'react-native';
 import * as React from 'react';
 
 
-function CompanyPostJob({ navigation }) {
+function UserNotificationScreen({ navigation }) {
   return (
     <View style={styles.container}>
-  <Text>Company Post job Screen</Text>
+  
+  <Text>User clicks on notification Screen</Text>
+
 
 
   </View>
@@ -20,6 +22,8 @@ function CompanyPostJob({ navigation }) {
       alignItems: 'center',
       justifyContent: 'center',
     },
+
+   
   });
 
-  export default CompanyPostJob;
+  export default UserNotificationScreen;

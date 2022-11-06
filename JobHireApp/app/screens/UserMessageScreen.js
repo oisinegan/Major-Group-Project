@@ -2,10 +2,13 @@ import { StyleSheet, Text, View,Button } from 'react-native';
 import * as React from 'react';
 
 
-function CompanyMessages({ navigation }) {
+function UserMessageScreen({ navigation }) {
   return (
     <View style={styles.container}>
-  <Text>Company Profile Screen</Text>
+  
+  <Text>User Message Screen</Text>
+
+
 
   </View>
     );
@@ -19,6 +22,16 @@ function CompanyMessages({ navigation }) {
       alignItems: 'center',
       justifyContent: 'center',
     },
+
+    navBar:{
+      flexDirection: 'row',
+      backgroundColor: 'white',
+      alignItems: 'center',
+      justifyContent: 'center',
+
+      
+  
+    },
   });
 
-  export default CompanyMessages;
+  export default UserMessageScreen;

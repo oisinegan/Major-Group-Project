@@ -2,10 +2,12 @@ import { StyleSheet, Text, View,Button } from 'react-native';
 import * as React from 'react';
 
 
-function CompanyPostJob({ navigation }) {
+function UserAbout({ navigation }) {
   return (
     <View style={styles.container}>
-  <Text>Company Post job Screen</Text>
+  
+  <Text>user about Screen</Text>
+
 
 
   </View>
@@ -20,6 +22,16 @@ function CompanyPostJob({ navigation }) {
       alignItems: 'center',
       justifyContent: 'center',
     },
+
+    navBar:{
+      flexDirection: 'row',
+      backgroundColor: 'white',
+      alignItems: 'center',
+      justifyContent: 'center',
+
+      
+  
+    },
   });
 
-  export default CompanyPostJob;
+  export default UserAbout;
