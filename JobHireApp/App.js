@@ -38,7 +38,7 @@ function Home({navigation}) {
       />
      <Button
         title="Go to company home screen"
-        onPress={() => navigation.navigate('CompanyHomeScreen')}
+        onPress={() => navigation.navigate('CompanyHome')}
       />
     
   </View>
