@@ -1,7 +1,30 @@
-import { StyleSheet, Text, View,Button, ScrollView } from 'react-native';
+import { StyleSheet, Text, View,Button,Alert, ScrollView } from 'react-native';
 import * as React from 'react';
+//Database imports
+import { useState } from 'react/cjs/react.development';
+import { collection,doc, setDoc, getDocs } from "firebase/firestore"; 
+import { db } from '../database/config';
 
-function CompanyHomeScreen({ navigation }) {
+
+
+ function CompanyHomeScreen({ navigation }) {
+
+
+
+      let Adverts = [];
+
+     //Read all data
+    getDocs(collection(db, "Adverts")).then(docSnap => {
+       
+        docSnap.forEach((doc) => {
+            Adverts.push({...doc.data(), id:doc.id})
+        });
+        console.log(Adverts);
+           
+    }) 
+    
+
+
     return (
 //navbar wont appear on app unless at top for this page, easy fix i'd imagine
 
@@ -29,7 +52,8 @@ function CompanyHomeScreen({ navigation }) {
   </View>   
       <View style={styles.outerContainer}>
         <ScrollView> 
-            <Text style={styles.mainTitle}>Active Job posts (6)</Text>
+            
+            <Text style={styles.mainTitle}>Active Job posts (5)</Text>
         
             <View style={styles.innerContainer}>
                 <Text style={styles.title}>Job title 1</Text>
@@ -45,10 +69,10 @@ function CompanyHomeScreen({ navigation }) {
             </View>
 
             <View style={styles.innerContainer}>
-                <Text style={styles.title}>Job title 2</Text>
+                <Text style={styles.title}>Job title 1</Text>
                 <View style={styles.textContainer}>
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
-                </View>                
+                </View>
                 <View style={styles.buttons}> 
                 <Button title='Edit'
                     onPress={() => navigation.navigate('CompanyEditJobScreen')}
@@ -58,10 +82,10 @@ function CompanyHomeScreen({ navigation }) {
             </View>
 
             <View style={styles.innerContainer}>
-                <Text style={styles.title}>Job title 3 </Text>
+                <Text style={styles.title}>Job title 1</Text>
                 <View style={styles.textContainer}>
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
-                </View>                
+                </View>
                 <View style={styles.buttons}> 
                 <Button title='Edit'
                     onPress={() => navigation.navigate('CompanyEditJobScreen')}
@@ -71,10 +95,10 @@ function CompanyHomeScreen({ navigation }) {
             </View>
 
             <View style={styles.innerContainer}>
-                <Text style={styles.title}>Job title 4</Text>
+                <Text style={styles.title}>Job title 1</Text>
                 <View style={styles.textContainer}>
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
-                </View>                
+                </View>
                 <View style={styles.buttons}> 
                 <Button title='Edit'
                     onPress={() => navigation.navigate('CompanyEditJobScreen')}
@@ -84,25 +108,21 @@ function CompanyHomeScreen({ navigation }) {
             </View>
 
             <View style={styles.innerContainer}>
-                <Text style={styles.title}>Job title 5</Text>
+                <Text style={styles.title}>Job title 1</Text>
                 <View style={styles.textContainer}>
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
                 </View>                
                 <View style={styles.buttons}> 
-                <Button title='Edit'
-                    onPress={() => navigation.navigate('CompanyEditJobScreen')}
-                    />
+                    <Button title='Edit'></Button>
                     <Button title='View'></Button>
                 </View>
             </View>
-            
 
             <View style={styles.innerContainer}>
                 <Text style={styles.title}>Job title 6</Text>
                 <View style={styles.textContainer}>
                      <Text style={styles.text}>This is some info about the job. This is some info about the job. This is some info about the job.</Text>
-                </View>  
-                              
+                </View>                
                 <View style={styles.buttons}> 
                 <Button title='Edit'
                     onPress={() => navigation.navigate('CompanyEditJobScreen')}
@@ -111,6 +131,8 @@ function CompanyHomeScreen({ navigation }) {
                 </View>
 
             </View>
+
+        
         </ScrollView>
         
       </View>
