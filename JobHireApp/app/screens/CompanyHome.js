@@ -21,6 +21,7 @@ function CompanyHomeScreen({ navigation }) {
       Adverts.push({ ...doc.data(), id: doc.id });
     });
     console.log(Adverts);
+    console.log(Adverts.at(0).title);
   });
 
   return (
