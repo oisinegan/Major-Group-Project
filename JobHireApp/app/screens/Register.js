@@ -1,16 +1,4 @@
-import {
-  StyleSheet,
-  Pressable,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Text,
-  View,
-  Button,
-  TextInput,
-  PermissionsAndroid,
-  Image,
-  Alert,
-} from "react-native";
+import {StyleSheet, Text, View, Button, Alert, ScrollView, Image, TextInput, Pressable, TouchableOpacity, KeyboardAvoidingView, PermissionsAndroid} from "react-native";
 import * as React from "react";
 //Database imports
 import { useState } from "react/cjs/react.development";
