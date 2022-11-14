@@ -10,10 +10,10 @@ function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
 
-  function create() {
+  function jobseekersCreate() {
     //Submit data
     //db= databse link (database/config),
-    //"jobseekers" = table name on firebae
+    //"jobseekers" = table name on firebase
     // username = id person being written to database,
     setDoc(doc(db, "Jobseekers", username), {
       username: username,
@@ -22,7 +22,7 @@ function RegisterScreen({ navigation }) {
     })
       .then(() => {
         //Successfully written to database
-        Alert.alert("Sucess", "Data Submitted", [
+        Alert.alert("Success", "Data Submitted", [
           { text: "OK", onPress: () => console.log("OK Pressed") },
         ]);
       })
@@ -32,7 +32,31 @@ function RegisterScreen({ navigation }) {
           { text: "OK", onPress: () => console.log("OK Pressed") },
         ]);
       });
-  } ////end create
+  } ////end jobseekersCreate
+
+  function companyCreate() {
+    //Submit data
+    //db= databse link (database/config),
+    //"jobseekers" = table name on firebase
+    // username = id person being written to database,
+    setDoc(doc(db, "Company", username), {
+      username: username,
+      email: email,
+      pass: pass,
+    })
+      .then(() => {
+        //Successfully written to database
+        Alert.alert("Success", "Data Submitted", [
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ]);
+      })
+      .catch((error) => {
+        //failed
+        Alert.alert("ERROR", "Data not submitted", [
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ]);
+      });
+  } ////end companyCreate
 
   return (
     <View style={styles.container}>
@@ -44,9 +68,7 @@ function RegisterScreen({ navigation }) {
       </View>
 
       <View style={styles.title}>
-        <Text style={{ fontSize: 30, letterSpacing: 1 }}>
-          Create an Account
-        </Text>
+        <Text style={{ fontSize: 30, letterSpacing: 1 }}>Create an Account</Text>
       </View>
 
       <KeyboardAvoidingView style={styles.textInput}>
@@ -68,7 +90,6 @@ function RegisterScreen({ navigation }) {
         <TextInput
           value={email}
           onChangeText={(email) => setEmail(email)}
-          placeholder="Email"
           style={{
             borderWidth: 1,
             borderColor: "#777",
@@ -76,26 +97,27 @@ function RegisterScreen({ navigation }) {
             width: 250,
             marginBottom: 20,
           }}
-        ></TextInput>
+          placeholder="example@mail.com"
+        />
 
         <Text>Password:</Text>
         <TextInput
           value={pass}
           onChangeText={(pass) => setPass(pass)}
-          placeholder="Password"
           secureTextEntry={true}
           style={{
             borderWidth: 1,
             borderColor: "#777",
             padding: 5,
             width: 250,
-            marginBottom: 20,
           }}
-        ></TextInput>
+          placeholder="Password"
+        />
+      </KeyboardAvoidingView>
 
-        <Button
-          title="Sign up"
-          onPress={create}
+      <TouchableOpacity style={styles.button}>
+        <Text
+          onPress={jobseekersCreate}
           style={{
             color: "white",
             textAlign: "center",
@@ -103,8 +125,25 @@ function RegisterScreen({ navigation }) {
             fontSize: 20,
             lineHeight: 40,
           }}
-        ></Button>
-      </KeyboardAvoidingView>
+        >
+          Sign Up as a Jobseeker
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button}>
+        <Text
+          onPress={companyCreate}
+          style={{
+            color: "white",
+            textAlign: "center",
+            justifyContent: "center",
+            fontSize: 20,
+            lineHeight: 40,
+          }}
+        >
+          Sign Up as a Company
+        </Text>
+      </TouchableOpacity>
 
       <View style={styles.footer}>
         <Text style={{ fontSize: 15 }}>
@@ -144,11 +183,11 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     justifyContent: "center",
-    width: 100,
+    width: 250,
     borderRadius: 4,
     height: 40,
     backgroundColor: "grey",
-    marginBottom: 50,
+    marginBottom: 10,
   },
   footer: {
     fontSize: 30,
