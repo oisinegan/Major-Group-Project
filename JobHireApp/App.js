@@ -21,37 +21,16 @@ import CompanyPostedJobs from "./app/screens/CompanyPostedJobs";
 import UserAbout from "./app/screens/UserAbout";
 import UserViewJobs from "./app/screens/UserViewJobs";
 import JobScreen from "./app/screens/JobScreen";
-
-function Home({ navigation }) {
-  return (
-    <View style={styles.container}>
-      <Button
-        title="Go to Login screen"
-        onPress={() => navigation.navigate("Login")}
-      />
-      <Button
-        title="Go to Register screen"
-        onPress={() => navigation.navigate("Register")}
-      />
-      <Button
-        title="Go to user home screen"
-        onPress={() => navigation.navigate("UserHomeScreen")}
-      />
-      <Button
-        title="Go to company home screen"
-        onPress={() => navigation.navigate("CompanyHome")}
-      />
-    </View>
-  );
-}
+import HomeNotLoggedIn from "./app/screens/HomeNotLoggedIn";
+import HomeLoggedIn from "./app/screens/HomeLoggedIn";
 
 const Stack = createNativeStackNavigator();
-
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="HomeNotLoggedIn" component={HomeNotLoggedIn} />
+        <Stack.Screen name="HomeLoggedIn" component={HomeLoggedIn} />
         <Stack.Screen name="CompanyHome" component={CompanyHomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
