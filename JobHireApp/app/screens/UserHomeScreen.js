@@ -11,6 +11,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   PermissionsAndroid,
+  FlatList,
+  SafeAreaView,
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -20,20 +22,24 @@ import { collection, doc, setDoc, getDocs } from "firebase/firestore";
 import { db } from "../database/config";
 
 function UserHomeScreen({ navigation }) {
-  let Adverts = [];
+  const [Adverts, setAdverts] = useState([]);
+  //Used store username read from async storage
   const [username, setUsername] = useState("");
-  //Read all data
+  //Read all data from job adverts database
   getDocs(collection(db, "Adverts")).then((docSnap) => {
     docSnap.forEach((doc) => {
-      Adverts.push({ ...doc.data(), id: doc.id });
+      const { title, info, wage, type } = doc.data();
+      Adverts.push({ ...doc.data(), id: doc.id, title, info, wage, type });
     });
-    console.log(Adverts);
-    console.log(Adverts.at(0).title);
+    setAdverts(Adverts);
+    //Call method to read username from async storage
     getData();
   });
+  /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
+  //Pass username and store it in async storage
   const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem("Test");
+      const value = await AsyncStorage.getItem("Username");
       var usernameFromAsyncStorage = value.toString();
       if (value !== null) {
         // value previously stored
@@ -46,99 +52,6 @@ function UserHomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.outerContainer}>
-        <ScrollView>
-          <Button
-            title="Log out"
-            onPress={() => navigation.navigate("HomeNotLoggedIn")}
-          />
-          <Text style={styles.mainTitle}>Active Job posts (6)</Text>
-          <Text style={styles.mainTitle}>Hello {username}</Text>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 1</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-
-            <Button
-              title="Go to job screen screen"
-              onPress={() => navigation.navigate("JobScreen")}
-            />
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 2</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <Button
-              title="Go to job screen screen"
-              onPress={() => navigation.navigate("JobScreen")}
-            />
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 3 </Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <Button
-              title="Go to job screen screen"
-              onPress={() => navigation.navigate("JobScreen")}
-            />
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 4</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <Button
-              title="Go to job screen screen"
-              onPress={() => navigation.navigate("JobScreen")}
-            />
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 5</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <Button
-              title="Go to job screen screen"
-              onPress={() => navigation.navigate("JobScreen")}
-            />
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 6</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <Button
-              title="Go to job screen screen"
-              onPress={() => navigation.navigate("JobScreen")}
-            />
-          </View>
-        </ScrollView>
         <View style={styles.navBar}>
           <Button
             title="Home"
@@ -157,6 +70,28 @@ function UserHomeScreen({ navigation }) {
             onPress={() => navigation.navigate("UserProfile")}
           />
         </View>
+        <SafeAreaView>
+          <Button
+            title="Log out"
+            onPress={() => navigation.navigate("HomeNotLoggedIn")}
+          />
+          <Text style={styles.mainTitle}>Active Job posts (6)</Text>
+          <Text style={styles.mainTitle}>Hello {username}</Text>
+          <View style={styles.innerContainer}>
+            <FlatList
+              data={Adverts}
+              renderItem={({ item }) => (
+                <View>
+                  <Text style={styles.title}>{item.title}</Text>
+                  <Text style={styles.info}>{item.info}</Text>
+                  <Text style={styles.wage}>${item.wage}</Text>
+                  <Text style={styles.type}>Type: {item.type}</Text>
+                  <Button title="Apply" />
+                </View>
+              )}
+            />
+          </View>
+        </SafeAreaView>
       </View>
     </View>
   );
@@ -183,14 +118,7 @@ const styles = StyleSheet.create({
     borderWidth: 20,
     borderColor: "snow",
   },
-  title: {
-    color: "white",
-    backgroundColor: "navy",
-    fontSize: 20,
-    paddingTop: 10,
-    paddingLeft: 20,
-    paddingBottom: 10,
-  },
+
   textContainer: {
     padding: 20,
   },
@@ -204,22 +132,38 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingRight: 20,
   },
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: "#fff",
-    alignItems: "center",
-
-    textAlign: "left",
-  },
   navBar: {
     flexDirection: "row",
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
     padding: 5,
-    justifyContent: "space-around",
+  },
+  title: {
+    color: "white",
+    backgroundColor: "navy",
+    fontSize: 20,
+    paddingTop: 10,
+    paddingLeft: 20,
+    paddingBottom: 10,
+  },
+  info: {
+    fontSize: 15,
+    paddingTop: 5,
+    paddingLeft: 10,
+    paddingBottom: 5,
+    fontStyle: "italic",
+  },
+  wage: {
+    textAlign: "right",
+    paddingRight: 5,
+    fontWeight: "bold",
+  },
+  type: {
+    textAlign: "right",
+    paddingRight: 5,
+    paddingBottom: 5,
+    textDecorationLine: "underline",
   },
 });
-
 export default UserHomeScreen;

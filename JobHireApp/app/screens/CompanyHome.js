@@ -11,12 +11,9 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   PermissionsAndroid,
-<<<<<<< Updated upstream
   FlatList,
   SafeAreaView,
   Touchable,
-=======
->>>>>>> Stashed changes
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,29 +23,26 @@ import { collection, doc, setDoc, getDocs } from "firebase/firestore";
 import { db } from "../database/config";
 
 function CompanyHomeScreen({ navigation }) {
-<<<<<<< Updated upstream
   const [Adverts, setAdverts] = useState([]);
+  //Used store username read from async storage
   const [username, setUsername] = useState("");
 
-=======
-  let Adverts = [];
-  const [username, setUsername] = useState("");
->>>>>>> Stashed changes
-  //Read all data
+  //Read all data from job adverts database
   getDocs(collection(db, "Adverts")).then((docSnap) => {
-    const Adverts = [];
     docSnap.forEach((doc) => {
       const { title, info, wage, type } = doc.data();
       Adverts.push({ ...doc.data(), id: doc.id, title, info, wage, type });
     });
     setAdverts(Adverts);
-    console.log(Adverts);
-    console.log(Adverts.at(0).title);
+    //Call method to read username from async storage
     getData();
   });
+
+  /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
+  //Pass username and store it in async storage
   const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem("Test");
+      const value = await AsyncStorage.getItem("Username");
       var usernameFromAsyncStorage = value.toString();
       if (value !== null) {
         // value previously stored
@@ -82,90 +76,10 @@ function CompanyHomeScreen({ navigation }) {
         />
       </View>
       <View style={styles.outerContainer}>
-<<<<<<< Updated upstream
         <Button
           title="Log out"
           onPress={() => navigation.navigate("HomeNotLoggedIn")}
         />
-=======
-        <ScrollView>
-          <Button
-            title="Log out"
-            onPress={() => navigation.navigate("HomeNotLoggedIn")}
-          />
-
-          <Text style={styles.mainTitle}>Active Job posts (5)</Text>
-          <Text style={styles.mainTitle}>hello {username}</Text>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 1</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
-              />
-              <Button title="View"></Button>
-            </View>
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 1</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
-              />
-
-              <Button title="View"></Button>
-            </View>
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 1</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
-              />
-              <Button title="View"></Button>
-            </View>
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 1</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
-              />
-              <Button title="View"></Button>
-            </View>
-          </View>
->>>>>>> Stashed changes
 
         <Text style={styles.mainTitle}>Active Job posts (5)</Text>
         <Text style={styles.mainTitle}>hello {username}</Text>

@@ -21,8 +21,9 @@ import { db } from "../database/config";
 function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
-  var isLoggedIn = false;
 
+  //After Log in button is pressed it searches Job seeker database first,
+  //IF no match found then it search company database for match
   function searchJobseekerDatabase() {
     console.log("User: " + username + ", Pass: " + pass);
     //Search database for username and password
@@ -33,17 +34,21 @@ function LoginScreen({ navigation }) {
         where("pass", "==", pass)
       )
     ).then((docSnap) => {
+      //Store results in array
       let user = [];
       docSnap.forEach((doc) => {
         user.push({ ...doc.data(), id: doc.id });
       });
+      //If array is empty, Search company database
       if (user[0] == undefined) {
         searchCompanyDatabase();
       } else {
         console.log("User:", user[0].username + " pass: " + user[0].pass);
+        //If array is not empty(match found), store username as string
         var userName = user[0].username.toString();
-        storeDataCompany(userName);
-
+        //Send string(username) to async storage
+        storeDataToAsyncStorage(userName);
+        //Alert user with success message
         var successMsg = "Hello " + user[0].username;
         Alert.alert("USER", successMsg, [
           {
@@ -51,7 +56,7 @@ function LoginScreen({ navigation }) {
             onPress: () => console.log("Ok Pressed"),
           },
         ]);
-        isLoggedIn = true;
+        //Navigate to user home screen
         navigation.navigate("UserHomeScreen");
       }
     });
@@ -65,11 +70,13 @@ function LoginScreen({ navigation }) {
         where("pass", "==", pass)
       )
     ).then((docSnap) => {
+      //Store results in array
       let comp = [];
       docSnap.forEach((doc) => {
         comp.push({ ...doc.data(), id: doc.id });
       });
       if (comp[0] == undefined) {
+        //If array is empty, Alert user; Credentials not found
         console.log("Comp Error, Wrong username or password");
         Alert.alert("Error", "Wrong username or password", [
           {
@@ -78,11 +85,13 @@ function LoginScreen({ navigation }) {
           },
         ]);
       } else {
+        //IF match found:
         console.log("comp:", comp[0].username + " pass: " + comp[0].pass);
-
+        //If array is not empty(match found), store username as string
         var compName = comp[0].username.toString();
-        storeDataCompany(compName);
-
+        //Send string(username) to async storage
+        storeDataToAsyncStorage(compName);
+        //Alert user with success message
         var successMsg = "Hello " + comp[0].username;
         Alert.alert("COMPANY", successMsg, [
           {
@@ -90,26 +99,21 @@ function LoginScreen({ navigation }) {
             onPress: () => console.log("Ok Pressed"),
           },
         ]);
-        isLoggedIn = true;
+        //Navigate to company home screen
         navigation.navigate("CompanyHome");
       }
     });
   }
+  /******* METHOD TO STORE VARIABLE IN ASYNC STORAGE *******/
+  //Pass username and store it in async storage
+  const storeDataToAsyncStorage = async (value) => {
+    try {
+      await AsyncStorage.setItem("Username", value);
+    } catch (e) {
+      // saving error
+    }
+  };
 
-  const storeDataCompany = async (value) => {
-    try {
-      await AsyncStorage.setItem("Test", value);
-    } catch (e) {
-      // saving error
-    }
-  };
-  const storeDataJobseeker = async (value) => {
-    try {
-      await AsyncStorage.setItem("Test", value);
-    } catch (e) {
-      // saving error
-    }
-  };
   return (
     <View style={styles.container}>
       <View style={styles.image}>
