@@ -17,24 +17,31 @@ import {
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //Database imports
-import { useState } from "react/cjs/react.development";
+import { useState, useEffect } from "react/cjs/react.development";
 import { collection, doc, setDoc, getDocs } from "firebase/firestore";
 import { db } from "../database/config";
 
 function UserHomeScreen({ navigation }) {
-  const [Adverts, setAdverts] = useState([]);
+  const [AdvertsUser, setAdvertsUser] = useState([]);
   //Used store username read from async storage
   const [username, setUsername] = useState("");
-  //Read all data from job adverts database
-  getDocs(collection(db, "Adverts")).then((docSnap) => {
-    docSnap.forEach((doc) => {
-      const { title, info, wage, type } = doc.data();
-      Adverts.push({ ...doc.data(), id: doc.id, title, info, wage, type });
+  useEffect(() => {
+    //Read all data from job adverts database
+    getDocs(collection(db, "Adverts")).then((docSnap) => {
+      let advert = [];
+      docSnap.forEach((doc) => {
+        const { title, info, wage, type } = doc.data();
+        advert.push({ ...doc.data(), id: doc.id, title, info, wage, type });
+      });
+
+      //console.log(advert);
+      setAdvertsUser(advert);
+      console.log(AdvertsUser);
+      console.log("done");
+      //Call method to read username from async storage
+      getData();
     });
-    setAdverts(Adverts);
-    //Call method to read username from async storage
-    getData();
-  });
+  }, []);
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
   const getData = async () => {
@@ -79,14 +86,17 @@ function UserHomeScreen({ navigation }) {
           <Text style={styles.mainTitle}>Hello {username}</Text>
           <View style={styles.innerContainer}>
             <FlatList
-              data={Adverts}
+              data={AdvertsUser}
               renderItem={({ item }) => (
                 <View>
                   <Text style={styles.title}>{item.title}</Text>
                   <Text style={styles.info}>{item.info}</Text>
                   <Text style={styles.wage}>${item.wage}</Text>
                   <Text style={styles.type}>Type: {item.type}</Text>
-                  <Button title="Apply" />
+                  <Button
+                    title="Edit"
+                    onPress={() => navigation.navigate("CompanyEditJobScreen")}
+                  />
                 </View>
               )}
             />
