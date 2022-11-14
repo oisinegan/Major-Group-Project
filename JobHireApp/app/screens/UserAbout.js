@@ -1,5 +1,13 @@
-import { StyleSheet, Text, View, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  SafeAreaView,
+  FlatList,
+} from "react-native";
 import * as React from "react";
+import UserProfile from "./UserProfile";
 
 function UserAbout({ navigation }) {
   return (

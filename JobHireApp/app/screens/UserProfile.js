@@ -1,21 +1,54 @@
-import { StyleSheet, Text, View, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  SafeAreaView,
+  FlatList,
+} from "react-native";
 import * as React from "react";
+import { useState } from "react/cjs/react.development";
+import { collection, doc, setDoc, getDocs } from "firebase/firestore";
+import { db } from "../database/config";
 
 function UserProfile({ navigation }) {
+  const [Users, setUsers] = useState([]);
+
+  //Read all data
+  getDocs(collection(db, "Users")).then((docSnap) => {
+    const Users = [];
+    docSnap.forEach((doc) => {
+      const { About, Age, Name, appliedJobs } = doc.data();
+      Users.push({
+        ...doc.data(),
+        id: doc.id,
+        About,
+        Age,
+        Name,
+        appliedJobs,
+      });
+    });
+    setUsers(Users);
+  });
+  //unsure currently how to get specific details to display on profile page,
+  //it is only displaying everything that's there in order at the moment
   return (
     <View style={styles.container}>
       <Text>user profile page</Text>
 
-      <View style={styles.navBar}>
-        <Button
-          title="About"
-          onPress={() => navigation.navigate("UserAbout")}
-        />
-        <Button
-          title="View Jobs"
-          onPress={() => navigation.navigate("UserViewJobs")}
-        />
-      </View>
+      <FlatList
+        data={Users}
+        renderItem={({ item }) => (
+          <View>
+            <Text style={styles.title}>Name: {item.Name}</Text>
+            <Text style={styles.title}>Age: {item.Age}</Text>
+            <Text style={styles.title}>About: {item.About}</Text>
+            <Text style={styles.title}>
+              Applied to jobs: {item.appliedJobs}
+            </Text>
+          </View>
+        )}
+      />
 
       <View style={styles.navBar}>
         <Button

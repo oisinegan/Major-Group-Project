@@ -5,6 +5,9 @@ import {
   Button,
   Alert,
   ScrollView,
+  FlatList,
+  SafeAreaView,
+  Touchable,
 } from "react-native";
 import * as React from "react";
 //Database imports
@@ -13,15 +16,16 @@ import { collection, doc, setDoc, getDocs } from "firebase/firestore";
 import { db } from "../database/config";
 
 function CompanyHomeScreen({ navigation }) {
-  let Adverts = [];
+  const [Adverts, setAdverts] = useState([]);
 
   //Read all data
   getDocs(collection(db, "Adverts")).then((docSnap) => {
+    const Adverts = [];
     docSnap.forEach((doc) => {
-      Adverts.push({ ...doc.data(), id: doc.id });
+      const { title, info, wage, type } = doc.data();
+      Adverts.push({ ...doc.data(), id: doc.id, title, info, wage, type });
     });
-    console.log(Adverts);
-    console.log(Adverts.at(0).title);
+    setAdverts(Adverts);
   });
 
   return (
@@ -48,109 +52,26 @@ function CompanyHomeScreen({ navigation }) {
         />
       </View>
       <View style={styles.outerContainer}>
-        <ScrollView>
-          <Text style={styles.mainTitle}>Active Job posts (5)</Text>
-
+        <Text style={styles.mainTitle}>Active Job posts (5)</Text>
+        <SafeAreaView>
           <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 1</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
-              />
-              <Button title="View"></Button>
-            </View>
+            <FlatList
+              data={Adverts}
+              renderItem={({ item }) => (
+                <View>
+                  <Text style={styles.title}>{item.title}</Text>
+                  <Text style={styles.info}>{item.info}</Text>
+                  <Text style={styles.wage}>${item.wage}</Text>
+                  <Text style={styles.type}>Type: {item.type}</Text>
+                  <Button
+                    title="Edit"
+                    onPress={() => navigation.navigate("CompanyEditJobScreen")}
+                  />
+                </View>
+              )}
+            />
           </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 1</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
-              />
-
-              <Button title="View"></Button>
-            </View>
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 1</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
-              />
-              <Button title="View"></Button>
-            </View>
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 1</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
-              />
-              <Button title="View"></Button>
-            </View>
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 1</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button title="Edit"></Button>
-              <Button title="View"></Button>
-            </View>
-          </View>
-
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>Job title 6</Text>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                This is some info about the job. This is some info about the
-                job. This is some info about the job.
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
-              />
-              <Button title="View"></Button>
-            </View>
-          </View>
-        </ScrollView>
+        </SafeAreaView>
       </View>
     </View>
   );
@@ -176,14 +97,7 @@ const styles = StyleSheet.create({
     borderWidth: 20,
     borderColor: "snow",
   },
-  title: {
-    color: "white",
-    backgroundColor: "navy",
-    fontSize: 20,
-    paddingTop: 10,
-    paddingLeft: 20,
-    paddingBottom: 10,
-  },
+
   textContainer: {
     padding: 20,
   },
@@ -203,6 +117,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 5,
+  },
+  title: {
+    color: "white",
+    backgroundColor: "navy",
+    fontSize: 20,
+    paddingTop: 10,
+    paddingLeft: 20,
+    paddingBottom: 10,
+  },
+  info: {
+    fontSize: 15,
+    paddingTop: 5,
+    paddingLeft: 10,
+    paddingBottom: 5,
+    fontStyle: "italic",
+  },
+  wage: {
+    textAlign: "right",
+    paddingRight: 5,
+    fontWeight: "bold",
+  },
+  type: {
+    textAlign: "right",
+    paddingRight: 5,
+    paddingBottom: 5,
+    textDecorationLine: "underline",
   },
 });
 

@@ -1,4 +1,12 @@
-import { StyleSheet, Text, View, Button, TextInput, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  Alert,
+  Menu,
+} from "react-native";
 import * as React from "react";
 //Database imports
 import { useState } from "react/cjs/react.development";
@@ -6,23 +14,17 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 
 function CompanyPostJob({ navigation }) {
-  //////////////////////////////////////////////////////////
-  //Line 14 - 47 will be deleted from this page its just
-  // an example of writing to the database
-
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
+  const [title, setTitle] = useState("");
+  const [info, setInfo] = useState("");
+  const [wage, setWage] = useState("");
+  const [type, setType] = useState("");
 
   function create() {
-    //Submit data
-    //db= databse link (database/config),
-    //"jobseekers" = table name on firebae
-    // username = id person being written to database,
-    setDoc(doc(db, "Jobseekers", username), {
-      username: username,
-      email: email,
-      pass: pass,
+    setDoc(doc(db, "Adverts", title), {
+      title: title,
+      info: info,
+      wage: wage,
+      type: type,
     })
       .then(() => {
         //Successfully written to database
@@ -39,15 +41,15 @@ function CompanyPostJob({ navigation }) {
   }
 
   ///////////////////////////////////////////////////////////////////////////////////
-
+  const [isSelected, setSelection] = useState(false);
   return (
     <View style={styles.container}>
       <Text>Company Post job Screen</Text>
       <Text>Test: Writing to database</Text>
       <TextInput
-        value={username}
-        onChangeText={(username) => setUsername(username)}
-        placeholder="Username"
+        value={title}
+        onChangeText={(title) => setTitle(title)}
+        placeholder="Job/Project title"
         style={{
           borderWidth: 1,
           borderColor: "#777",
@@ -57,9 +59,9 @@ function CompanyPostJob({ navigation }) {
         }}
       ></TextInput>
       <TextInput
-        value={email}
-        onChangeText={(email) => setEmail(email)}
-        placeholder="Email"
+        value={info}
+        onChangeText={(info) => setInfo(info)}
+        placeholder="More information"
         style={{
           borderWidth: 1,
           borderColor: "#777",
@@ -69,10 +71,9 @@ function CompanyPostJob({ navigation }) {
         }}
       ></TextInput>
       <TextInput
-        value={pass}
-        onChangeText={(pass) => setPass(pass)}
-        placeholder="Password"
-        secureTextEntry={true}
+        value={wage}
+        onChangeText={(wage) => setWage(wage)}
+        placeholder="Wage"
         style={{
           borderWidth: 1,
           borderColor: "#777",
@@ -81,6 +82,19 @@ function CompanyPostJob({ navigation }) {
           marginBottom: 20,
         }}
       ></TextInput>
+      <TextInput
+        value={type}
+        onChangeText={(type) => setType(type)}
+        placeholder="Type of work (Job/Project etc..)"
+        style={{
+          borderWidth: 1,
+          borderColor: "#777",
+          padding: 5,
+          width: 250,
+          marginBottom: 20,
+        }}
+      ></TextInput>
+
       <Button title="Submit" onPress={create}></Button>
     </View>
   );
