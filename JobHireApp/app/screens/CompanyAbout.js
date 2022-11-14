@@ -1,4 +1,17 @@
-import {StyleSheet, Text, View, Button, Alert, ScrollView, Image, TextInput, Pressable, TouchableOpacity, KeyboardAvoidingView, PermissionsAndroid} from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  ScrollView,
+  Image,
+  TextInput,
+  Pressable,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  PermissionsAndroid,
+} from "react-native";
 import * as React from "react";
 //Database imports
 import { useState } from "react/cjs/react.development";
@@ -45,17 +58,18 @@ function CompanyHomeScreen({ navigation }) {
           <View style={styles.innerContainer}>
             <Text style={styles.title}>CompanyName</Text>
             <View style={styles.image}>
-        <Image
-          style={{ width: 150, height: 150, margin: 20 }}
-          source={require("../assets/login_symbol.png")}
-        />
-      </View>
+              <Image
+                style={{ width: 150, height: 150, margin: 20 }}
+                source={require("../assets/login_symbol.png")}
+              />
+            </View>
             <View style={styles.textContainer}>
               <Text style={styles.text}>
                 Date Founded: DD/MM/YYYY
-                {'\n'}
-                About: This is some info about the company. This is some info about the company. This is some info about the company.
-                {'\n'}
+                {"\n"}
+                About: This is some info about the company. This is some info
+                about the company. This is some info about the company.
+                {"\n"}
                 Positions Available: 123
               </Text>
             </View>

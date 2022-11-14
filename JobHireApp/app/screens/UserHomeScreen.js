@@ -1,16 +1,58 @@
-import {StyleSheet, Text, View, Button, Alert, ScrollView, Image, TextInput, Pressable, TouchableOpacity, KeyboardAvoidingView, PermissionsAndroid} from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  ScrollView,
+  Image,
+  TextInput,
+  Pressable,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  PermissionsAndroid,
+} from "react-native";
 import * as React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 //Database imports
 import { useState } from "react/cjs/react.development";
-import { doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs } from "firebase/firestore";
 import { db } from "../database/config";
 
 function UserHomeScreen({ navigation }) {
+  let Adverts = [];
+  const [username, setUsername] = useState("");
+  //Read all data
+  getDocs(collection(db, "Adverts")).then((docSnap) => {
+    docSnap.forEach((doc) => {
+      Adverts.push({ ...doc.data(), id: doc.id });
+    });
+    console.log(Adverts);
+    console.log(Adverts.at(0).title);
+    getData();
+  });
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("Test");
+      var usernameFromAsyncStorage = value.toString();
+      if (value !== null) {
+        // value previously stored
+        setUsername(usernameFromAsyncStorage);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.outerContainer}>
         <ScrollView>
+          <Button
+            title="Log out"
+            onPress={() => navigation.navigate("HomeNotLoggedIn")}
+          />
           <Text style={styles.mainTitle}>Active Job posts (6)</Text>
+          <Text style={styles.mainTitle}>Hello {username}</Text>
 
           <View style={styles.innerContainer}>
             <Text style={styles.title}>Job title 1</Text>

@@ -1,0 +1,147 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2639
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 -- MySQL Workbench Forward Engineering\
+\
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;\
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;\
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';\
+\
+-- -----------------------------------------------------\
+-- Schema JobHireDb\
+-- -----------------------------------------------------\
+\
+-- -----------------------------------------------------\
+-- Schema JobHireDb\
+-- -----------------------------------------------------\
+CREATE SCHEMA IF NOT EXISTS `JobHireDb` DEFAULT CHARACTER SET utf8 ;\
+USE `JobHireDb` ;\
+\
+-- -----------------------------------------------------\
+-- Table `JobHireDb`.`JobSeeker`\
+-- -----------------------------------------------------\
+CREATE TABLE IF NOT EXISTS `JobHireDb`.`JobSeeker` (\
+  `idJobSeeker` INT UNSIGNED NOT NULL,\
+  `FirstName` VARCHAR(45) NOT NULL,\
+  `LastName` VARCHAR(45) NOT NULL,\
+  `Age` INT NOT NULL,\
+  `Email` VARCHAR(45) NOT NULL,\
+  `Pass` VARCHAR(45) NOT NULL,\
+  `Phone` VARCHAR(25) NOT NULL,\
+  PRIMARY KEY (`idJobSeeker`))\
+ENGINE = InnoDB;\
+\
+\
+-- -----------------------------------------------------\
+-- Table `JobHireDb`.`Profile`\
+-- -----------------------------------------------------\
+CREATE TABLE IF NOT EXISTS `JobHireDb`.`Profile` (\
+  `idProfile` INT NOT NULL AUTO_INCREMENT,\
+  `JobSeeker_idJobSeeker` INT UNSIGNED NOT NULL,\
+  `Photo` VARCHAR(45) NULL,\
+  `About` VARCHAR(200) NOT NULL,\
+  `Experience` VARCHAR(500) NOT NULL,\
+  `Qualification` VARCHAR(45) NOT NULL,\
+  `Skills` VARCHAR(200) NOT NULL,\
+  PRIMARY KEY (`idProfile`, `JobSeeker_idJobSeeker`),\
+  INDEX `fk_Profile_JobSeeker_idx` (`JobSeeker_idJobSeeker` ASC) VISIBLE,\
+  CONSTRAINT `fk_Profile_JobSeeker`\
+    FOREIGN KEY (`JobSeeker_idJobSeeker`)\
+    REFERENCES `JobHireDb`.`JobSeeker` (`idJobSeeker`)\
+    ON DELETE NO ACTION\
+    ON UPDATE NO ACTION)\
+ENGINE = InnoDB;\
+\
+\
+-- -----------------------------------------------------\
+-- Table `JobHireDb`.`Company`\
+-- -----------------------------------------------------\
+CREATE TABLE IF NOT EXISTS `JobHireDb`.`Company` (\
+  `idCompany` INT NOT NULL AUTO_INCREMENT,\
+  `Name` VARCHAR(45) NOT NULL,\
+  `Email` VARCHAR(45) NOT NULL,\
+  `Pass` VARCHAR(45) NOT NULL,\
+  `Info` VARCHAR(45) NOT NULL,\
+  `Photo` VARCHAR(45) NOT NULL,\
+  PRIMARY KEY (`idCompany`))\
+ENGINE = InnoDB;\
+\
+\
+-- -----------------------------------------------------\
+-- Table `JobHireDb`.`Chat`\
+-- -----------------------------------------------------\
+CREATE TABLE IF NOT EXISTS `JobHireDb`.`Chat` (\
+  `idChat` INT UNSIGNED NOT NULL,\
+  `JobSeeker_idJobSeeker` INT UNSIGNED NOT NULL,\
+  `Company_idCompany` INT NOT NULL,\
+  `Sender` VARCHAR(50) NOT NULL,\
+  `Message` VARCHAR(100) NOT NULL,\
+  PRIMARY KEY (`idChat`, `JobSeeker_idJobSeeker`, `Company_idCompany`),\
+  INDEX `fk_Chat_JobSeeker1_idx` (`JobSeeker_idJobSeeker` ASC) VISIBLE,\
+  INDEX `fk_Chat_Company1_idx` (`Company_idCompany` ASC) VISIBLE,\
+  CONSTRAINT `fk_Chat_JobSeeker1`\
+    FOREIGN KEY (`JobSeeker_idJobSeeker`)\
+    REFERENCES `JobHireDb`.`JobSeeker` (`idJobSeeker`)\
+    ON DELETE NO ACTION\
+    ON UPDATE NO ACTION,\
+  CONSTRAINT `fk_Chat_Company1`\
+    FOREIGN KEY (`Company_idCompany`)\
+    REFERENCES `JobHireDb`.`Company` (`idCompany`)\
+    ON DELETE NO ACTION\
+    ON UPDATE NO ACTION)\
+ENGINE = InnoDB;\
+\
+\
+-- -----------------------------------------------------\
+-- Table `JobHireDb`.`Advert`\
+-- -----------------------------------------------------\
+CREATE TABLE IF NOT EXISTS `JobHireDb`.`Advert` (\
+  `idAdvert` INT NOT NULL,\
+  `Company_idCompany` INT NOT NULL,\
+  `Role` VARCHAR(45) NOT NULL,\
+  `Wage` VARCHAR(45) NOT NULL,\
+  `Experience` VARCHAR(45) NOT NULL,\
+  `Qualfication` VARCHAR(45) NOT NULL,\
+  `Skills` VARCHAR(45) NOT NULL,\
+  PRIMARY KEY (`idAdvert`, `Company_idCompany`),\
+  UNIQUE INDEX `idAdvert_UNIQUE` (`idAdvert` ASC) VISIBLE,\
+  INDEX `fk_Advert_Company1_idx` (`Company_idCompany` ASC) VISIBLE,\
+  CONSTRAINT `fk_Advert_Company1`\
+    FOREIGN KEY (`Company_idCompany`)\
+    REFERENCES `JobHireDb`.`Company` (`idCompany`)\
+    ON DELETE NO ACTION\
+    ON UPDATE NO ACTION)\
+ENGINE = InnoDB;\
+\
+\
+-- -----------------------------------------------------\
+-- Table `JobHireDb`.`Advert_has_JobSeeker`\
+-- -----------------------------------------------------\
+CREATE TABLE IF NOT EXISTS `JobHireDb`.`Advert_has_JobSeeker` (\
+  `Advert_idAdvert` INT NOT NULL,\
+  `Advert_Company_idCompany` INT NOT NULL,\
+  `JobSeeker_idJobSeeker` INT UNSIGNED NOT NULL,\
+  PRIMARY KEY (`Advert_idAdvert`, `Advert_Company_idCompany`, `JobSeeker_idJobSeeker`),\
+  INDEX `fk_Advert_has_JobSeeker_JobSeeker1_idx` (`JobSeeker_idJobSeeker` ASC) VISIBLE,\
+  INDEX `fk_Advert_has_JobSeeker_Advert1_idx` (`Advert_idAdvert` ASC, `Advert_Company_idCompany` ASC) VISIBLE,\
+  CONSTRAINT `fk_Advert_has_JobSeeker_Advert1`\
+    FOREIGN KEY (`Advert_idAdvert` , `Advert_Company_idCompany`)\
+    REFERENCES `JobHireDb`.`Advert` (`idAdvert` , `Company_idCompany`)\
+    ON DELETE NO ACTION\
+    ON UPDATE NO ACTION,\
+  CONSTRAINT `fk_Advert_has_JobSeeker_JobSeeker1`\
+    FOREIGN KEY (`JobSeeker_idJobSeeker`)\
+    REFERENCES `JobHireDb`.`JobSeeker` (`idJobSeeker`)\
+    ON DELETE NO ACTION\
+    ON UPDATE NO ACTION)\
+ENGINE = InnoDB;\
+\
+\
+SET SQL_MODE=@OLD_SQL_MODE;\
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;\
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;\
+}

@@ -1,7 +1,115 @@
-import {StyleSheet, Text, View, Button, Alert, ScrollView, Image, TextInput, Pressable, TouchableOpacity, KeyboardAvoidingView, PermissionsAndroid} from "react-native";
+import {
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Text,
+  View,
+  Button,
+  Alert,
+  TextInput,
+  PermissionsAndroid,
+  Image,
+} from "react-native";
 import * as React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+//Database imports
+import { useState } from "react/cjs/react.development";
+import { collection, doc, getDocs, query, where } from "firebase/firestore";
+import { db } from "../database/config";
 
 function LoginScreen({ navigation }) {
+  const [username, setUsername] = useState("");
+  const [pass, setPass] = useState("");
+  var isLoggedIn = false;
+
+  function searchJobseekerDatabase() {
+    console.log("User: " + username + ", Pass: " + pass);
+    //Search database for username and password
+    getDocs(
+      query(
+        collection(db, "Jobseekers"),
+        where("username", "==", username),
+        where("pass", "==", pass)
+      )
+    ).then((docSnap) => {
+      let user = [];
+      docSnap.forEach((doc) => {
+        user.push({ ...doc.data(), id: doc.id });
+      });
+      if (user[0] == undefined) {
+        searchCompanyDatabase();
+      } else {
+        console.log("User:", user[0].username + " pass: " + user[0].pass);
+        var userName = user[0].username.toString();
+        storeDataCompany(userName);
+
+        var successMsg = "Hello " + user[0].username;
+        Alert.alert("USER", successMsg, [
+          {
+            text: "Ok",
+            onPress: () => console.log("Ok Pressed"),
+          },
+        ]);
+        isLoggedIn = true;
+        navigation.navigate("UserHomeScreen");
+      }
+    });
+  }
+  function searchCompanyDatabase() {
+    //Search database for username and password
+    getDocs(
+      query(
+        collection(db, "Company"),
+        where("username", "==", username),
+        where("pass", "==", pass)
+      )
+    ).then((docSnap) => {
+      let comp = [];
+      docSnap.forEach((doc) => {
+        comp.push({ ...doc.data(), id: doc.id });
+      });
+      if (comp[0] == undefined) {
+        console.log("Comp Error, Wrong username or password");
+        Alert.alert("Error", "Wrong username or password", [
+          {
+            text: "Try again",
+            onPress: () => console.log("Try again Pressed"),
+          },
+        ]);
+      } else {
+        console.log("comp:", comp[0].username + " pass: " + comp[0].pass);
+
+        var compName = comp[0].username.toString();
+        storeDataCompany(compName);
+
+        var successMsg = "Hello " + comp[0].username;
+        Alert.alert("COMPANY", successMsg, [
+          {
+            text: "Ok",
+            onPress: () => console.log("Ok Pressed"),
+          },
+        ]);
+        isLoggedIn = true;
+        navigation.navigate("CompanyHome");
+      }
+    });
+  }
+
+  const storeDataCompany = async (value) => {
+    try {
+      await AsyncStorage.setItem("Test", value);
+    } catch (e) {
+      // saving error
+    }
+  };
+  const storeDataJobseeker = async (value) => {
+    try {
+      await AsyncStorage.setItem("Test", value);
+    } catch (e) {
+      // saving error
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.image}>
@@ -18,6 +126,9 @@ function LoginScreen({ navigation }) {
       <KeyboardAvoidingView style={styles.textInput}>
         <Text>Username:</Text>
         <TextInput
+          value={username}
+          onChangeText={(username) => setUsername(username)}
+          placeholder="Username"
           style={{
             borderWidth: 1,
             borderColor: "#777",
@@ -25,11 +136,12 @@ function LoginScreen({ navigation }) {
             width: 250,
             marginBottom: 20,
           }}
-          placeholder="Username"
-        />
+        ></TextInput>
 
         <Text>Password:</Text>
         <TextInput
+          value={pass}
+          onChangeText={(pass) => setPass(pass)}
           secureTextEntry={true}
           style={{
             borderWidth: 1,
@@ -43,6 +155,7 @@ function LoginScreen({ navigation }) {
 
       <TouchableOpacity style={styles.button}>
         <Text
+          onPress={searchJobseekerDatabase}
           style={{
             color: "white",
             textAlign: "center",

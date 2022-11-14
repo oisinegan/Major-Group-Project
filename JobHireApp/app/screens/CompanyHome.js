@@ -5,11 +5,18 @@ import {
   Button,
   Alert,
   ScrollView,
+  Image,
+  TextInput,
+  Pressable,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  PermissionsAndroid,
   FlatList,
   SafeAreaView,
   Touchable,
 } from "react-native";
 import * as React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 //Database imports
 import { useState } from "react/cjs/react.development";
 import { collection, doc, setDoc, getDocs } from "firebase/firestore";
@@ -17,6 +24,7 @@ import { db } from "../database/config";
 
 function CompanyHomeScreen({ navigation }) {
   const [Adverts, setAdverts] = useState([]);
+  const [username, setUsername] = useState("");
 
   //Read all data
   getDocs(collection(db, "Adverts")).then((docSnap) => {
@@ -26,11 +34,24 @@ function CompanyHomeScreen({ navigation }) {
       Adverts.push({ ...doc.data(), id: doc.id, title, info, wage, type });
     });
     setAdverts(Adverts);
+    console.log(Adverts);
+    console.log(Adverts.at(0).title);
   });
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("Test");
+      var usernameFromAsyncStorage = value.toString();
+      if (value !== null) {
+        // value previously stored
+        setUsername(usernameFromAsyncStorage);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
 
   return (
     //navbar wont appear on app unless at top for this page, easy fix i'd imagine
-
     <View style={styles.container}>
       <View style={styles.navBar}>
         <Button
@@ -52,7 +73,14 @@ function CompanyHomeScreen({ navigation }) {
         />
       </View>
       <View style={styles.outerContainer}>
+        <Button
+          title="Log out"
+          onPress={() => navigation.navigate("HomeNotLoggedIn")}
+        />
+
         <Text style={styles.mainTitle}>Active Job posts (5)</Text>
+        <Text style={styles.mainTitle}>hello {username}</Text>
+
         <SafeAreaView>
           <View style={styles.innerContainer}>
             <FlatList
