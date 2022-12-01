@@ -22,6 +22,10 @@ import { useState, useEffect } from "react/cjs/react.development";
 import { collection, doc, setDoc, getDocs } from "firebase/firestore";
 import { db } from "../database/config";
 
+/******** FIX: Company post 1 click = writes all info to database but company field = "",
+ * On 2nd click it then reads in company field from async storage from sets company field in db.
+ * (Obvisously should be done on first click) *********/
+
 function CompanyHomeScreen({ navigation }) {
   const [AdvertsCompany, setAdvertsCompany] = useState([]);
   //Used store username read from async storage
@@ -90,19 +94,26 @@ function CompanyHomeScreen({ navigation }) {
           onPress={() => navigation.navigate("HomeNotLoggedIn")}
         />
 
-        <Text style={styles.mainTitle}>Active Job posts (5)</Text>
-        <Text style={styles.mainTitle}>hello {username}</Text>
+        <Text style={styles.userNameStyle}>hello {username}</Text>
+        <Text style={styles.mainTitle}>Active Job posts</Text>
 
         <SafeAreaView>
-          <View style={styles.innerContainer}>
+          <View>
             <FlatList
               data={AdvertsCompany}
               renderItem={({ item }) => (
-                <View>
+                <View style={styles.innerContainer}>
                   <Text style={styles.title}>{item.title}</Text>
+                  <Text style={styles.companyName}>
+                    Posted by: {item.company}
+                  </Text>
                   <Text style={styles.info}>{item.info}</Text>
                   <Text style={styles.wage}>${item.wage}</Text>
                   <Text style={styles.type}>Type: {item.type}</Text>
+                  <Button
+                    title="View Applicants"
+                    onPress={console.log("View Applicants")}
+                  />
                   <Button
                     title="Edit"
                     onPress={() => navigation.navigate("CompanyEditJobScreen")}
@@ -127,14 +138,20 @@ const styles = StyleSheet.create({
     fontSize: 25,
     textDecorationLine: "underline",
     textAlign: "center",
-    paddingTop: 40,
-    paddingBottom: 10,
+    paddingTop: 20,
+    paddingBottom: 5,
+  },
+  userNameStyle: {
+    color: "navy",
+    fontSize: 25,
+    textAlign: "center",
+    paddingTop: 20,
+    paddingBottom: 5,
   },
   innerContainer: {
     backgroundColor: "lightyellow",
     borderTopColor: "snow",
     borderTopWidth: 15,
-    borderWidth: 20,
     borderColor: "snow",
   },
 
@@ -157,6 +174,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 5,
+  },
+  companyName: {
+    color: "blue",
+    fontSize: 20,
+    paddingTop: 5,
+    paddingLeft: 10,
+    paddingBottom: 5,
+    fontStyle: "bold",
   },
   title: {
     color: "white",

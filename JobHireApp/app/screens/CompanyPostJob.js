@@ -12,6 +12,7 @@ import * as React from "react";
 import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function CompanyPostJob({ navigation }) {
   const [title, setTitle] = useState("");
@@ -19,12 +20,33 @@ function CompanyPostJob({ navigation }) {
   const [wage, setWage] = useState("");
   const [type, setType] = useState("");
 
+  //Used store username read from async storage
+  const [username, setUsername] = useState("");
+
+  /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
+  //Pass username and store it in async storage
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("Username");
+      var usernameFromAsyncStorage = value.toString();
+      if (value !== null) {
+        // value previously stored
+        setUsername(usernameFromAsyncStorage);
+        console.log("ASYNC: " + username);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
   function create() {
+    getData();
     setDoc(doc(db, "Adverts", title), {
       title: title,
       info: info,
       wage: wage,
       type: type,
+      company: username,
     })
       .then(() => {
         //Successfully written to database
