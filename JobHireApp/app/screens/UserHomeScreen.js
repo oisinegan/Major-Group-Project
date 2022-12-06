@@ -45,10 +45,8 @@ function UserHomeScreen({ navigation }) {
         advert.push({ ...doc.data(), id: doc.id, title, info, wage, type });
       });
 
-      //console.log(advert);
       setAdvertsUser(advert);
-      console.log(AdvertsUser);
-      console.log("done");
+
       //Call method to read username from async storage
       getData();
     });
@@ -69,9 +67,6 @@ function UserHomeScreen({ navigation }) {
   };
 
   async function writeUserToJobAdvertDB(item) {
-    //console.log(item.id);
-    // console.log(item.wage);
-    // console.log("Submitted");
     const advertDocumentRef = doc(db, "Adverts", item.id);
 
     await updateDoc(advertDocumentRef, {
@@ -120,7 +115,12 @@ function UserHomeScreen({ navigation }) {
                 <Button
                   title="Apply"
                   onPress={() => {
-                    writeUserToJobAdvertDB(item);
+                    Alert.alert("Application Successful!", "GOOD LUCK!", [
+                      {
+                        text: "Thank you!",
+                        onPress: () => writeUserToJobAdvertDB(item),
+                      },
+                    ]);
                   }}
                 />
                 <Button

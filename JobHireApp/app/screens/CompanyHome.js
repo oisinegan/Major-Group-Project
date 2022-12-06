@@ -14,12 +14,22 @@ import {
   FlatList,
   SafeAreaView,
   Touchable,
+  Modal,
 } from "react-native";
 import * as React from "react";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //Database imports
 import { useState, useEffect } from "react/cjs/react.development";
-import { collection, doc, setDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+
 import { db } from "../database/config";
 
 /******** FIX: Company post 1 click = writes all info to database but company field = "",
@@ -28,29 +38,14 @@ import { db } from "../database/config";
 
 function CompanyHomeScreen({ navigation }) {
   const [AdvertsCompany, setAdvertsCompany] = useState([]);
+  const [Applicants, setApplicants] = useState([]);
+
+  //Model
+  const [modalVisible, setModalVisible] = useState(false);
+
   //Used store username read from async storage
   const [username, setUsername] = useState("");
-  useEffect(() => {
-    //Read all data from job adverts database
-    getDocs(collection(db, "Adverts")).then((docSnap) => {
-      let advert = [];
 
-      docSnap.forEach((doc) => {
-        const { title, info, wage, type } = doc.data();
-        advert.push({
-          ...doc.data(),
-          id: doc.id,
-          title,
-          info,
-          wage,
-          type,
-        });
-      });
-      setAdvertsCompany(advert);
-      //Call method to read username from async storage
-      getData();
-    });
-  }, []);
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
   const getData = async () => {
@@ -65,6 +60,50 @@ function CompanyHomeScreen({ navigation }) {
       // error reading value
     }
   };
+
+  //Read logged in Company job posts
+  function readCompanyAdverts() {
+    //Call method to read username from async storage
+    getData();
+    //Read  data from job adverts database where username(Gotten from login) equals company in adverts
+    getDocs(
+      query(collection(db, "Adverts"), where("company", "==", username))
+    ).then((docSnap) => {
+      let advert = [];
+
+      docSnap.forEach((doc) => {
+        const { title, info, wage, type } = doc.data();
+        advert.push({
+          ...doc.data(),
+          id: doc.id,
+          title,
+          info,
+          wage,
+          type,
+        });
+      });
+      setAdvertsCompany(advert);
+    });
+  }
+
+  //Read applicants on selected job
+  function readApplicantsOnAdvert(item) {
+    //Read  data from job adverts database where username(Gotten from login) equals company in adverts
+    getDocs(
+      query(collection(db, "Adverts"), where("title", "==", item.id))
+    ).then((docSnap) => {
+      let applicantsForAd = [];
+
+      docSnap.forEach((doc) => {
+        applicantsForAd.push({ ...doc.data(), id: doc.id });
+      });
+      setApplicants(applicantsForAd[0].Applicants);
+    });
+
+    setModalVisible(true);
+  }
+
+  useEffect(() => readCompanyAdverts(), [username]);
 
   return (
     //navbar wont appear on app unless at top for this page, easy fix i'd imagine
@@ -88,6 +127,43 @@ function CompanyHomeScreen({ navigation }) {
           onPress={() => navigation.navigate("CompanyProfileScreen")}
         />
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={styles.container}>
+              {Applicants.map((Applicant) => {
+                return (
+                  <View>
+                    <Text style={styles.modalText}>{Applicant}</Text>
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={() => console.log("Applicant: " + Applicant)}
+                    >
+                      <Text style={styles.textStyle}>View Profile</Text>
+                    </Pressable>
+                  </View>
+                );
+              })}
+            </View>
+            <Pressable
+              style={[styles.button, styles.buttonOpenCustom]}
+              onPress={() => setModalVisible(!modalVisible)}
+            >
+              <Text style={styles.textStyle}>Hide Modal</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
       <View style={styles.outerContainer}>
         <Button
           title="Log out"
@@ -95,7 +171,8 @@ function CompanyHomeScreen({ navigation }) {
         />
 
         <Text style={styles.userNameStyle}>hello {username}</Text>
-        <Text style={styles.mainTitle}>Active Job posts</Text>
+
+        <Text style={styles.mainTitle}>Your Active Job posts</Text>
 
         <SafeAreaView>
           <View>
@@ -110,10 +187,12 @@ function CompanyHomeScreen({ navigation }) {
                   <Text style={styles.info}>{item.info}</Text>
                   <Text style={styles.wage}>${item.wage}</Text>
                   <Text style={styles.type}>Type: {item.type}</Text>
-                  <Button
-                    title="View Applicants"
-                    onPress={console.log("View Applicants")}
-                  />
+                  <Pressable
+                    style={[styles.button, styles.buttonOpen]}
+                    onPress={() => readApplicantsOnAdvert(item)}
+                  >
+                    <Text style={styles.textStyle}>View Applicants</Text>
+                  </Pressable>
                   <Button
                     title="Edit"
                     onPress={() => navigation.navigate("CompanyEditJobScreen")}
@@ -208,6 +287,58 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     paddingBottom: 5,
     textDecorationLine: "underline",
+  },
+
+  //MODEL DESIGN
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "black",
+    borderRadius: 20,
+    padding: 70,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "salmon",
+  },
+  buttonOpenCustom: {
+    marginTop: 50,
+    padding: 15,
+    backgroundColor: "salmon",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    fontWeight: "bold",
+    color: "white",
+    fontSize: 30,
+    marginTop: 15,
+    marginBottom: 10,
+    textAlign: "center",
   },
 });
 
