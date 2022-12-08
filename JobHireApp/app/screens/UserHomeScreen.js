@@ -4,7 +4,6 @@ import {
   View,
   Button,
   Alert,
-  ScrollView,
   Image,
   TextInput,
   Pressable,
@@ -13,6 +12,7 @@ import {
   PermissionsAndroid,
   FlatList,
   SafeAreaView,
+  Touchable,
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -75,62 +75,85 @@ function UserHomeScreen({ navigation }) {
   }
   return (
     <SafeAreaView style={styles.outerContainer}>
-      <View style={styles.navBar}>
-        <Button
-          title="Home"
-          onPress={() => navigation.navigate("UserHomeScreen")}
-        />
-        <Button
-          title="Messages"
-          onPress={() => navigation.navigate("UserMessage")}
-        />
-        <Button
-          title="Notifications"
-          onPress={() => navigation.navigate("UserNotification")}
-        />
-        <Button
-          title="Profile"
-          onPress={() => navigation.navigate("UserProfile")}
+      <Button
+        title="Log out"
+        onPress={() => navigation.navigate("HomeNotLoggedIn")}
+      />
+
+      <Text style={styles.userNameStyle}>Hello {username}</Text>
+
+      <Text style={styles.mainTitle}>Job posts</Text>
+
+      <View>
+        <FlatList
+          data={AdvertsUser}
+          renderItem={({ item }) => (
+            <View style={styles.innerContainer}>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.companyName}>Posted by: {item.company}</Text>
+              <Text style={styles.info}>{item.info}</Text>
+              <Text style={styles.wage}>${item.wage}</Text>
+              <Text style={styles.type}>Type: {item.type}</Text>
+              <Button
+                title="Apply"
+                onPress={() => {
+                  Alert.alert("Application Successful!", "GOOD LUCK!", [
+                    {
+                      text: "Thank you!",
+                      onPress: () => writeUserToJobAdvertDB(item),
+                    },
+                  ]);
+                }}
+              />
+              <Button
+                title="More Info"
+                onPress={() => navigation.navigate("JobScreen")}
+              />
+            </View>
+          )}
         />
       </View>
-      <View>
-        <Button
-          title="Log out"
-          onPress={() => navigation.navigate("HomeNotLoggedIn")}
-        />
-        <Text style={styles.userNameStyle}>Hello {username}</Text>
-        <Text style={styles.mainTitle}>Job posts</Text>
-        <View>
-          <FlatList
-            data={AdvertsUser}
-            renderItem={({ item }) => (
-              <View style={styles.innerContainer}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.companyName}>
-                  Posted by: {item.company}
-                </Text>
-                <Text style={styles.info}>{item.info}</Text>
-                <Text style={styles.wage}>${item.wage}</Text>
-                <Text style={styles.type}>Type: {item.type}</Text>
-                <Button
-                  title="Apply"
-                  onPress={() => {
-                    Alert.alert("Application Successful!", "GOOD LUCK!", [
-                      {
-                        text: "Thank you!",
-                        onPress: () => writeUserToJobAdvertDB(item),
-                      },
-                    ]);
-                  }}
-                />
-                <Button
-                  title="More Info"
-                  onPress={() => navigation.navigate("JobScreen")}
-                />
-              </View>
-            )}
+
+      <View style={styles.navBar}>
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("UserHomeScreen")}
+        >
+          <Image
+            style={{ width: 30, height: 30, margin: 15 }}
+            source={require("../assets/Home.png")}
           />
-        </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("UserMessage")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Msg.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("UserNotification")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Noti.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("UserProfile")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Profile.png")}
+          />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -138,7 +161,8 @@ function UserHomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   outerContainer: {
-    backgroundColor: "snow",
+    flex: 1,
+    backgroundColor: "#F1F1F1",
     alignItems: "center",
     padding: 0,
   },
@@ -159,7 +183,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     backgroundColor: "lightyellow",
-    borderTopColor: "snow",
+    borderTopColor: "#F1F1F1",
     borderTopWidth: 15,
     borderColor: "snow",
   },
@@ -186,10 +210,16 @@ const styles = StyleSheet.create({
   },
   navBar: {
     flexDirection: "row",
+    flex: 1,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    padding: 5,
+    position: "absolute",
+    bottom: 0,
+    zIndex: 999,
+  },
+  navButtons: {
+    margin: 20,
   },
   title: {
     color: "white",

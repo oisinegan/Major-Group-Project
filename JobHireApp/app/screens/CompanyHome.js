@@ -106,28 +106,14 @@ function CompanyHomeScreen({ navigation }) {
   useEffect(() => readCompanyAdverts(), [username]);
 
   return (
-    //navbar wont appear on app unless at top for this page, easy fix i'd imagine
-    <View style={styles.container}>
-      <View style={styles.navBar}>
-        <Button
-          title="Home"
-          onPress={() => navigation.navigate("CompanyHome")}
-        />
-        <Button
-          title="Post"
-          onPress={() => navigation.navigate("CompanyPostJob")}
-        />
-        <Button
-          title="Notifications"
-          onPress={() => navigation.navigate("CompanyNotifications")}
-        />
+    <SafeAreaView style={styles.outerContainer}>
+      <Button
+        title="Log out"
+        onPress={() => navigation.navigate("HomeNotLoggedIn")}
+      />
+      <Text style={styles.userNameStyle}>hello {username}</Text>
 
-        <Button
-          title="Profile"
-          onPress={() => navigation.navigate("CompanyProfileScreen")}
-        />
-      </View>
-
+      <Text style={styles.mainTitle}>Your Active Job posts</Text>
       <Modal
         animationType="slide"
         transparent={true}
@@ -164,51 +150,79 @@ function CompanyHomeScreen({ navigation }) {
         </View>
       </Modal>
 
-      <View style={styles.outerContainer}>
-        <Button
-          title="Log out"
-          onPress={() => navigation.navigate("HomeNotLoggedIn")}
+      <View>
+        <FlatList
+          data={AdvertsCompany}
+          renderItem={({ item }) => (
+            <View style={styles.innerContainer}>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.companyName}>Posted by: {item.company}</Text>
+              <Text style={styles.info}>{item.info}</Text>
+              <Text style={styles.wage}>${item.wage}</Text>
+              <Text style={styles.type}>Type: {item.type}</Text>
+              <Pressable
+                style={[styles.button, styles.buttonOpen]}
+                onPress={() => readApplicantsOnAdvert(item)}
+              >
+                <Text style={styles.textStyle}>View Applicants</Text>
+              </Pressable>
+              <Button
+                title="Edit"
+                onPress={() => navigation.navigate("CompanyEditJobScreen")}
+              />
+            </View>
+          )}
         />
-
-        <Text style={styles.userNameStyle}>hello {username}</Text>
-
-        <Text style={styles.mainTitle}>Your Active Job posts</Text>
-
-        <SafeAreaView>
-          <View>
-            <FlatList
-              data={AdvertsCompany}
-              renderItem={({ item }) => (
-                <View style={styles.innerContainer}>
-                  <Text style={styles.title}>{item.title}</Text>
-                  <Text style={styles.companyName}>
-                    Posted by: {item.company}
-                  </Text>
-                  <Text style={styles.info}>{item.info}</Text>
-                  <Text style={styles.wage}>${item.wage}</Text>
-                  <Text style={styles.type}>Type: {item.type}</Text>
-                  <Pressable
-                    style={[styles.button, styles.buttonOpen]}
-                    onPress={() => readApplicantsOnAdvert(item)}
-                  >
-                    <Text style={styles.textStyle}>View Applicants</Text>
-                  </Pressable>
-                  <Button
-                    title="Edit"
-                    onPress={() => navigation.navigate("CompanyEditJobScreen")}
-                  />
-                </View>
-              )}
-            />
-          </View>
-        </SafeAreaView>
       </View>
-    </View>
+
+      <View style={styles.navBar}>
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyHome")}
+        >
+          <Image
+            style={{ width: 30, height: 30, margin: 15 }}
+            source={require("../assets/Home.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyPostJob")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/PostJob.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyMessages")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Msg.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyProfileScreen")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Profile.png")}
+          />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   outerContainer: {
-    backgroundColor: "snow",
+    flex: 1,
+    backgroundColor: "#F1F1F1",
     alignItems: "center",
     padding: 0,
   },
@@ -249,10 +263,16 @@ const styles = StyleSheet.create({
   },
   navBar: {
     flexDirection: "row",
+    flex: 1,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    padding: 5,
+    position: "absolute",
+    bottom: 0,
+    zIndex: 999,
+  },
+  navButtons: {
+    margin: 20,
   },
   companyName: {
     color: "blue",

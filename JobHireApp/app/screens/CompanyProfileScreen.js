@@ -1,4 +1,17 @@
-import {StyleSheet, Text, View, Button, Alert, ScrollView, Image, TextInput, Pressable, TouchableOpacity, KeyboardAvoidingView, PermissionsAndroid} from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  ScrollView,
+  Image,
+  TextInput,
+  Pressable,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  PermissionsAndroid,
+} from "react-native";
 import * as React from "react";
 
 function CompanyProfileScreen({ navigation }) {
@@ -6,35 +19,50 @@ function CompanyProfileScreen({ navigation }) {
     <View style={styles.container}>
       <Text>Company Profile Screen</Text>
 
+      <Button
+        title="About"
+        onPress={() => navigation.navigate("CompanyAbout")}
+      />
       <View style={styles.navBar}>
-        <Button
-          title="About"
-          onPress={() => navigation.navigate("CompanyAbout")}
-        />
-        <Button
-          title="Jobs"
-          onPress={() => navigation.navigate("CompanyPostedJobs")}
-        />
-      </View>
-
-      <View style={styles.navBar}>
-        <Button
-          title="Home"
+        <TouchableOpacity
+          style={styles.navButtons}
           onPress={() => navigation.navigate("CompanyHome")}
-        />
-        <Button
-          title="Post"
-          onPress={() => navigation.navigate("CompanyPostJob")}
-        />
-        <Button
-          title="Messages"
-          onPress={() => navigation.navigate("CompanyMessages")}
-        />
+        >
+          <Image
+            style={{ width: 30, height: 30, margin: 15 }}
+            source={require("../assets/Home.png")}
+          />
+        </TouchableOpacity>
 
-        <Button
-          title="Profile"
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyPostJob")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/PostJob.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyMessages")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Msg.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
           onPress={() => navigation.navigate("CompanyProfileScreen")}
-        />
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Profile.png")}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -43,16 +71,23 @@ function CompanyProfileScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#F1F1F1",
+    backgroundColor: "",
     alignItems: "center",
     justifyContent: "center",
   },
   navBar: {
     flexDirection: "row",
+    flex: 1,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    padding: 5,
+    position: "absolute",
+    bottom: 0,
+    zIndex: 999,
+  },
+  navButtons: {
+    margin: 20,
   },
 });
 

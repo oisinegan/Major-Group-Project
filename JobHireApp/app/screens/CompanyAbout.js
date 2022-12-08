@@ -6,6 +6,7 @@ import {
   Alert,
   ScrollView,
   Image,
+  SafeAreaView,
   TextInput,
   Pressable,
   TouchableOpacity,
@@ -27,70 +28,88 @@ function CompanyHomeScreen({ navigation }) {
       Adverts.push({ ...doc.data(), id: doc.id });
     });
     console.log(Adverts);
-    console.log(Adverts.at(0).title);
+    console.log(Adverts[0].title);
   });
 
   return (
-    //navbar wont appear on app unless at top for this page, easy fix i'd imagine
+    <SafeAreaView style={styles.outerContainer}>
+      <View style={styles.innerContainer}>
+        <Text style={styles.title}>CompanyName</Text>
+        <View style={styles.image}>
+          <Image
+            style={{ width: 150, height: 150, margin: 20 }}
+            source={require("../assets/login_symbol.png")}
+          />
+        </View>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>
+            Date Founded: DD/MM/YYYY
+            {"\n"}
+            About: This is some info about the company. This is some info about
+            the company. This is some info about the company.
+            {"\n"}
+            Positions Available: 123
+          </Text>
+        </View>
+        <View style={styles.buttons}>
+          <Button
+            title="Edit"
+            onPress={() => navigation.navigate("CompanyEditJobScreen")}
+          />
+          <Button title="View"></Button>
+        </View>
+      </View>
 
-    <View style={styles.container}>
       <View style={styles.navBar}>
-        <Button
-          title="Home"
+        <TouchableOpacity
+          style={styles.navButtons}
           onPress={() => navigation.navigate("CompanyHome")}
-        />
-        <Button
-          title="Post"
-          onPress={() => navigation.navigate("CompanyPostJob")}
-        />
-        <Button
-          title="Notifications"
-          onPress={() => navigation.navigate("CompanyNotifications")}
-        />
+        >
+          <Image
+            style={{ width: 30, height: 30, margin: 15 }}
+            source={require("../assets/Home.png")}
+          />
+        </TouchableOpacity>
 
-        <Button
-          title="Profile"
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyPostJob")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/PostJob.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyMessages")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Msg.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
           onPress={() => navigation.navigate("CompanyProfileScreen")}
-        />
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Profile.png")}
+          />
+        </TouchableOpacity>
       </View>
-      <View style={styles.outerContainer}>
-        <ScrollView>
-          <View style={styles.innerContainer}>
-            <Text style={styles.title}>CompanyName</Text>
-            <View style={styles.image}>
-              <Image
-                style={{ width: 150, height: 150, margin: 20 }}
-                source={require("../assets/login_symbol.png")}
-              />
-            </View>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                Date Founded: DD/MM/YYYY
-                {"\n"}
-                About: This is some info about the company. This is some info
-                about the company. This is some info about the company.
-                {"\n"}
-                Positions Available: 123
-              </Text>
-            </View>
-            <View style={styles.buttons}>
-              <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
-              />
-              <Button title="View"></Button>
-            </View>
-          </View>
-        </ScrollView>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   outerContainer: {
-    backgroundColor: "snow",
+    backgroundColor: "#F1F1F1",
     alignItems: "center",
     padding: 0,
+    flex: 1,
   },
   mainTitle: {
     color: "navy",
@@ -99,6 +118,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingTop: 40,
     paddingBottom: 10,
+    flex: 1,
   },
   innerContainer: {
     backgroundColor: "lightyellow",
@@ -130,10 +150,16 @@ const styles = StyleSheet.create({
   },
   navBar: {
     flexDirection: "row",
+    flex: 1,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    padding: 5,
+    position: "absolute",
+    bottom: 0,
+    zIndex: 999,
+  },
+  navButtons: {
+    margin: 20,
   },
 });
 

@@ -23,6 +23,7 @@ import UserViewJobs from "./app/screens/UserViewJobs";
 import JobScreen from "./app/screens/JobScreen";
 import HomeNotLoggedIn from "./app/screens/HomeNotLoggedIn";
 import HomeLoggedIn from "./app/screens/HomeLoggedIn";
+import CompanyMessages from "./app/screens/CompanyMessages";
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -42,6 +43,8 @@ export default function App() {
           name="CompanyProfileScreen"
           component={CompanyProfileScreen}
         />
+        <Stack.Screen name="CompanyMessages" component={CompanyMessages} />
+
         <Stack.Screen name="CompanyPostJob" component={CompanyPostJob} />
         <Stack.Screen
           name="CompanyEditJobScreen"

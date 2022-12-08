@@ -1,4 +1,17 @@
-import {StyleSheet, Text, View, Button, Alert, ScrollView, Image, TextInput, Pressable, TouchableOpacity, KeyboardAvoidingView, PermissionsAndroid} from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  ScrollView,
+  Image,
+  TextInput,
+  Pressable,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  PermissionsAndroid,
+} from "react-native";
 import * as React from "react";
 import UserMessageScreen from "./UserMessageScreen";
 
@@ -15,22 +28,45 @@ function UserMessage({ navigation }) {
       </View>
 
       <View style={styles.navBar}>
-        <Button
-          title="Home"
+        <TouchableOpacity
+          style={styles.navButtons}
           onPress={() => navigation.navigate("UserHomeScreen")}
-        />
-        <Button
-          title="Messages"
+        >
+          <Image
+            style={{ width: 30, height: 30, margin: 15 }}
+            source={require("../assets/Home.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
           onPress={() => navigation.navigate("UserMessage")}
-        />
-        <Button
-          title="Notifications"
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Msg.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
           onPress={() => navigation.navigate("UserNotification")}
-        />
-        <Button
-          title="Profile"
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Noti.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
           onPress={() => navigation.navigate("UserProfile")}
-        />
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Profile.png")}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -39,16 +75,22 @@ function UserMessage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#F1F1F1",
     alignItems: "center",
     justifyContent: "center",
   },
   navBar: {
     flexDirection: "row",
+    flex: 1,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    justifyContent: "space-around",
+    position: "absolute",
+    bottom: 0,
+    zIndex: 999,
+  },
+  navButtons: {
+    margin: 20,
   },
 });
 

@@ -6,6 +6,8 @@ import {
   TextInput,
   Alert,
   Menu,
+  TouchableOpacity,
+  Image,
 } from "react-native";
 import * as React from "react";
 //Database imports
@@ -118,6 +120,48 @@ function CompanyPostJob({ navigation }) {
       ></TextInput>
 
       <Button title="Submit" onPress={create}></Button>
+
+      <View style={styles.navBar}>
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyHome")}
+        >
+          <Image
+            style={{ width: 30, height: 30, margin: 15 }}
+            source={require("../assets/Home.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyPostJob")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/PostJob.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyMessages")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Msg.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyProfileScreen")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Profile.png")}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -125,9 +169,23 @@ function CompanyPostJob({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F1F1F1",
+    backgroundColor: "",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  navBar: {
+    flexDirection: "row",
+    flex: 1,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
+    position: "absolute",
+    bottom: 0,
+    zIndex: 999,
+  },
+  navButtons: {
+    margin: 20,
   },
 });
 
