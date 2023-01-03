@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, Alert } from "react-native";
+import { StyleSheet, Text, View, Button, Alert, Pressable } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //Database imports
@@ -6,7 +6,7 @@ import { useState, useEffect } from "react/cjs/react.development";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../database/config";
 
-function JobScreen({ route, navigation }) {
+function CompanyJobMoreInfo({ route, navigation }) {
   const { item } = route.params;
 
   //Used store username read from async storage
@@ -31,14 +31,6 @@ function JobScreen({ route, navigation }) {
     getData();
   }, []);
 
-  async function writeUserToJobAdvertDB(item) {
-    const advertDocumentRef = doc(db, "Adverts", item.id);
-
-    await updateDoc(advertDocumentRef, {
-      Applicants: arrayUnion(username),
-    });
-  }
-
   return (
     <View style={styles.container}>
       <Text>Job title: {item.id}</Text>
@@ -52,16 +44,15 @@ function JobScreen({ route, navigation }) {
       <Text>Wage: {item.wage} euros</Text>
 
       <Button
-        title="Apply"
-        onPress={() => {
-          Alert.alert("Application Successful!", "GOOD LUCK!", [
-            {
-              text: "Thank you!",
-              onPress: () => writeUserToJobAdvertDB(item),
-            },
-          ]);
-        }}
+        title="Edit"
+        onPress={() =>
+          navigation.navigate("CompanyEditJobScreen", { item: item })
+        }
       />
+      <Pressable
+        style={[styles.button, styles.buttonOpen]}
+        onPress={() => readApplicantsOnAdvert(item)}
+      ></Pressable>
     </View>
   );
 }
@@ -75,4 +66,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default JobScreen;
+export default CompanyJobMoreInfo;

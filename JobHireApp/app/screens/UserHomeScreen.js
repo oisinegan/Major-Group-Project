@@ -73,6 +73,7 @@ function UserHomeScreen({ navigation }) {
       Applicants: arrayUnion(username),
     });
   }
+
   return (
     <SafeAreaView style={styles.outerContainer}>
       <Button
@@ -84,7 +85,7 @@ function UserHomeScreen({ navigation }) {
 
       <Text style={styles.mainTitle}>Job posts</Text>
 
-      <View>
+      <View style={styles.flatlistContainer}>
         <FlatList
           data={AdvertsUser}
           renderItem={({ item }) => (
@@ -107,7 +108,7 @@ function UserHomeScreen({ navigation }) {
               />
               <Button
                 title="More Info"
-                onPress={() => navigation.navigate("JobScreen")}
+                onPress={() => navigation.navigate("JobScreen", { item: item })}
               />
             </View>
           )}
@@ -186,6 +187,9 @@ const styles = StyleSheet.create({
     borderTopColor: "#F1F1F1",
     borderTopWidth: 15,
     borderColor: "snow",
+  },
+  flatlistContainer: {
+    borderBottomWidth: 238,
   },
   companyName: {
     color: "blue",

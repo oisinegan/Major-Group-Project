@@ -22,6 +22,13 @@ function CompanyPostJob({ navigation }) {
   const [wage, setWage] = useState("");
   const [type, setType] = useState("");
 
+  //new text input for show job details screen
+  const [fullDescription, setFullDescription] = useState("");
+  const [schedule, setSchedule] = useState("");
+  const [experience, setExperience] = useState("");
+  const [qualification, setQualification] = useState("");
+  const [knowledge, setKnowledge] = useState("");
+
   //Used store username read from async storage
   const [username, setUsername] = useState("");
 
@@ -49,6 +56,11 @@ function CompanyPostJob({ navigation }) {
       wage: wage,
       type: type,
       company: username,
+      fullDescription: fullDescription,
+      schedule: schedule,
+      experience: experience,
+      qualification: qualification,
+      knowledge: knowledge,
     })
       .then(() => {
         //Successfully written to database
@@ -85,7 +97,7 @@ function CompanyPostJob({ navigation }) {
       <TextInput
         value={info}
         onChangeText={(info) => setInfo(info)}
-        placeholder="More information"
+        placeholder="3 lines about the job summary"
         style={{
           borderWidth: 1,
           borderColor: "#777",
@@ -110,6 +122,71 @@ function CompanyPostJob({ navigation }) {
         value={type}
         onChangeText={(type) => setType(type)}
         placeholder="Type of work (Job/Project etc..)"
+        style={{
+          borderWidth: 1,
+          borderColor: "#777",
+          padding: 5,
+          width: 250,
+          marginBottom: 20,
+        }}
+      ></TextInput>
+
+      <TextInput
+        value={fullDescription}
+        onChangeText={(fullDescription) => setFullDescription(fullDescription)}
+        placeholder="Full Job description"
+        style={{
+          borderWidth: 1,
+          borderColor: "#777",
+          padding: 5,
+          width: 250,
+          marginBottom: 20,
+        }}
+      ></TextInput>
+
+      <TextInput
+        value={schedule}
+        onChangeText={(schedule) => setSchedule(schedule)}
+        placeholder="Work schedule"
+        style={{
+          borderWidth: 1,
+          borderColor: "#777",
+          padding: 5,
+          width: 250,
+          marginBottom: 20,
+        }}
+      ></TextInput>
+
+      <TextInput
+        value={experience}
+        onChangeText={(experience) => setExperience(experience)}
+        placeholder="Minimum experience required"
+        style={{
+          borderWidth: 1,
+          borderColor: "#777",
+          padding: 5,
+          width: 250,
+          marginBottom: 20,
+        }}
+      ></TextInput>
+
+      <TextInput
+        value={qualification}
+        onChangeText={(qualification) => setQualification(qualification)}
+        placeholder="Required qualifications"
+        style={{
+          borderWidth: 1,
+          borderColor: "#777",
+          padding: 5,
+          width: 250,
+          marginBottom: 20,
+        }}
+      ></TextInput>
+
+      <TextInput
+        value={knowledge}
+        onChangeText={(knowledge) => setKnowledge(knowledge)}
+        placeholder="Required knowledge"
         style={{
           borderWidth: 1,
           borderColor: "#777",

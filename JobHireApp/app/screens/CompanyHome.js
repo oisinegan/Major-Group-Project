@@ -150,7 +150,7 @@ function CompanyHomeScreen({ navigation }) {
         </View>
       </Modal>
 
-      <View>
+      <View style={styles.flatlistContainer}>
         <FlatList
           data={AdvertsCompany}
           renderItem={({ item }) => (
@@ -167,8 +167,10 @@ function CompanyHomeScreen({ navigation }) {
                 <Text style={styles.textStyle}>View Applicants</Text>
               </Pressable>
               <Button
-                title="Edit"
-                onPress={() => navigation.navigate("CompanyEditJobScreen")}
+                title="More info"
+                onPress={() =>
+                  navigation.navigate("CompanyJobMoreInfo", { item: item })
+                }
               />
             </View>
           )}
@@ -247,7 +249,10 @@ const styles = StyleSheet.create({
     borderTopWidth: 15,
     borderColor: "snow",
   },
-
+  flatlistContainer: {
+    backgroundColor: "#F1F1F1",
+    borderBottomWidth: 210,
+  },
   textContainer: {
     padding: 20,
   },

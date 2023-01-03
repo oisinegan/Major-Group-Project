@@ -17,7 +17,7 @@ import UserMessageScreen from "./app/screens/UserMessageScreen";
 import UserNotificationScreen from "./app/screens/UserNotificationScreen";
 import CompanyNotificationScreen from "./app/screens/CompanyNotificationScreen";
 import CompanyAbout from "./app/screens/CompanyAbout";
-import CompanyPostedJobs from "./app/screens/CompanyPostedJobs";
+import CompanyJobMoreInfo from "./app/screens/CompanyJobMoreInfo";
 import UserAbout from "./app/screens/UserAbout";
 import UserViewJobs from "./app/screens/UserViewJobs";
 import JobScreen from "./app/screens/JobScreen";
@@ -64,7 +64,10 @@ export default function App() {
           component={CompanyNotificationScreen}
         />
         <Stack.Screen name="CompanyAbout" component={CompanyAbout} />
-        <Stack.Screen name="CompanyPostedJobs" component={CompanyPostedJobs} />
+        <Stack.Screen
+          name="CompanyJobMoreInfo"
+          component={CompanyJobMoreInfo}
+        />
         <Stack.Screen name="UserAbout" component={UserAbout} />
         <Stack.Screen name="UserViewJobs" component={UserViewJobs} />
         <Stack.Screen name="JobScreen" component={JobScreen} />
