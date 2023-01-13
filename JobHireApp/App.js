@@ -33,7 +33,11 @@ export default function App() {
         <Stack.Screen name="HomeNotLoggedIn" component={HomeNotLoggedIn} />
         <Stack.Screen name="HomeLoggedIn" component={HomeLoggedIn} />
         <Stack.Screen name="CompanyHome" component={CompanyHomeScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="UserHomeScreen" component={UserHomeScreen} />
         <Stack.Screen name="UserMessage" component={UserMessage} />

@@ -10,6 +10,8 @@ import {
   TextInput,
   PermissionsAndroid,
   Image,
+  Dimensions,
+  ImageBackground,
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,6 +19,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react/cjs/react.development";
 import { collection, doc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../database/config";
+
+// Get device width
+const deviceWidth = Dimensions.get("window").width;
 
 function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -115,94 +120,112 @@ function LoginScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.image}>
-        <Image
-          style={{ width: 150, height: 150, margin: 20 }}
-          source={require("../assets/login_symbol.png")}
-        />
-      </View>
+    <View style={styles.imageContainer}>
+      <ImageBackground
+        source={require("../assets/LoginImage.jpg")}
+        style={{ width: "100%", height: "100%" }}
+      >
+        <View style={styles.innerContainer}>
+          <Text style={styles.title}>Log In</Text>
+          <KeyboardAvoidingView style={styles.textInput}>
+            <TextInput
+              value={username}
+              onChangeText={(username) => setUsername(username)}
+              placeholder="Username"
+              placeholderTextColor={"#4f5250"}
+              style={{
+                borderWidth: 1,
+                borderColor: "blue",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
+              }}
+            ></TextInput>
 
-      <View style={styles.title}>
-        <Text style={{ fontSize: 30, letterSpacing: 1 }}>Log In</Text>
-      </View>
+            <TextInput
+              value={pass}
+              onChangeText={(pass) => setPass(pass)}
+              secureTextEntry={true}
+              style={{
+                borderWidth: 1,
+                borderColor: "blue",
+                padding: 15,
+                width: 250,
+                borderRadius: 50,
+              }}
+              placeholder="Password"
+              placeholderTextColor={"#4f5250"}
+            />
+          </KeyboardAvoidingView>
 
-      <KeyboardAvoidingView style={styles.textInput}>
-        <Text>Username:</Text>
-        <TextInput
-          value={username}
-          onChangeText={(username) => setUsername(username)}
-          placeholder="Username"
-          style={{
-            borderWidth: 1,
-            borderColor: "#777",
-            padding: 5,
-            width: 250,
-            marginBottom: 20,
-          }}
-        ></TextInput>
+          <TouchableOpacity style={styles.button}>
+            <Text
+              onPress={searchJobseekerDatabase}
+              style={{
+                color: "white",
+                textAlign: "center",
+                justifyContent: "center",
+                fontSize: 20,
+                lineHeight: 40,
+              }}
+            >
+              Log in
+            </Text>
+          </TouchableOpacity>
 
-        <Text>Password:</Text>
-        <TextInput
-          value={pass}
-          onChangeText={(pass) => setPass(pass)}
-          secureTextEntry={true}
-          style={{
-            borderWidth: 1,
-            borderColor: "#777",
-            padding: 5,
-            width: 250,
-          }}
-          placeholder="Password"
-        />
-      </KeyboardAvoidingView>
-
-      <TouchableOpacity style={styles.button}>
-        <Text
-          onPress={searchJobseekerDatabase}
-          style={{
-            color: "white",
-            textAlign: "center",
-            justifyContent: "center",
-            fontSize: 20,
-            lineHeight: 40,
-          }}
-        >
-          Log in
-        </Text>
-      </TouchableOpacity>
-
-      <View style={styles.footer}>
-        <Text style={{ fontSize: 15, marginBottom: 5 }}>Forgot password?</Text>
-        <Text style={{ fontSize: 15 }}>
-          Don't have an account?{" "}
-          <Text
-            style={{ textDecorationLine: "underline" }}
-            onPress={() => navigation.navigate("Register")}
-          >
-            Register
-          </Text>
-        </Text>
-      </View>
+          <View style={styles.footer}>
+            <Text style={{ fontSize: 20 }}>
+              Don't have an account?{" "}
+              <Text
+                style={{
+                  textDecorationLine: "underline",
+                  color: "blue",
+                  fontSize: 20,
+                }}
+                onPress={() => navigation.navigate("Register")}
+              >
+                Register
+              </Text>
+            </Text>
+          </View>
+        </View>
+      </ImageBackground>
     </View> //end of main view
   );
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 10,
     backgroundColor: "#fff",
-    alignItems: "center",
+  },
+  imageContainer: {
+    height: deviceWidth * 3,
+    width: deviceWidth * 1.3,
+    borderBottomColor: "black",
+    borderBottomWidth: 10,
+    borderTopColor: "black",
+    borderTopWidth: 40,
+
     //  justifyContent: 'center',
-    textAlign: "left",
   },
 
-  image: {
-    marginBottom: 15,
+  innerContainer: {
+    marginTop: 200,
+    margin: 50,
+    marginRight: 170,
+    backgroundColor: "rgba(239, 231, 225, 0.9)",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: 30,
+    borderRadius: 50,
+    borderColor: "blue",
   },
-
   title: {
-    marginBottom: 15,
+    marginTop: 25,
+    marginBottom: 35,
+    fontSize: 40,
+    fontStyle: "",
+    color: "blue",
   },
   textInput: {
     marginBottom: 50,
@@ -214,8 +237,8 @@ const styles = StyleSheet.create({
     width: 100,
     borderRadius: 4,
     height: 40,
-    backgroundColor: "grey",
-    marginBottom: 50,
+    backgroundColor: "blue",
+    marginBottom: 30,
   },
   footer: {
     fontSize: 30,
