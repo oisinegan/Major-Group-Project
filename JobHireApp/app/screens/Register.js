@@ -165,7 +165,7 @@ function RegisterScreen({ navigation }) {
           Already have an account?{" "}
           <Text
             style={{ textDecorationLine: "underline" }}
-            onPress={() => navigation.navigate("Login")}
+            onPress={() => navigation.navigate("HomeNotLoggedIn")}
           >
             Login
           </Text>

@@ -30,7 +30,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="HomeNotLoggedIn" component={HomeNotLoggedIn} />
+        <Stack.Screen
+          name="HomeNotLoggedIn"
+          component={HomeNotLoggedIn}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="HomeLoggedIn" component={HomeLoggedIn} />
         <Stack.Screen name="CompanyHome" component={CompanyHomeScreen} />
         <Stack.Screen
@@ -39,7 +43,11 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="UserHomeScreen" component={UserHomeScreen} />
+        <Stack.Screen
+          name="UserHomeScreen"
+          component={UserHomeScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="UserMessage" component={UserMessage} />
         <Stack.Screen name="UserNotification" component={UserNotification} />
         <Stack.Screen name="UserProfile" component={UserProfile} />

@@ -135,7 +135,7 @@ function LoginScreen({ navigation }) {
               placeholderTextColor={"#4f5250"}
               style={{
                 borderWidth: 1,
-                borderColor: "blue",
+                borderColor: "navy",
                 padding: 15,
                 width: 250,
                 marginBottom: 20,
@@ -149,7 +149,7 @@ function LoginScreen({ navigation }) {
               secureTextEntry={true}
               style={{
                 borderWidth: 1,
-                borderColor: "blue",
+                borderColor: "navy",
                 padding: 15,
                 width: 250,
                 borderRadius: 50,
@@ -180,10 +180,10 @@ function LoginScreen({ navigation }) {
               <Text
                 style={{
                   textDecorationLine: "underline",
-                  color: "blue",
+                  color: "navy",
                   fontSize: 20,
                 }}
-                onPress={() => navigation.navigate("Register")}
+                onPress={() => navigation.navigate("HomeNotLoggedIn")}
               >
                 Register
               </Text>
@@ -218,14 +218,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingBottom: 30,
     borderRadius: 50,
-    borderColor: "blue",
+    borderColor: "navy",
   },
   title: {
     marginTop: 25,
     marginBottom: 35,
     fontSize: 40,
     fontStyle: "",
-    color: "blue",
+    color: "navy",
   },
   textInput: {
     marginBottom: 50,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     width: 100,
     borderRadius: 4,
     height: 40,
-    backgroundColor: "blue",
+    backgroundColor: "navy",
     marginBottom: 30,
   },
   footer: {

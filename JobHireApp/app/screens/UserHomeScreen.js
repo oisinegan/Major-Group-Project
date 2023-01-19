@@ -95,21 +95,30 @@ function UserHomeScreen({ navigation }) {
               <Text style={styles.info}>{item.info}</Text>
               <Text style={styles.wage}>${item.wage}</Text>
               <Text style={styles.type}>Type: {item.type}</Text>
-              <Button
-                title="Apply"
-                onPress={() => {
-                  Alert.alert("Application Successful!", "GOOD LUCK!", [
-                    {
-                      text: "Thank you!",
-                      onPress: () => writeUserToJobAdvertDB(item),
-                    },
-                  ]);
-                }}
-              />
-              <Button
-                title="More Info"
-                onPress={() => navigation.navigate("JobScreen", { item: item })}
-              />
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => {
+                    Alert.alert("Application Successful!", "GOOD LUCK!", [
+                      {
+                        text: "Thank you!",
+                        onPress: () => writeUserToJobAdvertDB(item),
+                      },
+                    ]);
+                  }}
+                >
+                  <Text style={styles.buttonText}>Apply</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() =>
+                    navigation.navigate("JobScreen", { item: item })
+                  }
+                >
+                  <Text style={styles.buttonText}>More info</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         />
@@ -206,12 +215,22 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 15,
   },
-  buttons: {
-    backgroundColor: "lightyellow",
+  buttonContainer: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "flex-end",
-    paddingRight: 20,
+    padding: 10,
   },
+  button: {
+    backgroundColor: "navy",
+    padding: 1,
+    borderRadius: 50,
+    mar
+  },
+  buttonText: {
+    color: "white",
+  },
+
   navBar: {
     flexDirection: "row",
     flex: 1,
