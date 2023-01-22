@@ -31,8 +31,7 @@ import { db } from "../database/config";
 
 function UserHomeScreen({ navigation }) {
   const [AdvertsUser, setAdvertsUser] = useState([]);
-  const [compName, setCompName] = useState();
-  const [adName, setAdName] = useState();
+  const [numberJobs, setNumberJobs] = useState([]);
 
   //Used store username read from async storage
   const [username, setUsername] = useState("");
@@ -40,11 +39,13 @@ function UserHomeScreen({ navigation }) {
     //Read all data from job adverts database
     getDocs(collection(db, "Adverts")).then((docSnap) => {
       let advert = [];
+      let numJobs = 0;
       docSnap.forEach((doc) => {
         const { title, info, wage, type } = doc.data();
         advert.push({ ...doc.data(), id: doc.id, title, info, wage, type });
+        numJobs += 1;
       });
-
+      setNumberJobs(numJobs);
       setAdvertsUser(advert);
 
       //Call method to read username from async storage
@@ -74,56 +75,74 @@ function UserHomeScreen({ navigation }) {
     });
   }
 
+  const flatListHeader = () => {
+    return (
+      <View style={styles.headerFooterStyle}>
+        <Text style={styles.userNameStyle}>Hello {username}</Text>
+        <Text style={styles.mainTitle}>Total results: {numberJobs} </Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.outerContainer}>
-      <Button
-        title="Log out"
-        onPress={() => navigation.navigate("HomeNotLoggedIn")}
-      />
+      <View style={styles.topNav}>
+        <View style={styles.seachBarContainer}>
+          <TextInput
+            style={styles.seachBar}
+            placeholder="Search Jobs"
+          ></TextInput>
+        </View>
 
-      <Text style={styles.userNameStyle}>Hello {username}</Text>
-
-      <Text style={styles.mainTitle}>Job posts</Text>
-
-      <View style={styles.flatlistContainer}>
-        <FlatList
-          data={AdvertsUser}
-          renderItem={({ item }) => (
-            <View style={styles.innerContainer}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.companyName}>Posted by: {item.company}</Text>
-              <Text style={styles.info}>{item.info}</Text>
-              <Text style={styles.wage}>${item.wage}</Text>
-              <Text style={styles.type}>Type: {item.type}</Text>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => {
-                    Alert.alert("Application Successful!", "GOOD LUCK!", [
-                      {
-                        text: "Thank you!",
-                        onPress: () => writeUserToJobAdvertDB(item),
-                      },
-                    ]);
-                  }}
-                >
-                  <Text style={styles.buttonText}>Apply</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() =>
-                    navigation.navigate("JobScreen", { item: item })
-                  }
-                >
-                  <Text style={styles.buttonText}>More info</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        />
+        <TouchableOpacity
+          style={styles.buttonTopNav}
+          onPress={() => navigation.navigate("HomeNotLoggedIn")}
+        >
+          <Text style={styles.buttonTopNavText}>Log out</Text>
+        </TouchableOpacity>
       </View>
+      <View style={styles.mainContainer}>
+        <View style={styles.flatlistContainer}>
+          <FlatList
+            ListHeaderComponent={flatListHeader}
+            showsVerticalScrollIndicator={false}
+            data={AdvertsUser}
+            renderItem={({ item }) => (
+              <View style={styles.innerContainer}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.companyName}>{item.company}</Text>
+                <Text style={styles.info}>{item.info}</Text>
+                <Text style={styles.wage}>${item.wage}</Text>
+                <Text style={styles.type}>Type: {item.type}</Text>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.buttonApply}
+                    onPress={() => {
+                      Alert.alert("Application Successful!", "GOOD LUCK!", [
+                        {
+                          text: "Thank you!",
+                          onPress: () => writeUserToJobAdvertDB(item),
+                        },
+                      ]);
+                    }}
+                  >
+                    <Text style={styles.buttonText}>Apply</Text>
+                  </TouchableOpacity>
 
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      navigation.navigate("JobScreen", { item: item })
+                    }
+                  >
+                    <Text style={styles.buttonText}>More info</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          />
+        </View>
+      </View>
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
@@ -172,48 +191,85 @@ function UserHomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
-    backgroundColor: "#F1F1F1",
-    alignItems: "center",
+    backgroundColor: "black",
+
     padding: 0,
   },
-  mainTitle: {
-    color: "navy",
-    fontSize: 25,
-    textDecorationLine: "underline",
+  topNav: {
+    backgroundColor: "black",
+    width: "100%",
+    flexDirection: "row",
+    padding: 10,
+  },
+  seachBarContainer: {
+    width: "80%",
+    alignSelf: "center",
+  },
+  seachBar: {
+    width: "100%",
     textAlign: "center",
-    paddingTop: 40,
-    paddingBottom: 10,
+    alignSelf: "center",
+    verticalAlign: "center",
+    placeholder: "Search bar",
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "navy",
+    backgroundColor: "white",
+    padding: 7,
+  },
+  buttonTopNav: {
+    backgroundColor: "white",
+    padding: 8,
+    borderRadius: 50,
+    marginLeft: 7,
+  },
+  buttonTopNavText: {
+    color: "navy",
+    fontWeight: "bold",
+  },
+
+  mainTitle: {
+    color: "grey",
+    fontSize: 15,
+    paddingLeft: "5%",
+    fontWeight: "400",
   },
   userNameStyle: {
     color: "navy",
-    fontSize: 25,
-    textAlign: "center",
-    paddingTop: 20,
-    paddingBottom: 5,
-  },
-  innerContainer: {
-    backgroundColor: "lightyellow",
-    borderTopColor: "#F1F1F1",
-    borderTopWidth: 15,
-    borderColor: "snow",
+    fontWeight: "bold",
+    padding: "5%",
+    fontSize: "30%",
   },
   flatlistContainer: {
-    borderBottomWidth: 238,
+    paddingHorizontal: "4%",
   },
+  mainContainer: {
+    backgroundColor: "#FCFCFF",
+    paddingBottom: 120,
+  },
+  innerContainer: {
+    backgroundColor: "#ECE7E0",
+    borderColor: "#E1DEE9",
+    marginTop: 15,
+    padding: 2,
+    borderWidth: 3,
+    borderRadius: 30,
+  },
+
   companyName: {
-    color: "blue",
+    color: "darkblue",
     fontSize: 20,
-    paddingTop: 5,
-    paddingLeft: 10,
+    paddingLeft: 12.5,
     paddingBottom: 5,
     fontStyle: "bold",
+    fontWeight: "500",
   },
   textContainer: {
     padding: 20,
   },
   text: {
     color: "black",
-    fontSize: 15,
+    fontSize: 20,
   },
   buttonContainer: {
     flex: 1,
@@ -223,14 +279,53 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "navy",
-    padding: 1,
+    padding: 15,
     borderRadius: 50,
-    mar
+    marginLeft: 10,
+  },
+  buttonApply: {
+    backgroundColor: "navy",
+    paddingHorizontal: 25,
+    paddingVertical: 15,
+    borderRadius: 50,
+    marginLeft: 10,
   },
   buttonText: {
     color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 
+  title: {
+    color: "navy",
+    fontWeight: "bold",
+    fontSize: 25,
+    padding: 12,
+  },
+  info: {
+    fontSize: 19,
+    paddingTop: 7.5,
+    paddingBottom: 7.5,
+    paddingLeft: 15,
+    fontWeight: "400",
+  },
+  wage: {
+    textAlign: "left",
+    paddingRight: 5,
+    paddingLeft: 15,
+    paddingTop: 5,
+    fontSize: 18,
+    fontWeight: "bold",
+    paddingBottom: 2,
+  },
+  type: {
+    textAlign: "left",
+    paddingRight: 5,
+    paddingBottom: 5,
+    paddingLeft: 15,
+    paddingTop: 7.5,
+    fontSize: 19,
+  },
   navBar: {
     flexDirection: "row",
     flex: 1,
@@ -240,35 +335,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     zIndex: 999,
+    alignSelf: "center",
+    width: "100%",
   },
   navButtons: {
     margin: 20,
-  },
-  title: {
-    color: "white",
-    backgroundColor: "navy",
-    fontSize: 20,
-    paddingTop: 10,
-    paddingLeft: 20,
-    paddingBottom: 10,
-  },
-  info: {
-    fontSize: 15,
-    paddingTop: 5,
-    paddingLeft: 10,
-    paddingBottom: 5,
-    fontStyle: "italic",
-  },
-  wage: {
-    textAlign: "right",
-    paddingRight: 5,
-    fontWeight: "bold",
-  },
-  type: {
-    textAlign: "right",
-    paddingRight: 5,
-    paddingBottom: 5,
-    textDecorationLine: "underline",
   },
 });
 export default UserHomeScreen;

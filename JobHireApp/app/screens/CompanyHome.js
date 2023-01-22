@@ -39,6 +39,7 @@ import { db } from "../database/config";
 function CompanyHomeScreen({ navigation }) {
   const [AdvertsCompany, setAdvertsCompany] = useState([]);
   const [Applicants, setApplicants] = useState([]);
+  const [numberJobs, setNumberJobs] = useState([]);
 
   //Model
   const [modalVisible, setModalVisible] = useState(false);
@@ -70,6 +71,7 @@ function CompanyHomeScreen({ navigation }) {
       query(collection(db, "Adverts"), where("company", "==", username))
     ).then((docSnap) => {
       let advert = [];
+      let numJobs = 0;
 
       docSnap.forEach((doc) => {
         const { title, info, wage, type } = doc.data();
@@ -81,7 +83,9 @@ function CompanyHomeScreen({ navigation }) {
           wage,
           type,
         });
+        numJobs += 1;
       });
+      setNumberJobs(numJobs);
       setAdvertsCompany(advert);
     });
   }
@@ -105,15 +109,32 @@ function CompanyHomeScreen({ navigation }) {
 
   useEffect(() => readCompanyAdverts(), [username]);
 
+  const flatListHeader = () => {
+    return (
+      <View style={styles.headerFooterStyle}>
+        <Text style={styles.userNameStyle}>Hello {username}</Text>
+        <Text style={styles.mainTitle}>Total results: {numberJobs} </Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.outerContainer}>
-      <Button
-        title="Log out"
-        onPress={() => navigation.navigate("HomeNotLoggedIn")}
-      />
-      <Text style={styles.userNameStyle}>hello {username}</Text>
+      <View style={styles.topNav}>
+        <View style={styles.seachBarContainer}>
+          <TextInput
+            style={styles.seachBar}
+            placeholder="Search Jobs"
+          ></TextInput>
+        </View>
+        <TouchableOpacity
+          style={styles.buttonTopNav}
+          onPress={() => navigation.navigate("HomeNotLoggedIn")}
+        >
+          <Text style={styles.buttonTopNavText}>Log out</Text>
+        </TouchableOpacity>
+      </View>
 
-      <Text style={styles.mainTitle}>Your Active Job posts</Text>
       <Modal
         animationType="slide"
         transparent={true}
@@ -150,33 +171,41 @@ function CompanyHomeScreen({ navigation }) {
         </View>
       </Modal>
 
-      <View style={styles.flatlistContainer}>
-        <FlatList
-          data={AdvertsCompany}
-          renderItem={({ item }) => (
-            <View style={styles.innerContainer}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.companyName}>Posted by: {item.company}</Text>
-              <Text style={styles.info}>{item.info}</Text>
-              <Text style={styles.wage}>${item.wage}</Text>
-              <Text style={styles.type}>Type: {item.type}</Text>
-              <Pressable
-                style={[styles.button, styles.buttonOpen]}
-                onPress={() => readApplicantsOnAdvert(item)}
-              >
-                <Text style={styles.textStyle}>View Applicants</Text>
-              </Pressable>
-              <Button
-                title="More info"
-                onPress={() =>
-                  navigation.navigate("CompanyJobMoreInfo", { item: item })
-                }
-              />
-            </View>
-          )}
-        />
-      </View>
+      <View style={styles.mainContainer}>
+        <View style={styles.flatlistContainer}>
+          <FlatList
+            ListHeaderComponent={flatListHeader}
+            showsVerticalScrollIndicator={false}
+            data={AdvertsCompany}
+            renderItem={({ item }) => (
+              <View style={styles.innerContainer}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.companyName}>{item.company}</Text>
+                <Text style={styles.info}>{item.info}</Text>
+                <Text style={styles.wage}>${item.wage}</Text>
+                <Text style={styles.type}>Type: {item.type}</Text>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.buttonViewApplicants}
+                    onPress={() => readApplicantsOnAdvert(item)}
+                  >
+                    <Text style={styles.buttonText}>View Applicants</Text>
+                  </TouchableOpacity>
 
+                  <TouchableOpacity
+                    style={styles.buttonInfo}
+                    onPress={() =>
+                      navigation.navigate("CompanyJobMoreInfo", { item: item })
+                    }
+                  >
+                    <Text style={styles.buttonText}>More info</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          />
+        </View>
+      </View>
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
@@ -224,48 +253,104 @@ function CompanyHomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
-    backgroundColor: "#F1F1F1",
-    alignItems: "center",
+    backgroundColor: "black",
     padding: 0,
   },
-  mainTitle: {
-    color: "navy",
-    fontSize: 25,
-    textDecorationLine: "underline",
+
+  topNav: {
+    backgroundColor: "black",
+    width: "100%",
+    flexDirection: "row",
+    padding: 10,
+  },
+  seachBarContainer: {
+    width: "80%",
+    alignSelf: "center",
+  },
+  seachBar: {
+    width: "100%",
     textAlign: "center",
-    paddingTop: 20,
-    paddingBottom: 5,
+    alignSelf: "center",
+    verticalAlign: "center",
+    placeholder: "Search bar",
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "navy",
+    backgroundColor: "white",
+    padding: 7,
+  },
+  buttonTopNav: {
+    backgroundColor: "white",
+    padding: 8,
+    borderRadius: 50,
+    marginLeft: 7,
+  },
+  buttonTopNavText: {
+    color: "navy",
+    fontWeight: "bold",
+  },
+
+  mainTitle: {
+    color: "grey",
+    fontSize: 15,
+    paddingLeft: "5%",
+    fontWeight: "400",
   },
   userNameStyle: {
     color: "navy",
-    fontSize: 25,
-    textAlign: "center",
-    paddingTop: 20,
-    paddingBottom: 5,
+    fontWeight: "bold",
+    padding: "5%",
+    fontSize: "30%",
+  },
+  mainContainer: {
+    backgroundColor: "#FCFCFF",
+    paddingBottom: 120,
   },
   innerContainer: {
-    backgroundColor: "lightyellow",
-    borderTopColor: "snow",
-    borderTopWidth: 15,
-    borderColor: "snow",
+    backgroundColor: "#ECE7E0",
+    borderColor: "#E1DEE9",
+    marginTop: 15,
+    padding: 2,
+    borderWidth: 3,
+    borderRadius: 30,
   },
   flatlistContainer: {
-    backgroundColor: "#F1F1F1",
-    borderBottomWidth: 210,
+    paddingHorizontal: "4%",
   },
   textContainer: {
     padding: 20,
   },
   text: {
     color: "black",
-    fontSize: 15,
+    fontSize: 20,
   },
-  buttons: {
-    backgroundColor: "lightyellow",
+  buttonContainer: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "flex-end",
-    paddingRight: 20,
+    padding: 10,
   },
+
+  buttonViewApplicants: {
+    backgroundColor: "navy",
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    borderRadius: 50,
+    marginLeft: 10,
+  },
+  buttonInfo: {
+    backgroundColor: "navy",
+    paddingHorizontal: 25,
+    paddingVertical: 15,
+    borderRadius: 50,
+    marginLeft: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+
   navBar: {
     flexDirection: "row",
     flex: 1,
@@ -280,38 +365,42 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   companyName: {
-    color: "blue",
+    color: "darkblue",
     fontSize: 20,
-    paddingTop: 5,
-    paddingLeft: 10,
+    paddingLeft: 12.5,
     paddingBottom: 5,
     fontStyle: "bold",
+    fontWeight: "500",
   },
   title: {
-    color: "white",
-    backgroundColor: "navy",
-    fontSize: 20,
-    paddingTop: 10,
-    paddingLeft: 20,
-    paddingBottom: 10,
+    color: "navy",
+    fontWeight: "bold",
+    fontSize: 25,
+    padding: 12,
   },
   info: {
-    fontSize: 15,
-    paddingTop: 5,
-    paddingLeft: 10,
-    paddingBottom: 5,
-    fontStyle: "italic",
+    fontSize: 19,
+    paddingTop: 7.5,
+    paddingBottom: 7.5,
+    paddingLeft: 15,
+    fontWeight: "400",
   },
   wage: {
-    textAlign: "right",
+    textAlign: "left",
     paddingRight: 5,
+    paddingLeft: 15,
+    paddingTop: 5,
+    fontSize: 18,
     fontWeight: "bold",
+    paddingBottom: 2,
   },
   type: {
-    textAlign: "right",
+    textAlign: "left",
     paddingRight: 5,
     paddingBottom: 5,
-    textDecorationLine: "underline",
+    paddingLeft: 15,
+    paddingTop: 7.5,
+    fontSize: 19,
   },
 
   //MODEL DESIGN
