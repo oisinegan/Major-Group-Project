@@ -57,30 +57,6 @@ function RegisterScreen({ navigation }) {
         ]);
       });
   } ////end jobseekersCreate
-
-  function companyCreate() {
-    //Submit data
-    //db= databse link (database/config),
-    //"jobseekers" = table name on firebase
-    // username = id person being written to database,
-    setDoc(doc(db, "Company", username), {
-      username: username,
-      email: email,
-      pass: pass,
-    })
-      .then(() => {
-        //Successfully written to database
-        Alert.alert("Success", "Data Submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]);
-      })
-      .catch((error) => {
-        //failed
-        Alert.alert("ERROR", "Data not submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]);
-      });
-  } ////end companyCreate
   /******* METHOD TO STORE VARIABLE IN ASYNC STORAGE *******/
   //Pass username and store it in async storage
   const storeDataToAsyncStorage = async (value) => {
@@ -98,11 +74,102 @@ function RegisterScreen({ navigation }) {
         style={{ width: "100%", height: "100%" }}
       >
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>Welcome!</Text>
+          <Text style={styles.title}>Create an Account</Text>
           <KeyboardAvoidingView style={styles.textInput}>
+            <TextInput
+              value={username}
+              onChangeText={(username) => setUsername(username)}
+              placeholder="Username"
+              placeholderTextColor={"#4f5250"}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
+              }}
+            ></TextInput>
+
+            <TextInput
+              value={qualifications}
+              onChangeText={(qualifications) => setQualifications(qualifications)}
+              placeholder="Qualifications"
+              placeholderTextColor={"#4f5250"}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
+              }}
+            ></TextInput>
+
+            <TextInput
+              value={experience}
+              onChangeText={(experience) => setExperience(experience)}
+              placeholder="Experience"
+              placeholderTextColor={"#4f5250"}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
+              }}
+            ></TextInput>
+
+            <TextInput
+              value={skills}
+              onChangeText={(skills) => setSkills(skills)}
+              placeholder="Skills"
+              placeholderTextColor={"#4f5250"}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
+              }}
+            ></TextInput>
+
+            <TextInput
+              value={email}
+              onChangeText={(email) => setEmail(email)}
+              placeholder="example@mail.com"
+              placeholderTextColor={"#4f5250"}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
+              }}
+            ></TextInput>
+
+            <TextInput
+              value={pass}
+              onChangeText={(pass) => setPass(pass)}
+              secureTextEntry={true}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                borderRadius: 50,
+              }}
+              placeholder="Password"
+              placeholderTextColor={"#4f5250"}
+            />
+          </KeyboardAvoidingView>
+
           <TouchableOpacity style={styles.button}>
             <Text
-              onPress={() => navigation.navigate("HomeNotLoggedIn")}
+              onPress={jobseekersCreate}
               style={{
                 color: "white",
                 textAlign: "center",
@@ -114,22 +181,6 @@ function RegisterScreen({ navigation }) {
               Sign Up as a Jobseeker
             </Text>
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.button}>
-            <Text
-              onPress={() => navigation.navigate("HomeNotLoggedIn")}
-              style={{
-                color: "white",
-                textAlign: "center",
-                justifyContent: "center",
-                fontSize: 20,
-                lineHeight: 40,
-              }}
-            >
-              Sign Up as a Company
-            </Text>
-          </TouchableOpacity>
-          </KeyboardAvoidingView>
 
           <View style={styles.footer}>
             <Text style={{ fontSize: 20 }}>

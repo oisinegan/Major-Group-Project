@@ -25,38 +25,11 @@ const deviceWidth = Dimensions.get("window").width;
 
 function RegisterScreen({ navigation }) {
   const [username, setUsername] = useState("");
-  const [qualifications, setQualifications] = useState("");
-  const [experience, setExperience] = useState("");
-  const [skills, setSkills] = useState("");
+  const [founded, setFounded] = useState("");
+  const [info, setInfo] = useState("");
+  const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
-
-  function jobseekersCreate() {
-    //Submit data
-    //db= databse link (database/config),
-    //"jobseekers" = table name on firebase
-    // username = id person being written to database,
-    setDoc(doc(db, "Jobseekers", username), {
-      username: username,
-      qualifications: qualifications,
-      experience: experience,
-      skills: skills,
-      email: email,
-      pass: pass,
-    })
-      .then(() => {
-        //Successfully written to database
-        Alert.alert("Success", "Data Submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]);
-      })
-      .catch((error) => {
-        //failed
-        Alert.alert("ERROR", "Data not submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]);
-      });
-  } ////end jobseekersCreate
 
   function companyCreate() {
     //Submit data
@@ -98,26 +71,102 @@ function RegisterScreen({ navigation }) {
         style={{ width: "100%", height: "100%" }}
       >
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>Welcome!</Text>
+          <Text style={styles.title}>Create an Account</Text>
           <KeyboardAvoidingView style={styles.textInput}>
-          <TouchableOpacity style={styles.button}>
-            <Text
-              onPress={() => navigation.navigate("HomeNotLoggedIn")}
+            <TextInput
+              value={username}
+              onChangeText={(username) => setUsername(username)}
+              placeholder="Username"
+              placeholderTextColor={"#4f5250"}
               style={{
-                color: "white",
-                textAlign: "center",
-                justifyContent: "center",
-                fontSize: 20,
-                lineHeight: 40,
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
               }}
-            >
-              Sign Up as a Jobseeker
-            </Text>
-          </TouchableOpacity>
+            ></TextInput>
+
+            <TextInput
+              value={founded}
+              onChangeText={(founded) => setFounded(founded)}
+              placeholder="Founded"
+              placeholderTextColor={"#4f5250"}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
+              }}
+            ></TextInput>
+
+            <TextInput
+              value={info}
+              onChangeText={(info) => setInfo(info)}
+              placeholder="Info"
+              placeholderTextColor={"#4f5250"}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
+              }}
+            ></TextInput>
+
+            <TextInput
+              value={address}
+              onChangeText={(address) => setAddress(address)}
+              placeholder="Address"
+              placeholderTextColor={"#4f5250"}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
+              }}
+            ></TextInput>
+
+            <TextInput
+              value={email}
+              onChangeText={(email) => setEmail(email)}
+              placeholder="example@mail.com"
+              placeholderTextColor={"#4f5250"}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                marginBottom: 20,
+                borderRadius: 50,
+              }}
+            ></TextInput>
+
+            <TextInput
+              value={pass}
+              onChangeText={(pass) => setPass(pass)}
+              secureTextEntry={true}
+              style={{
+                borderWidth: 1,
+                borderColor: "navy",
+                padding: 15,
+                width: 250,
+                borderRadius: 50,
+              }}
+              placeholder="Password"
+              placeholderTextColor={"#4f5250"}
+            />
+          </KeyboardAvoidingView>
 
           <TouchableOpacity style={styles.button}>
             <Text
-              onPress={() => navigation.navigate("HomeNotLoggedIn")}
+              onPress={companyCreate}
               style={{
                 color: "white",
                 textAlign: "center",
@@ -129,7 +178,6 @@ function RegisterScreen({ navigation }) {
               Sign Up as a Company
             </Text>
           </TouchableOpacity>
-          </KeyboardAvoidingView>
 
           <View style={styles.footer}>
             <Text style={{ fontSize: 20 }}>
