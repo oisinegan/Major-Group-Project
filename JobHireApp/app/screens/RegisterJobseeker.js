@@ -23,7 +23,7 @@ import { db } from "../database/config";
 // Get device width
 const deviceWidth = Dimensions.get("window").width;
 
-function RegisterScreen({ navigation }) {
+function RegisterJobseeker({ navigation }) {
   const [username, setUsername] = useState("");
   const [qualifications, setQualifications] = useState("");
   const [experience, setExperience] = useState("");
@@ -46,8 +46,8 @@ function RegisterScreen({ navigation }) {
     })
       .then(() => {
         //Successfully written to database
-        Alert.alert("Success", "Data Submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
+        Alert.alert("Success", "You have successfully signed up!", [
+          { text: "OK", onPress: () => navigation.navigate("HomeNotLoggedIn") },
         ]);
       })
       .catch((error) => {
@@ -70,7 +70,7 @@ function RegisterScreen({ navigation }) {
   return (
     <View style={styles.imageContainer}>
       <ImageBackground
-        source={require("../assets/LoginImage.jpg")}
+        source={require("../assets/JobseekerImage.webp")}
         style={{ width: "100%", height: "100%" }}
       >
         <View style={styles.innerContainer}>
@@ -93,7 +93,9 @@ function RegisterScreen({ navigation }) {
 
             <TextInput
               value={qualifications}
-              onChangeText={(qualifications) => setQualifications(qualifications)}
+              onChangeText={(qualifications) =>
+                setQualifications(qualifications)
+              }
               placeholder="Qualifications"
               placeholderTextColor={"#4f5250"}
               style={{
@@ -207,8 +209,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   imageContainer: {
-    height: deviceWidth * 3,
-    width: deviceWidth * 1.3,
+    height: deviceWidth * 2.5,
+    width: deviceWidth,
     borderBottomColor: "black",
     borderBottomWidth: 10,
     borderTopColor: "black",
@@ -218,10 +220,13 @@ const styles = StyleSheet.create({
   },
 
   innerContainer: {
-    marginTop: 200,
     margin: 50,
-    marginRight: 170,
-    backgroundColor: "rgba(239, 231, 225, 0.9)",
+    alignSelf: "center",
+
+    marginTop: "15%",
+    padding: 5,
+
+    backgroundColor: "rgba(239, 231, 225, .95)",
     alignItems: "center",
     justifyContent: "center",
     paddingBottom: 30,
@@ -254,4 +259,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen;
+export default RegisterJobseeker;

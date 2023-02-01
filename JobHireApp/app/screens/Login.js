@@ -12,6 +12,7 @@ import {
   Image,
   Dimensions,
   ImageBackground,
+  StatusBar,
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -121,6 +122,7 @@ function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.imageContainer}>
+      <StatusBar barStyle="dark-content"></StatusBar>
       <ImageBackground
         source={require("../assets/LoginImage.jpg")}
         style={{ width: "100%", height: "100%" }}
@@ -183,7 +185,7 @@ function LoginScreen({ navigation }) {
                   color: "navy",
                   fontSize: 20,
                 }}
-                onPress={() => navigation.navigate("HomeNotLoggedIn")}
+                onPress={() => navigation.navigate("Register")}
               >
                 Register
               </Text>
@@ -201,12 +203,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     height: deviceWidth * 3,
     width: deviceWidth * 1.3,
-    borderBottomColor: "black",
-    borderBottomWidth: 10,
-    borderTopColor: "black",
-    borderTopWidth: 40,
-
-    //  justifyContent: 'center',
   },
 
   innerContainer: {

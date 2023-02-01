@@ -24,9 +24,15 @@ import JobScreen from "./app/screens/JobScreen";
 import HomeNotLoggedIn from "./app/screens/HomeNotLoggedIn";
 import HomeLoggedIn from "./app/screens/HomeLoggedIn";
 import CompanyMessages from "./app/screens/CompanyMessages";
+<<<<<<< Updated upstream
 import CompanyViewJobs from "./app/screens/CompanyViewJobs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+=======
+import RegisterJobseeker from "./app/screens/RegisterJobseeker";
+import RegisterCompany from "./app/screens/RegisterCompany";
+import CompanyViewApplicants from "./app/screens/CompanyViewApplicants";
+>>>>>>> Stashed changes
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -49,7 +55,11 @@ export default function App() {
           component={LoginScreen}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="UserHomeScreen"
           component={UserHomeScreen}
@@ -73,6 +83,7 @@ export default function App() {
         <Stack.Screen
           name="CompanyEditJobScreen"
           component={CompanyEditJobScreen}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="CompanyNotifications"
@@ -91,11 +102,35 @@ export default function App() {
         <Stack.Screen
           name="CompanyJobMoreInfo"
           component={CompanyJobMoreInfo}
+          options={{ headerShown: false }}
         />
         <Stack.Screen name="UserAbout" component={UserAbout} />
         <Stack.Screen name="UserViewJobs" component={UserViewJobs} />
+<<<<<<< Updated upstream
         <Stack.Screen name="JobScreen" component={JobScreen} />
         <Stack.Screen name="CompanyViewJobs" component={CompanyViewJobs} />
+=======
+        <Stack.Screen
+          name="JobScreen"
+          component={JobScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="RegisterJobseeker"
+          component={RegisterJobseeker}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="RegisterCompany"
+          component={RegisterCompany}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CompanyViewApplicants"
+          component={CompanyViewApplicants}
+          options={{ headerShown: false }}
+        />
+>>>>>>> Stashed changes
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -15,6 +15,7 @@ import {
   SafeAreaView,
   Touchable,
   Modal,
+  StatusBar,
 } from "react-native";
 import * as React from "react";
 
@@ -74,7 +75,7 @@ function CompanyHomeScreen({ navigation }) {
       let numJobs = 0;
 
       docSnap.forEach((doc) => {
-        const { title, info, wage, type } = doc.data();
+        const { title, info, wage, type, Applicants } = doc.data();
         advert.push({
           ...doc.data(),
           id: doc.id,
@@ -82,6 +83,7 @@ function CompanyHomeScreen({ navigation }) {
           info,
           wage,
           type,
+          Applicants,
         });
         numJobs += 1;
       });
@@ -97,14 +99,14 @@ function CompanyHomeScreen({ navigation }) {
       query(collection(db, "Adverts"), where("title", "==", item.id))
     ).then((docSnap) => {
       let applicantsForAd = [];
-
       docSnap.forEach((doc) => {
         applicantsForAd.push({ ...doc.data(), id: doc.id });
       });
       setApplicants(applicantsForAd[0].Applicants);
     });
+    console.log(Applicants);
 
-    setModalVisible(true);
+    //setModel(true);
   }
 
   useEffect(() => readCompanyAdverts(), [username]);
@@ -120,6 +122,7 @@ function CompanyHomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.outerContainer}>
+      <StatusBar barStyle="dark-content"></StatusBar>
       <View style={styles.topNav}>
         <View style={styles.seachBarContainer}>
           <TextInput
@@ -146,21 +149,7 @@ function CompanyHomeScreen({ navigation }) {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <View style={styles.container}>
-              {Applicants.map((Applicant) => {
-                return (
-                  <View>
-                    <Text style={styles.modalText}>{Applicant}</Text>
-                    <Pressable
-                      style={[styles.button, styles.buttonClose]}
-                      onPress={() => console.log("Applicant: " + Applicant)}
-                    >
-                      <Text style={styles.textStyle}>View Profile</Text>
-                    </Pressable>
-                  </View>
-                );
-              })}
-            </View>
+            <Text style={styles.modalText}>No Applicants yet!</Text>
             <Pressable
               style={[styles.button, styles.buttonOpenCustom]}
               onPress={() => setModalVisible(!modalVisible)}
@@ -187,7 +176,11 @@ function CompanyHomeScreen({ navigation }) {
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity
                     style={styles.buttonViewApplicants}
-                    onPress={() => readApplicantsOnAdvert(item)}
+                    onPress={() =>
+                      navigation.navigate("CompanyViewApplicants", {
+                        item: item,
+                      })
+                    }
                   >
                     <Text style={styles.buttonText}>View Applicants</Text>
                   </TouchableOpacity>
@@ -253,18 +246,18 @@ function CompanyHomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
-    backgroundColor: "black",
+    backgroundColor: "white",
     padding: 0,
   },
 
   topNav: {
-    backgroundColor: "black",
+    backgroundColor: "white",
     width: "100%",
     flexDirection: "row",
     padding: 10,
   },
   seachBarContainer: {
-    width: "80%",
+    width: "75%",
     alignSelf: "center",
   },
   seachBar: {
@@ -277,17 +270,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "navy",
     backgroundColor: "white",
-    padding: 7,
+    padding: 10,
   },
   buttonTopNav: {
-    backgroundColor: "white",
-    padding: 8,
+    backgroundColor: "navy",
+    padding: 10,
     borderRadius: 50,
     marginLeft: 7,
   },
   buttonTopNavText: {
-    color: "navy",
+    color: "white",
     fontWeight: "bold",
+    fontSize: 20,
   },
 
   mainTitle: {
@@ -360,6 +354,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     zIndex: 999,
+    width: "100%",
   },
   navButtons: {
     margin: 20,
@@ -457,3 +452,27 @@ const styles = StyleSheet.create({
 });
 
 export default CompanyHomeScreen;
+
+/*
+<View style={styles.container}>
+              {Applicants.map((Applicant) => {
+                return (
+                  <View>
+                    <Text style={styles.modalText}>{Applicant}</Text>
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={() => console.log("Applicant: " + Applicant)}
+                    >
+                      <Text style={styles.textStyle}>View Profile</Text>
+                    </Pressable>
+                  </View>
+                );
+              })}
+            </View>
+            <Pressable
+              style={[styles.button, styles.buttonOpenCustom]}
+              onPress={() => setModalVisible(!modalVisible)}
+            >
+              <Text style={styles.textStyle}>Hide Modal</Text>
+            </Pressable>
+            */

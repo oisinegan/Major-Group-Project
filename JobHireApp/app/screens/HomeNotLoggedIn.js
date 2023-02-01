@@ -49,6 +49,8 @@ const styles = StyleSheet.create({
   },
   buttonLog: {
     backgroundColor: "navy",
+
+    
     padding: 15,
     borderRadius: 50,
     paddingHorizontal: "27%",

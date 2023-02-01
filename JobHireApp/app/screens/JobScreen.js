@@ -1,4 +1,15 @@
-import { StyleSheet, Text, View, Button, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  TouchableOpacity,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+} from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //Database imports
@@ -40,29 +51,82 @@ function JobScreen({ route, navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text>Job title: {item.id}</Text>
-      <Text>Company: {item.company}</Text>
-      <Text>Full Job description: {item.fullDescription}</Text>
-      <Text>Job type: {item.type}</Text>
-      <Text>Minimum experience: {item.experience}</Text>
-      <Text>Minimum qualification: {item.qualification}</Text>
-      <Text>Required knowledge: {item.knowledge}</Text>
-      <Text>Work schedule: {item.schedule}</Text>
-      <Text>Wage: {item.wage} euros</Text>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content"></StatusBar>
+      <View style={styles.nav}>
+        <TouchableOpacity style={styles.backButton}>
+          <Text
+            style={styles.backText}
+            onPress={() => navigation.navigate("UserHomeScreen")}
+          >
+            Back
+          </Text>
+        </TouchableOpacity>
 
-      <Button
-        title="Apply"
-        onPress={() => {
-          Alert.alert("Application Successful!", "GOOD LUCK!", [
-            {
-              text: "Thank you!",
-              onPress: () => writeUserToJobAdvertDB(item),
-            },
-          ]);
-        }}
-      />
-    </View>
+        <Text style={styles.titleNav}> {item.id}</Text>
+
+        <Text style={styles.blank}></Text>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.outerContainerTop}>
+          <View style={styles.innerContainerTop}>
+            <TouchableOpacity
+              style={styles.companyImageContainer}
+              onPress={() => navigation.navigate("JobScreen")}
+            >
+              <Image
+                style={styles.companyImage}
+                source={require("../assets/Profile.png")}
+              />
+            </TouchableOpacity>
+            <Text style={styles.companyName}>{item.company}</Text>
+            <Text style={styles.companyLocation}>Location</Text>
+          </View>
+        </View>
+
+        <View style={styles.innerContainerBottom}>
+          <Text style={styles.heading}>Job title</Text>
+          <Text style={styles.info}> {item.id}</Text>
+
+          <Text style={styles.heading}>Full Job description</Text>
+          <Text style={styles.info}> {item.fullDescription}</Text>
+
+          <Text style={styles.heading}>Job type</Text>
+          <Text style={styles.info}> {item.type}</Text>
+
+          <Text style={styles.heading}>Minimum experience</Text>
+          <Text style={styles.info}> {item.experience}</Text>
+
+          <Text style={styles.heading}>Minimum qualification</Text>
+          <Text style={styles.info}>{item.qualification}</Text>
+
+          <Text style={styles.heading}>Required knowledge</Text>
+          <Text style={styles.info}>{item.knowledge}</Text>
+
+          <Text style={styles.heading}>Work schedule</Text>
+          <Text style={styles.info}>{item.schedule}</Text>
+
+          <Text style={styles.heading}>Wage</Text>
+          <Text style={styles.info}>{item.wage}</Text>
+
+          <TouchableOpacity style={styles.applyButton}>
+            <Text
+              style={styles.applyText}
+              onPress={() => {
+                Alert.alert("Application Successful!", "GOOD LUCK!", [
+                  {
+                    text: "Thank you!",
+                    onPress: () => writeUserToJobAdvertDB(item),
+                  },
+                ]);
+              }}
+            >
+              Apply
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -70,8 +134,106 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    alignItems: "center",
+  },
+  nav: {
+    backgroundColor: "white",
+    width: "100%",
+    flexDirection: "row",
+    padding: 0,
+  },
+  backButton: {
+    alignSelf: "left",
+    padding: 10,
+    flex: 0.17,
+  },
+  backText: {
+    color: "navy",
+    textAlign: "center",
+    fontSize: 20,
+  },
+  titleNav: {
+    alignSelf: "center",
     justifyContent: "center",
+    textAlign: "center",
+    color: "navy",
+    fontWeight: "bold",
+    fontSize: 25,
+    flex: 0.7,
+  },
+  blank: {
+    flex: 0.2,
+  },
+  innerContainerTop: {
+    flexDirection: "column",
+    backgroundColor: "white",
+    alignSelf: "center",
+  },
+  outerContainerTop: {
+    backgroundColor: "white",
+    borderBottomColor: "navy",
+    borderBottomWidth: 2,
+  },
+
+  companyImageContainer: {
+    borderRadius: 100,
+    borderWidth: 3,
+    padding: 40,
+    marginTop: 20,
+    borderColor: "navy",
+  },
+  companyImage: {
+    width: 100,
+    height: 100,
+    justifyContent: "center",
+  },
+
+  companyName: {
+    fontSize: 35,
+    fontWeight: "bold",
+    color: "navy",
+    alignSelf: "center",
+    paddingTop: 5,
+  },
+  companyLocation: {
+    paddingTop: 5,
+    paddingBottom: 10,
+    fontSize: 20,
+    fontWeight: "400",
+    color: "black",
+    alignSelf: "center",
+  },
+  innerContainerBottom: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+
+  heading: {
+    fontSize: 25,
+    fontWeight: "600",
+    marginLeft: 20,
+    marginTop: 20,
+    color: "navy",
+  },
+  info: {
+    fontSize: 20,
+    marginLeft: 40,
+    marginTop: 10,
+    fontWeight: "400",
+  },
+  applyButton: {
+    padding: 10,
+    backgroundColor: "navy",
+    width: "30%",
+    alignSelf: "center",
+    marginTop: 20,
+    marginBottom: 40,
+    borderRadius: 50,
+  },
+  applyText: {
+    fontSize: 25,
+    color: "white",
+    textAlign: "center",
+    fontWeight: "700",
   },
 });
 

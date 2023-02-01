@@ -13,6 +13,7 @@ import {
   FlatList,
   SafeAreaView,
   Touchable,
+  StatusBar,
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -86,6 +87,7 @@ function UserHomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.outerContainer}>
+      <StatusBar barStyle="dark-content"></StatusBar>
       <View style={styles.topNav}>
         <View style={styles.seachBarContainer}>
           <TextInput
@@ -191,18 +193,17 @@ function UserHomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
-    backgroundColor: "black",
-
+    backgroundColor: "white",
     padding: 0,
   },
   topNav: {
-    backgroundColor: "black",
+    backgroundColor: "white",
     width: "100%",
     flexDirection: "row",
     padding: 10,
   },
   seachBarContainer: {
-    width: "80%",
+    width: "75%",
     alignSelf: "center",
   },
   seachBar: {
@@ -215,17 +216,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "navy",
     backgroundColor: "white",
-    padding: 7,
+    padding: 10,
   },
   buttonTopNav: {
-    backgroundColor: "white",
-    padding: 8,
+    backgroundColor: "navy",
+    padding: 10,
     borderRadius: 50,
     marginLeft: 7,
   },
   buttonTopNavText: {
-    color: "navy",
+    color: "white",
     fontWeight: "bold",
+    fontSize: 20,
   },
 
   mainTitle: {

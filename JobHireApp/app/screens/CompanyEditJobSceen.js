@@ -11,11 +11,13 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   PermissionsAndroid,
+  StatusBar,
 } from "react-native";
 import * as React from "react";
 import { db } from "../database/config";
 import { useState, useEffect } from "react/cjs/react.development";
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function CompanyEditJobScreen({ route, navigation }) {
   const { item } = route.params;
@@ -96,134 +98,119 @@ function CompanyEditJobScreen({ route, navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text>Edit job post</Text>
-      <Text>Title: </Text>
-      <TextInput
-        value={title}
-        onChangeText={(title) => setTitle(title)}
-        placeholder="Job/Project title"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
-      <Text>Small description: </Text>
-      <TextInput
-        value={info}
-        onChangeText={(info) => setInfo(info)}
-        placeholder="3 lines about the job summary"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
-      <Text>Wage: </Text>
-      <TextInput
-        value={wage}
-        onChangeText={(wage) => setWage(wage)}
-        placeholder="Wage"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
-      <Text>Job type: </Text>
-      <TextInput
-        value={type}
-        onChangeText={(type) => setType(type)}
-        placeholder="Type of work (Job/Project etc..)"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
-      <Text>Full description: </Text>
-      <TextInput
-        value={fullDescription}
-        onChangeText={(fullDescription) => setFullDescription(fullDescription)}
-        placeholder="Full Job description"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content"></StatusBar>
+      <View style={styles.nav}>
+        <TouchableOpacity style={styles.backButton}>
+          <Text
+            style={styles.backText}
+            onPress={() => navigation.navigate("CompanyHome")}
+          >
+            Back
+          </Text>
+        </TouchableOpacity>
 
-      <Text>Schedule: </Text>
-      <TextInput
-        value={schedule}
-        onChangeText={(schedule) => setSchedule(schedule)}
-        placeholder="Work schedule"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
-      <Text>Minimum experience: </Text>
-      <TextInput
-        value={experience}
-        onChangeText={(experience) => setExperience(experience)}
-        placeholder="Minimum experience required"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
-      <Text>Required qualifications: </Text>
-      <TextInput
-        value={qualification}
-        onChangeText={(qualification) => setQualification(qualification)}
-        placeholder="Required qualifications"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
-      <Text>knowledge and skills: </Text>
-      <TextInput
-        value={knowledge}
-        onChangeText={(knowledge) => setKnowledge(knowledge)}
-        placeholder="Required knowledge"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
+        <Text style={styles.titleNav}> Edit job</Text>
 
-      <Button title="Update" onPress={create}></Button>
-      <Button title="Delete Job post" onPress={deletePost}></Button>
-      <Button
-        title="Home"
-        onPress={() => navigation.navigate("CompanyHome", { item: item })}
-      />
-    </View>
+        <TouchableOpacity style={styles.buttonDelete}>
+          <Text style={styles.buttonDeleteText} onPress={deletePost}>
+            Delete
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={styles.labels}>Title </Text>
+        <TextInput
+          value={title}
+          onChangeText={(title) => setTitle(title)}
+          placeholder="Job/Project title"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>Location </Text>
+        <TextInput placeholder="location" style={styles.inputBox}></TextInput>
+        <Text style={styles.labels}>Small description </Text>
+        <TextInput
+          multiline
+          numberOfLines={5}
+          value={info}
+          onChangeText={(info) => setInfo(info)}
+          placeholder="3 lines about the job summary"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>Wage </Text>
+        <TextInput
+          value={wage}
+          onChangeText={(wage) => setWage(wage)}
+          placeholder="Wage"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>Job type </Text>
+        <TextInput
+          value={type}
+          onChangeText={(type) => setType(type)}
+          placeholder="Type of work (Job/Project etc..)"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>Full description </Text>
+        <TextInput
+          multiline
+          maxLength={1000}
+          numberOfLines={5}
+          scrollEnabled={true}
+          value={fullDescription}
+          onChangeText={(fullDescription) =>
+            setFullDescription(fullDescription)
+          }
+          placeholder="Full Job description"
+          style={styles.inputBox}
+        ></TextInput>
+
+        <Text style={styles.labels}>Schedule </Text>
+        <TextInput
+          value={schedule}
+          onChangeText={(schedule) => setSchedule(schedule)}
+          placeholder="Work schedule"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>Minimum experience </Text>
+        <TextInput
+          multiline
+          maxLength={1000}
+          numberOfLines={5}
+          value={experience}
+          onChangeText={(experience) => setExperience(experience)}
+          placeholder="Minimum experience required"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>Required qualifications </Text>
+        <TextInput
+          multiline
+          maxLength={1000}
+          numberOfLines={5}
+          value={qualification}
+          onChangeText={(qualification) => setQualification(qualification)}
+          placeholder="Required qualifications"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>knowledge and skills </Text>
+        <TextInput
+          multiline
+          maxLength={1000}
+          numberOfLines={5}
+          value={knowledge}
+          onChangeText={(knowledge) => setKnowledge(knowledge)}
+          placeholder="Required knowledge"
+          style={styles.inputBox}
+        ></TextInput>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText} onPress={create}>
+              Update
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -231,8 +218,83 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    alignItems: "center",
+  },
+  nav: {
+    backgroundColor: "white",
+    width: "100%",
+    flexDirection: "row",
+    paddingBottom: 20,
+  },
+  backButton: {
+    alignSelf: "left",
+    padding: 10,
+    flex: 0.17,
+  },
+  backText: {
+    color: "navy",
+    textAlign: "center",
+    fontSize: 20,
+  },
+  titleNav: {
+    alignSelf: "center",
     justifyContent: "center",
+    textAlign: "center",
+    color: "navy",
+    fontWeight: "bold",
+    paddingLeft: 15,
+    fontSize: 35,
+    flex: 0.6,
+  },
+
+  buttonDelete: {
+    backgroundColor: "navy",
+    borderRadius: 50,
+    alignSelf: "center",
+    padding: 10,
+    flex: 0.2,
+  },
+  buttonDeleteText: {
+    fontSize: 20,
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  labels: {
+    fontSize: 25,
+    fontWeight: "600",
+    marginLeft: 20,
+    marginTop: 20,
+    color: "navy",
+    marginBottom: 10,
+  },
+  inputBox: {
+    borderWidth: 1.5,
+    borderColor: "navy",
+    padding: 20,
+    width: "80%",
+    marginBottom: 10,
+    marginLeft: "10%",
+    marginRight: "10%",
+    borderRadius: 10,
+    fontSize: 17.5,
+  },
+
+  buttonContainer: {
+    paddingVertical: 40,
+  },
+  button: {
+    padding: 20,
+    backgroundColor: "navy",
+
+    alignSelf: "center",
+    marginBottom: 10,
+    borderRadius: 50,
+  },
+  buttonText: {
+    fontSize: 25,
+    color: "white",
+    textAlign: "center",
+    fontWeight: "700",
   },
 });
 
