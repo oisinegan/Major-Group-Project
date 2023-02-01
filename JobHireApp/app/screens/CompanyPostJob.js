@@ -80,123 +80,82 @@ function CompanyPostJob({ navigation }) {
   const [isSelected, setSelection] = useState(false);
   return (
     <View style={styles.container}>
-      <Text>Company Post job Screen</Text>
-      <Text>Test: Writing to database</Text>
-      <TextInput
-        value={title}
-        onChangeText={(title) => setTitle(title)}
-        placeholder="Job/Project title"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
-      <TextInput
-        value={info}
-        onChangeText={(info) => setInfo(info)}
-        placeholder="3 lines about the job summary"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
-      <TextInput
-        value={wage}
-        onChangeText={(wage) => setWage(wage)}
-        placeholder="Wage"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
-      <TextInput
-        value={type}
-        onChangeText={(type) => setType(type)}
-        placeholder="Type of work (Job/Project etc..)"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
+      <Text style={styles.title}>Job form</Text>
+      <View>
+        <Text style={styles.heading_1}>Job/Project information</Text>
+      </View>
 
-      <TextInput
-        value={fullDescription}
-        onChangeText={(fullDescription) => setFullDescription(fullDescription)}
-        placeholder="Full Job description"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
+      <View style={styles.infoContent}>
+        <TextInput
+          value={title}
+          onChangeText={(title) => setTitle(title)}
+          placeholder="Job/Project title"
+          style={styles.inputs}
+        ></TextInput>
+        <TextInput
+          value={info}
+          onChangeText={(info) => setInfo(info)}
+          placeholder="3 lines about the job summary"
+          style={styles.inputs}
+        ></TextInput>
+        <TextInput
+          value={wage}
+          onChangeText={(wage) => setWage(wage)}
+          placeholder="Wage"
+          style={styles.inputs}
+        ></TextInput>
+        <TextInput
+          value={type}
+          onChangeText={(type) => setType(type)}
+          placeholder="Type of work (Job/Project etc..)"
+          style={styles.inputs}
+        ></TextInput>
 
-      <TextInput
-        value={schedule}
-        onChangeText={(schedule) => setSchedule(schedule)}
-        placeholder="Work schedule"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
+        <TextInput
+          value={fullDescription}
+          onChangeText={(fullDescription) =>
+            setFullDescription(fullDescription)
+          }
+          placeholder="Full Job description"
+          style={styles.inputs}
+        ></TextInput>
+      </View>
+      <View>
+        <Text style={styles.heading_2}>Requierments</Text>
+      </View>
+      <View style={styles.requirementContent}>
+        <TextInput
+          value={schedule}
+          onChangeText={(schedule) => setSchedule(schedule)}
+          placeholder="Work schedule"
+          style={styles.inputs}
+        ></TextInput>
 
-      <TextInput
-        value={experience}
-        onChangeText={(experience) => setExperience(experience)}
-        placeholder="Minimum experience required"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
+        <TextInput
+          value={experience}
+          onChangeText={(experience) => setExperience(experience)}
+          placeholder="Minimum experience required"
+          style={styles.inputs}
+        ></TextInput>
 
-      <TextInput
-        value={qualification}
-        onChangeText={(qualification) => setQualification(qualification)}
-        placeholder="Required qualifications"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
+        <TextInput
+          value={qualification}
+          onChangeText={(qualification) => setQualification(qualification)}
+          placeholder="Required qualifications"
+          style={styles.inputs}
+        ></TextInput>
 
-      <TextInput
-        value={knowledge}
-        onChangeText={(knowledge) => setKnowledge(knowledge)}
-        placeholder="Required knowledge"
-        style={{
-          borderWidth: 1,
-          borderColor: "#777",
-          padding: 5,
-          width: 250,
-          marginBottom: 20,
-        }}
-      ></TextInput>
+        <TextInput
+          value={knowledge}
+          onChangeText={(knowledge) => setKnowledge(knowledge)}
+          placeholder="Required knowledge"
+          style={styles.inputs}
+        ></TextInput>
 
-      <Button title="Submit" onPress={create}></Button>
+        <TouchableOpacity onPress={create} style={styles.button}>
+          <Text style={styles.buttonText}>SUBMIT</Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.navBar}>
         <TouchableOpacity
@@ -248,8 +207,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F1F1F1",
     backgroundColor: "",
-    alignItems: "center",
     justifyContent: "center",
+  },
+  header: {
+    flex: 1,
+  },
+  title: {
+    fontWeight: "bold",
+    letterSpacing: 1,
+    textDecorationLine: "underline",
+    margin: 5,
+    fontSize: 25,
+    marginTop: 50,
+    textAlign: "center",
+  },
+  heading_1: {
+    opacity: 0.5,
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
+  heading_2: {
+    opacity: 0.5,
+    fontWeight: "bold",
+    marginTop: 25,
+    marginLeft: 10,
   },
   navBar: {
     flexDirection: "row",
@@ -263,6 +244,46 @@ const styles = StyleSheet.create({
   },
   navButtons: {
     margin: 20,
+  },
+
+  infoContent: {
+    flex: 2,
+    marginTop: -10,
+  },
+  requirementContent: {
+    flex: 3,
+    marginTop: -10,
+  },
+  inputs: {
+    marginLeft: 10,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginTop: 20,
+    padding: 10,
+    fontSize: 12,
+    width: 350,
+    height: 38,
+    borderRadius: 7,
+  },
+  button: {
+    backgroundColor: "seagreen",
+    borderRadius: 10,
+    marginTop: 35,
+    width: 130,
+    height: 40,
+    borderWidth: 1,
+    alignSelf: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 18,
+    textAlign: "center",
+    marginTop: 6,
   },
 });
 

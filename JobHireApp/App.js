@@ -76,7 +76,11 @@ export default function App() {
         />
         <Stack.Screen name="CompanyMessages" component={CompanyMessages} />
 
-        <Stack.Screen name="CompanyPostJob" component={CompanyPostJob} />
+        <Stack.Screen
+          name="CompanyPostJob"
+          component={CompanyPostJob}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="CompanyEditJobScreen"
           component={CompanyEditJobScreen}
