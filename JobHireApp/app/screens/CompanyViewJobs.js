@@ -14,10 +14,10 @@ import {
 } from "react-native";
 import * as React from "react";
 
-function UserViewJobs({ navigation }) {
+function CompanyViewJobs({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text>user view jobs Screen</Text>
+      <Text>Company View Jobs</Text>
     </View>
   );
 }
@@ -38,4 +38,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserViewJobs;
+export default CompanyViewJobs;

@@ -24,8 +24,11 @@ import JobScreen from "./app/screens/JobScreen";
 import HomeNotLoggedIn from "./app/screens/HomeNotLoggedIn";
 import HomeLoggedIn from "./app/screens/HomeLoggedIn";
 import CompanyMessages from "./app/screens/CompanyMessages";
+import CompanyViewJobs from "./app/screens/CompanyViewJobs";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 const Stack = createNativeStackNavigator();
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -54,10 +57,15 @@ export default function App() {
         />
         <Stack.Screen name="UserMessage" component={UserMessage} />
         <Stack.Screen name="UserNotification" component={UserNotification} />
-        <Stack.Screen name="UserProfile" component={UserProfile} />
+        <Stack.Screen
+          name="UserProfile"
+          component={UserProfile}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="CompanyProfileScreen"
           component={CompanyProfileScreen}
+          options={{ headerShown: false }}
         />
         <Stack.Screen name="CompanyMessages" component={CompanyMessages} />
 
@@ -87,6 +95,7 @@ export default function App() {
         <Stack.Screen name="UserAbout" component={UserAbout} />
         <Stack.Screen name="UserViewJobs" component={UserViewJobs} />
         <Stack.Screen name="JobScreen" component={JobScreen} />
+        <Stack.Screen name="CompanyViewJobs" component={CompanyViewJobs} />
       </Stack.Navigator>
     </NavigationContainer>
   );

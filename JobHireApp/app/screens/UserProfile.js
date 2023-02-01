@@ -9,39 +9,45 @@ import {
   Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import * as React from "react";
 import { useState } from "react/cjs/react.development";
-import { collection, doc, setDoc, getDocs } from "firebase/firestore";
+import { useEffect } from "react/cjs/react.development";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../database/config";
-// - 08/12: there is an error happening when this page is loaded for me(adam), it's "Please report: Excessive number of pending callbacks: 501."
-//and it freezes the whole app, i have to reload it to get it to work.
-//Think it is something to do with aysnc, not 100% sure.
-
-//^^ Fixed but really bad implementation Reading in whole database to call the getData async function, but it'll do for now
 
 function UserProfile({ navigation }) {
-  const [Users, setUsers] = useState([]);
+  const [scroll, setScroll] = useState(true);
   const [username, setUsername] = useState("");
+  const [userInfo, setUserInfo] = useState([]);
 
-  //Read all data
-  getDocs(collection(db, "Jobseekers")).then((docSnap) => {
-    /*   const Users = [];
+  //main error happening here is that when i load this page up on the app, I don't see the database information until i refresh.
+  //something with async i imagine, tried loads of things.
 
-    docSnap.forEach((doc) => {
-      const { About, Age, Name, appliedJobs } = doc.data();
-      Users.push({
-        ...doc.data(),
-        id: doc.id,
-        About,
-        Age,
-        Name,
-        appliedJobs,
+  useEffect(() => {
+    //Read all data from logged in company database.
+    getDocs(
+      query(collection(db, "Jobseekers"), where("username", "==", username))
+    ).then((docSnap) => {
+      let info = [];
+      docSnap.forEach((doc) => {
+        const { email, pass, username } = doc.data();
+        //I can only read in these fields for the user profile page until joel is finished with the register page.
+        //When thats finished the databse will have more fields and i can fully finish it
+        info.push({ ...doc.data(), id: doc.id, email, pass, username });
       });
+
+      setUserInfo(info);
+      getData();
     });
-    setUsers(Users); */
-    getData();
-  });
+  }, []);
+
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("Username");
@@ -54,12 +60,76 @@ function UserProfile({ navigation }) {
       // error reading value
     }
   };
-  //unsure currently how to get specific details to display on profile page,
-  //it is only displaying everything that's there in order at the moment
+
   return (
     <View style={styles.container}>
-      <Text>user profile page</Text>
-      <Text style={styles.title}>Name: {username}</Text>
+      <Text style={styles.company_username}>{username}</Text>
+
+      <View style={styles.userImg}>
+        <Image
+          style={{ width: 100, height: 110, marginTop: 20 }}
+          source={require("../assets/company_profile.png")}
+        />
+      </View>
+
+      <View style={styles.buttons}>
+        <TouchableOpacity
+          style={styles.logOutButton}
+          onPress={() => navigation.navigate("HomeNotLoggedIn")}
+        >
+          <Text style={styles.buttonTopNavText}>Log out</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.buttonTopNav}
+          onPress={() => navigation.navigate("UserViewJobs")}
+        >
+          <Text style={styles.buttonTopNavText}>View active applicaitons</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.mainContainer}>
+        <FlatList
+          data={userInfo}
+          scrollEnabled={scroll}
+          renderItem={({ item }) => (
+            <View style={styles.innerContainer}>
+              <Text style={styles.info_titles}>Current user</Text>
+              <Text style={styles.company_info}>{item.username}</Text>
+
+              <Image
+                style={{
+                  width: 400,
+                  opacity: 0.2,
+                  height: 1,
+                  marginRight: 35,
+                  alignSelf: "center",
+                  marginTop: 5,
+                }}
+                source={require("../assets/line.png")}
+              />
+
+              <Text style={styles.info_titles}>Email</Text>
+              <Text style={styles.company_info}>{item.email}</Text>
+
+              <Image
+                style={{
+                  width: 400,
+                  opacity: 0.2,
+                  height: 1,
+                  marginRight: 35,
+                  alignSelf: "center",
+                  marginTop: 5,
+                }}
+                source={require("../assets/line.png")}
+              />
+              <Text style={styles.info_titles}>Password</Text>
+              <Text style={styles.company_info}>{item.pass}</Text>
+            </View>
+          )}
+        />
+      </View>
+      <View style={{ flex: 0.5 }}></View>
 
       <View style={styles.navBar}>
         <TouchableOpacity
@@ -113,9 +183,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  mainContainer: {
+    flex: 2,
+    width: 350,
+    margin: 15,
+    backgroundColor: "ghostwhite",
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    borderRadius: 40,
+    borderWidth: 2,
+    borderColor: "navy",
+  },
   navBar: {
     flexDirection: "row",
-    flex: 1,
+    flex: 4,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
@@ -125,6 +208,76 @@ const styles = StyleSheet.create({
   },
   navButtons: {
     margin: 20,
+  },
+  userImg: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    marginBottom: 10,
+  },
+  company_username: {
+    textAlign: "center",
+    color: "navy",
+    fontSize: 25,
+    fontWeight: "bold",
+    letterSpacing: 0,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    marginTop: 40,
+  },
+  buttonTopNav: {
+    borderRadius: 10,
+    marginLeft: 5,
+    backgroundColor: "navy",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 30,
+    marginLeft: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+  },
+  buttons: {
+    flexDirection: "row",
+  },
+  buttonTopNavText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 14,
+    textAlign: "center",
+  },
+  company_info: {
+    color: "black",
+    textAlign: "center",
+    marginBottom: 10,
+    margin: 5,
+    fontWeight: "bold",
+    fontSize: 15,
+  },
+  info_titles: {
+    fontSize: 20,
+    opacity: 0.5,
+    marginTop: 15,
+    marginLeft: 8,
+    textAlign: "center",
+  },
+  logOutButton: {
+    borderRadius: 10,
+    marginLeft: 5,
+    backgroundColor: "navy",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 30,
+    marginLeft: 10,
+    width: 100,
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
   },
 });
 
