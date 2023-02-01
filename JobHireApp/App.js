@@ -24,15 +24,12 @@ import JobScreen from "./app/screens/JobScreen";
 import HomeNotLoggedIn from "./app/screens/HomeNotLoggedIn";
 import HomeLoggedIn from "./app/screens/HomeLoggedIn";
 import CompanyMessages from "./app/screens/CompanyMessages";
-<<<<<<< Updated upstream
 import CompanyViewJobs from "./app/screens/CompanyViewJobs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-=======
 import RegisterJobseeker from "./app/screens/RegisterJobseeker";
 import RegisterCompany from "./app/screens/RegisterCompany";
 import CompanyViewApplicants from "./app/screens/CompanyViewApplicants";
->>>>>>> Stashed changes
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -106,10 +103,8 @@ export default function App() {
         />
         <Stack.Screen name="UserAbout" component={UserAbout} />
         <Stack.Screen name="UserViewJobs" component={UserViewJobs} />
-<<<<<<< Updated upstream
-        <Stack.Screen name="JobScreen" component={JobScreen} />
+
         <Stack.Screen name="CompanyViewJobs" component={CompanyViewJobs} />
-=======
         <Stack.Screen
           name="JobScreen"
           component={JobScreen}
@@ -130,7 +125,6 @@ export default function App() {
           component={CompanyViewApplicants}
           options={{ headerShown: false }}
         />
->>>>>>> Stashed changes
       </Stack.Navigator>
     </NavigationContainer>
   );
