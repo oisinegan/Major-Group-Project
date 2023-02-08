@@ -11,21 +11,34 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   PermissionsAndroid,
+  SafeAreaView,
 } from "react-native";
 import * as React from "react";
 import UserMessageScreen from "./UserMessageScreen";
 
-function UserMessage({ navigation }) {
-  return (
-    <View style={styles.container}>
-      <Text>user messages</Text>
+import { ChannelList } from "stream-chat-expo";
+import { chatApiKey, chatUserId } from "../config/chatConfig";
 
-      <View>
-        <Button
-          title="clicks on message screen"
-          onPress={() => navigation.navigate("UserMessageScreen")}
-        />
-      </View>
+const filters = {
+  members: {
+    $in: [chatUserId],
+  },
+};
+
+const sort = {
+  last_message_at: -1,
+};
+
+function UserMessage({ route, navigation }) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <ChannelList
+        onSelect={(channel) => {
+          navigation.navigate("UserMessageScreen", { channel: channel });
+        }}
+        filters={filters}
+        sort={sort}
+      />
 
       <View style={styles.navBar}>
         <TouchableOpacity
@@ -68,16 +81,15 @@ function UserMessage({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F1F1F1",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "white",
+    width: "100%",
   },
   navBar: {
     flexDirection: "row",

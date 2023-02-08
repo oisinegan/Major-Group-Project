@@ -30,106 +30,129 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import RegisterJobseeker from "./app/screens/RegisterJobseeker";
 import RegisterCompany from "./app/screens/RegisterCompany";
 import CompanyViewApplicants from "./app/screens/CompanyViewApplicants";
+
+//Chat API
+import { useChatClient } from "./app/chat/useChatClient";
+import { StreamChat } from "stream-chat";
+import { chatApiKey } from "./app/config/chatConfig";
+import { OverlayProvider, Chat } from "stream-chat-expo";
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const { clientIsReady } = useChatClient();
+  const chatClient = StreamChat.getInstance(chatApiKey);
+
+  if (!clientIsReady) {
+    return <Text>Loading chat ...</Text>;
+  }
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="HomeNotLoggedIn"
-          component={HomeNotLoggedIn}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="HomeLoggedIn" component={HomeLoggedIn} />
-        <Stack.Screen
-          name="CompanyHome"
-          component={CompanyHomeScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Register"
-          component={RegisterScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="UserHomeScreen"
-          component={UserHomeScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="UserMessage" component={UserMessage} />
-        <Stack.Screen name="UserNotification" component={UserNotification} />
-        <Stack.Screen
-          name="UserProfile"
-          component={UserProfile}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="CompanyProfileScreen"
-          component={CompanyProfileScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="CompanyMessages" component={CompanyMessages} />
+      <OverlayProvider>
+        <Chat client={chatClient}>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="HomeNotLoggedIn"
+              component={HomeNotLoggedIn}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="HomeLoggedIn" component={HomeLoggedIn} />
+            <Stack.Screen
+              name="CompanyHome"
+              component={CompanyHomeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Register"
+              component={RegisterScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="UserHomeScreen"
+              component={UserHomeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="UserMessage" component={UserMessage} />
+            <Stack.Screen
+              name="UserNotification"
+              component={UserNotification}
+            />
+            <Stack.Screen
+              name="UserProfile"
+              component={UserProfile}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompanyProfileScreen"
+              component={CompanyProfileScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="CompanyMessages" component={CompanyMessages} />
 
-        <Stack.Screen
-          name="CompanyPostJob"
-          component={CompanyPostJob}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="CompanyEditJobScreen"
-          component={CompanyEditJobScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="CompanyNotifications"
-          component={CompanyNotifications}
-        />
-        <Stack.Screen name="UserMessageScreen" component={UserMessageScreen} />
-        <Stack.Screen
-          name="UserNotificationScreen"
-          component={UserNotificationScreen}
-        />
-        <Stack.Screen
-          name="CompanyNotificationScreen"
-          component={CompanyNotificationScreen}
-        />
-        <Stack.Screen name="CompanyAbout" component={CompanyAbout} />
-        <Stack.Screen
-          name="CompanyJobMoreInfo"
-          component={CompanyJobMoreInfo}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="UserAbout" component={UserAbout} />
-        <Stack.Screen name="UserViewJobs" component={UserViewJobs} />
+            <Stack.Screen
+              name="CompanyPostJob"
+              component={CompanyPostJob}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompanyEditJobScreen"
+              component={CompanyEditJobScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompanyNotifications"
+              component={CompanyNotifications}
+            />
+            <Stack.Screen
+              name="UserMessageScreen"
+              component={UserMessageScreen}
+            />
+            <Stack.Screen
+              name="UserNotificationScreen"
+              component={UserNotificationScreen}
+            />
+            <Stack.Screen
+              name="CompanyNotificationScreen"
+              component={CompanyNotificationScreen}
+            />
+            <Stack.Screen name="CompanyAbout" component={CompanyAbout} />
+            <Stack.Screen
+              name="CompanyJobMoreInfo"
+              component={CompanyJobMoreInfo}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="UserAbout" component={UserAbout} />
+            <Stack.Screen name="UserViewJobs" component={UserViewJobs} />
 
-        <Stack.Screen name="CompanyViewJobs" component={CompanyViewJobs} />
-        <Stack.Screen
-          name="JobScreen"
-          component={JobScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="RegisterJobseeker"
-          component={RegisterJobseeker}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="RegisterCompany"
-          component={RegisterCompany}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="CompanyViewApplicants"
-          component={CompanyViewApplicants}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
+            <Stack.Screen name="CompanyViewJobs" component={CompanyViewJobs} />
+            <Stack.Screen
+              name="JobScreen"
+              component={JobScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="RegisterJobseeker"
+              component={RegisterJobseeker}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="RegisterCompany"
+              component={RegisterCompany}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompanyViewApplicants"
+              component={CompanyViewApplicants}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </Chat>
+      </OverlayProvider>
     </NavigationContainer>
   );
 }
