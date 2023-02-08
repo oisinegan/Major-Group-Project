@@ -26,10 +26,8 @@ function CompanyProfileScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [companyInfo, setCompanyInfo] = useState([]);
 
-  //main error happening here is that when i load this page up on the app, I don't see the database information until i refresh.
-  //something with async i imagine but i tried loads of things.
-
-  useEffect(() => {
+  function getCompanyInfo() {
+    getData();
     //Read all data from logged in company database.
     getDocs(
       query(collection(db, "Company"), where("username", "==", username))
@@ -41,9 +39,10 @@ function CompanyProfileScreen({ navigation }) {
       });
 
       setCompanyInfo(info);
-      getData();
     });
-  }, []);
+  }
+
+  useEffect(() => getCompanyInfo(), [username]);
 
   const getData = async () => {
     try {

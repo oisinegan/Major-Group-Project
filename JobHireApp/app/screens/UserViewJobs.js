@@ -23,50 +23,46 @@ import {
 import { db } from "../database/config";
 
 function UserViewJobs({ navigation }) {
-  
   const [username, setUsername] = useState("");
   const [userJobs, setUserJobs] = useState([]);
 
-    //Read all data from logged in company database.
-    getDocs(
-      query(collection(db, "Adverts"), where("Applicants", "==", username))
-      ).then((docSnap) => {
-        let jobs = [];
-        docSnap.forEach((doc) => {
-          jobs.push({ ...doc.data(), id: doc.id, title});
-        });
-        setUserJobs(jobs);
-        getData();
-      
-      });
+  //Read all data from logged in company database.
+  getDocs(
+    query(collection(db, "Adverts"), where("Applicants", "==", username))
+  ).then((docSnap) => {
+    let jobs = [];
+    docSnap.forEach((doc) => {
+      jobs.push({ ...doc.data(), id: doc.id, title });
+    });
+    setUserJobs(jobs);
+    getData();
+  });
 
-      const getData = async () => {
-        try {
-          const value = await AsyncStorage.getItem("Username");
-          var usernameFromAsyncStorage = value.toString();
-          if (value !== null) {
-            // value previously stored
-            setUsername(usernameFromAsyncStorage);
-          }
-        } catch (e) {
-          // error reading value
-        }
-      };
-      
-     
-
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("Username");
+      var usernameFromAsyncStorage = value.toString();
+      if (value !== null) {
+        // value previously stored
+        setUsername(usernameFromAsyncStorage);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.company_username}>Job applications for {username}</Text>
-      
+      <Text style={styles.company_username}>
+        Job applications for {username}
+      </Text>
+
       <View style={styles.mainContainer}>
         <FlatList
           data={userJobs}
           renderItem={({ item }) => (
             <View style={styles.innerContainer}>
               <Text>{item.title}</Text>
-
             </View>
           )}
         />
@@ -115,7 +111,7 @@ function UserViewJobs({ navigation }) {
       </View>
     </View>
   );
-          }
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
