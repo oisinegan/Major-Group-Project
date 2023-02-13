@@ -29,8 +29,7 @@ function UserProfile({ navigation }) {
 
   //main error happening here is that when i load this page up on the app, I don't see the database information until i refresh.
   //something with async i imagine, tried loads of things.
-
-  useEffect(() => {
+  function getUserInfo() {
     //Read all data from logged in company database.
     getDocs(
       query(collection(db, "Jobseekers"), where("username", "==", username))
@@ -46,7 +45,9 @@ function UserProfile({ navigation }) {
       setUserInfo(info);
       getData();
     });
-  }, []);
+  }
+
+  useEffect(() => getUserInfo(), [username]);
 
   const getData = async () => {
     try {

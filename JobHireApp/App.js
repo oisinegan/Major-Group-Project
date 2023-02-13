@@ -25,6 +25,7 @@ import HomeNotLoggedIn from "./app/screens/HomeNotLoggedIn";
 import HomeLoggedIn from "./app/screens/HomeLoggedIn";
 import CompanyMessages from "./app/screens/CompanyMessages";
 import CompanyViewJobs from "./app/screens/CompanyViewJobs";
+import CompanyMessageScreen from "./app/screens/CompanyMessageScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import RegisterJobseeker from "./app/screens/RegisterJobseeker";
@@ -40,16 +41,20 @@ import { OverlayProvider, Chat } from "stream-chat-expo";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const { clientIsReady } = useChatClient();
+  /* const { clientIsReady } = useChatClient();
   const chatClient = StreamChat.getInstance(chatApiKey);
 
   if (!clientIsReady) {
     return <Text>Loading chat ...</Text>;
-  }
+  } */
+  // client-side you initialize the Chat client with your API key
+  const client = StreamChat.getInstance("83shajg3euaq", {
+    timeout: 6000,
+  });
   return (
     <NavigationContainer>
       <OverlayProvider>
-        <Chat client={chatClient}>
+        <Chat client={client}>
           <Stack.Navigator>
             <Stack.Screen
               name="HomeNotLoggedIn"
@@ -77,7 +82,17 @@ export default function App() {
               component={UserHomeScreen}
               options={{ headerShown: false }}
             />
+
             <Stack.Screen name="UserMessage" component={UserMessage} />
+            <Stack.Screen name="CompanyMessages" component={CompanyMessages} />
+            <Stack.Screen
+              name="UserMessageScreen"
+              component={UserMessageScreen}
+            />
+            <Stack.Screen
+              name="CompanyMessageScreen"
+              component={CompanyMessageScreen}
+            />
             <Stack.Screen
               name="UserNotification"
               component={UserNotification}
@@ -92,7 +107,6 @@ export default function App() {
               component={CompanyProfileScreen}
               options={{ headerShown: false }}
             />
-            <Stack.Screen name="CompanyMessages" component={CompanyMessages} />
 
             <Stack.Screen
               name="CompanyPostJob"
@@ -108,10 +122,7 @@ export default function App() {
               name="CompanyNotifications"
               component={CompanyNotifications}
             />
-            <Stack.Screen
-              name="UserMessageScreen"
-              component={UserMessageScreen}
-            />
+
             <Stack.Screen
               name="UserNotificationScreen"
               component={UserNotificationScreen}

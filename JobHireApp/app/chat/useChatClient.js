@@ -8,12 +8,18 @@ import {
   chatUserName,
   chatUserToken,
 } from "../config/chatConfig";
-    
+
+// client-side you initialize the Chat client with your API key
+const client = StreamChat.getInstance("83shajg3euaq", {
+  timeout: 6000,
+});
+
 const user = {
   id: chatUserId,
   name: chatUserName,
 };
 
+/*
 const chatClient = StreamChat.getInstance(chatApiKey);
 
 export const useChatClient = () => {
@@ -48,4 +54,4 @@ export const useChatClient = () => {
   return {
     clientIsReady,
   };
-};
+};*/

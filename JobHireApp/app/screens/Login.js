@@ -21,8 +21,24 @@ import { useState } from "react/cjs/react.development";
 import { collection, doc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../database/config";
 
+//Stream chat api imports
+import {
+  Chat,
+  OverlayProvider,
+  ChannelList,
+  Channel,
+  MessageList,
+  MessageInput,
+  StreamChat,
+} from "stream-chat";
+
 // Get device width
 const deviceWidth = Dimensions.get("window").width;
+
+// client-side you initialize the Chat client with your API key
+const client = StreamChat.getInstance("83shajg3euaq", {
+  timeout: 6000,
+});
 
 function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -115,6 +131,15 @@ function LoginScreen({ navigation }) {
   const storeDataToAsyncStorage = async (value) => {
     try {
       await AsyncStorage.setItem("Username", value);
+      await client.disconnectUser();
+      client.connectUser(
+        {
+          id: username.toString(),
+          name: username.toString(),
+          image: "https://getstream.io/random_svg/?name=John",
+        },
+        client.devToken(username.toString())
+      );
     } catch (e) {
       // saving error
     }

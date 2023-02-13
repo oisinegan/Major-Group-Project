@@ -67,6 +67,7 @@ function CompanyHomeScreen({ navigation }) {
   function readCompanyAdverts() {
     //Call method to read username from async storage
     getData();
+    console.log("Username1=" + username);
     //Read  data from job adverts database where username(Gotten from login) equals company in adverts
     getDocs(
       query(collection(db, "Adverts"), where("company", "==", username))
@@ -90,6 +91,7 @@ function CompanyHomeScreen({ navigation }) {
       setNumberJobs(numJobs);
       setAdvertsCompany(advert);
     });
+    console.log("Username2=" + username);
   }
 
   //Read applicants on selected job

@@ -20,6 +20,24 @@ import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 
+//Stream chat api imports
+import {
+  Chat,
+  OverlayProvider,
+  ChannelList,
+  Channel,
+  MessageList,
+  MessageInput,
+  StreamChat,
+} from "stream-chat";
+
+// client-side you initialize the Chat client with your API key
+
+// client-side you initialize the Chat client with your API key
+const client = StreamChat.getInstance("83shajg3euaq", {
+  timeout: 6000,
+});
+
 // Get device width
 const deviceWidth = Dimensions.get("window").width;
 
@@ -56,7 +74,9 @@ function RegisterJobseeker({ navigation }) {
           { text: "OK", onPress: () => console.log("OK Pressed") },
         ]);
       });
+    
   } ////end jobseekersCreate
+
   /******* METHOD TO STORE VARIABLE IN ASYNC STORAGE *******/
   //Pass username and store it in async storage
   const storeDataToAsyncStorage = async (value) => {

@@ -24,12 +24,42 @@ import {
 } from "firebase/firestore";
 import { db } from "../database/config";
 
+//Stream chat api imports
+import {
+  Chat,
+  OverlayProvider,
+  ChannelList,
+  Channel,
+  MessageList,
+  MessageInput,
+  StreamChat,
+} from "stream-chat";
+
 function CompanyViewApplicants({ route, navigation }) {
   const { item } = route.params;
   const [Applicants, setApplicants] = useState([]);
 
+  //Used store username read from async storage
+  const [username, setUsername] = useState("");
+
+  /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
+  //Pass username and store it in async storage
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("Username");
+      var usernameFromAsyncStorage = value.toString();
+      if (value !== null) {
+        // value previously stored
+        setUsername(usernameFromAsyncStorage);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
   //Read applicants on selected job
   function readApplicantsOnAdvert() {
+    getData();
     //Read  data from job adverts database where username(Gotten from login) equals company in adverts
     getDocs(
       query(collection(db, "Adverts"), where("title", "==", item.id))
@@ -42,6 +72,25 @@ function CompanyViewApplicants({ route, navigation }) {
       setApplicants(applicantsForAd[0].Applicants);
       console.log(Applicants);
     });
+  }
+
+  function createTextChannel(user) {
+    console.log("Create channel with: " + user + " by: " + username);
+    // client-side you initialize the Chat client with your API key
+    const client = StreamChat.getInstance("83shajg3euaq", {
+      timeout: 6000,
+    });
+    //Write User to stream chat api to allow for messaging
+    const chanName = username + "_" + user;
+    const channel = client.channel("messaging", chanName.toString(), {
+      name: chanName.toString(),
+      members: [username.toString(), user.toString()],
+    });
+
+    // fetch the channel state, subscribe to future updates
+    const state = channel.watch();
+
+    navigation.navigate("UserMessageScreen", { channel: channel });
   }
 
   useEffect(() => readApplicantsOnAdvert(), []);
@@ -87,7 +136,13 @@ function CompanyViewApplicants({ route, navigation }) {
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={styles.buttonViewApplicants}
-                  onPress={() => console.log("View Applicant: " + item)}
+                  onPress={() => createTextChannel(item.toString())}
+                >
+                  <Text style={styles.buttonText}>Contact</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonViewApplicants}
+                  onPress={() => console.log("View profile: " + item)}
                 >
                   <Text style={styles.buttonText}>View Profile</Text>
                 </TouchableOpacity>

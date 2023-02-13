@@ -20,6 +20,8 @@ import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 
+
+
 // Get device width
 const deviceWidth = Dimensions.get("window").width;
 

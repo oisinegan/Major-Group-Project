@@ -13,11 +13,67 @@ import {
   PermissionsAndroid,
 } from "react-native";
 import * as React from "react";
+//Stream chat api imports
+import {
+  Chat,
+  OverlayProvider,
+  ChannelList,
+  Channel,
+  MessageList,
+  MessageInput,
+  StreamChat,
+} from "stream-chat-expo";
+import { useState, useEffect } from "react/cjs/react.development";
+import UserMessageScreen from "./UserMessageScreen";
+import CompanyMessageScreen from "./CompanyMessageScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { chatApiKey, chatUserId } from "../config/chatConfig";
 
 function CompanyMessages({ navigation }) {
+  //Used store username read from async storage
+  const [username, setUsername] = useState("");
+
+  /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
+  //Pass username and store it in async storage
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("Username");
+      var usernameFromAsyncStorage = value.toString();
+      if (value !== null) {
+        // value previously stored
+        setUsername(usernameFromAsyncStorage);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+  function getUsername() {
+    getData();
+
+    console.log("Username=" + username);
+  }
+
+  const filters = {
+    members: {
+      $in: [username],
+    },
+  };
+
+  const sort = {
+    last_message_at: -1,
+  };
+
+  useEffect(() => getUsername(), [username]);
   return (
     <View style={styles.container}>
-      <Text>Company Message Screen</Text>
+      <ChannelList
+        onSelect={(channel) => {
+          navigation.navigate("CompanyMessageScreen", { channel: channel });
+        }}
+        filters={filters}
+        sort={sort}
+      />
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
@@ -68,8 +124,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F1F1F1",
     backgroundColor: "",
-    alignItems: "center",
-    justifyContent: "center",
   },
   navBar: {
     flexDirection: "row",
