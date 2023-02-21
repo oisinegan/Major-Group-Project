@@ -13,6 +13,8 @@ import {
   Dimensions,
   ImageBackground,
   StatusBar,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,11 +28,15 @@ const deviceWidth = Dimensions.get("window").width;
 
 function RegisterCompany({ navigation }) {
   const [username, setUsername] = useState("");
-  const [founded, setFounded] = useState("");
-  const [info, setInfo] = useState("");
-  const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [number, setNumber] = useState("");
+
+  const [founded, setFounded] = useState("");
+  const [info, setInfo] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [companySize, setCompanySize] = useState("");
+  const [address, setAddress] = useState("");
 
   function companyCreate() {
     //Submit data
@@ -44,6 +50,9 @@ function RegisterCompany({ navigation }) {
       address: address,
       email: email,
       pass: pass,
+      number: number,
+      industry: industry,
+      companySize: companySize,
     })
       .then(() => {
         //Successfully written to database
@@ -69,105 +78,88 @@ function RegisterCompany({ navigation }) {
   };
 
   return (
-    <View style={styles.imageContainer}>
-      <ImageBackground
-        source={require("../assets/CompanyRegister.webp")}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <View style={styles.innerContainer}>
-          <Text style={styles.title}>Create an Account</Text>
-          <KeyboardAvoidingView style={styles.textInput}>
-            <TextInput
-              value={username}
-              onChangeText={(username) => setUsername(username)}
-              placeholder="Username"
-              placeholderTextColor={"#4f5250"}
-              style={{
-                borderWidth: 1,
-                borderColor: "navy",
-                padding: 15,
-                width: 250,
-                marginBottom: 20,
-                borderRadius: 50,
-              }}
-            ></TextInput>
+    <SafeAreaView style={styles.outerCon}>
+      <StatusBar barStyle="dark-content"></StatusBar>
+      <TouchableOpacity style={styles.backButton}>
+        <Text
+          onPress={() => navigation.navigate("Register")}
+          style={styles.backButton}
+        >
+          back
+        </Text>
+      </TouchableOpacity>
 
-            <TextInput
-              value={founded}
-              onChangeText={(founded) => setFounded(founded)}
-              placeholder="Founded"
-              placeholderTextColor={"#4f5250"}
-              style={{
-                borderWidth: 1,
-                borderColor: "navy",
-                padding: 15,
-                width: 250,
-                marginBottom: 20,
-                borderRadius: 50,
-              }}
-            ></TextInput>
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>Create an Account</Text>
+        <Text style={styles.titleMini}>General information</Text>
+        <TextInput
+          value={username}
+          onChangeText={(username) => setUsername(username)}
+          placeholder="Username"
+          placeholderTextColor={"#4f5250"}
+          style={styles.input}
+        ></TextInput>
+        <TextInput
+          value={pass}
+          onChangeText={(pass) => setPass(pass)}
+          secureTextEntry={true}
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor={"#4f5250"}
+        />
+        <TextInput
+          value={email}
+          onChangeText={(email) => setEmail(email)}
+          placeholder="Email"
+          placeholderTextColor={"#4f5250"}
+          style={styles.input}
+        ></TextInput>
+        <TextInput
+          value={number}
+          onChangeText={(number) => setNumber(number)}
+          placeholder="Number"
+          placeholderTextColor={"#4f5250"}
+          style={styles.input}
+        ></TextInput>
+        <TextInput
+          value={address}
+          onChangeText={(address) => setAddress(address)}
+          placeholder="Address"
+          placeholderTextColor={"#4f5250"}
+          style={styles.input}
+        ></TextInput>
 
-            <TextInput
-              value={info}
-              onChangeText={(info) => setInfo(info)}
-              placeholder="Info"
-              placeholderTextColor={"#4f5250"}
-              style={{
-                borderWidth: 1,
-                borderColor: "navy",
-                padding: 15,
-                width: 250,
-                marginBottom: 20,
-                borderRadius: 50,
-              }}
-            ></TextInput>
+        <Text style={styles.titleMini}>Company Information</Text>
+        <TextInput
+          value={info}
+          onChangeText={(info) => setInfo(info)}
+          placeholder="Summary of company"
+          placeholderTextColor={"#4f5250"}
+          style={styles.input}
+        ></TextInput>
+        <TextInput
+          value={founded}
+          onChangeText={(founded) => setFounded(founded)}
+          placeholder="Founded"
+          placeholderTextColor={"#4f5250"}
+          style={styles.input}
+        ></TextInput>
+        <TextInput
+          value={industry}
+          onChangeText={(industry) => setIndustry(industry)}
+          placeholder="Industry type"
+          placeholderTextColor={"#4f5250"}
+          style={styles.input}
+        ></TextInput>
+        <TextInput
+          value={companySize}
+          onChangeText={(companySize) => setCompanySize(companySize)}
+          placeholder="Company size"
+          placeholderTextColor={"#4f5250"}
+          style={styles.input}
+        ></TextInput>
 
-            <TextInput
-              value={address}
-              onChangeText={(address) => setAddress(address)}
-              placeholder="Address"
-              placeholderTextColor={"#4f5250"}
-              style={{
-                borderWidth: 1,
-                borderColor: "navy",
-                padding: 15,
-                width: 250,
-                marginBottom: 20,
-                borderRadius: 50,
-              }}
-            ></TextInput>
-
-            <TextInput
-              value={email}
-              onChangeText={(email) => setEmail(email)}
-              placeholder="example@mail.com"
-              placeholderTextColor={"#4f5250"}
-              style={{
-                borderWidth: 1,
-                borderColor: "navy",
-                padding: 15,
-                width: 250,
-                marginBottom: 20,
-                borderRadius: 50,
-              }}
-            ></TextInput>
-
-            <TextInput
-              value={pass}
-              onChangeText={(pass) => setPass(pass)}
-              secureTextEntry={true}
-              style={{
-                borderWidth: 1,
-                borderColor: "navy",
-                padding: 15,
-                width: 250,
-                borderRadius: 50,
-              }}
-              placeholder="Password"
-              placeholderTextColor={"#4f5250"}
-            />
-          </KeyboardAvoidingView>
-
+        <View style={styles.buttonsContainer}>
           <TouchableOpacity style={styles.button}>
             <Text
               onPress={companyCreate}
@@ -176,81 +168,87 @@ function RegisterCompany({ navigation }) {
                 textAlign: "center",
                 justifyContent: "center",
                 fontSize: 20,
+                fontWeight: "bold",
                 lineHeight: 40,
               }}
             >
-              Sign Up as a Company
+              Sign Up
             </Text>
           </TouchableOpacity>
-
-          <View style={styles.footer}>
-            <Text style={{ fontSize: 20 }}>
-              Already have an account?{" "}
-              <Text
-                style={{
-                  textDecorationLine: "underline",
-                  color: "navy",
-                  fontSize: 20,
-                }}
-                onPress={() => navigation.navigate("HomeNotLoggedIn")}
-              >
-                Login
-              </Text>
-            </Text>
-          </View>
         </View>
-      </ImageBackground>
-    </View> //end of main view
+
+        <View style={styles.footer}>
+          <Text style={{ fontSize: 20 }}>
+            Already have an account?{" "}
+            <Text
+              style={{
+                textDecorationLine: "underline",
+                color: "navy",
+                fontSize: 20,
+              }}
+              onPress={() => navigation.navigate("HomeNotLoggedIn")}
+            >
+              Login
+            </Text>
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
+  outerCon: {
+    backgroundColor: "#FAF9F6",
+  },
   container: {
-    backgroundColor: "#fff",
+    paddingTop: "5%",
+    backgroundColor: "#FAF9F6",
   },
-  imageContainer: {
-    height: deviceWidth * 3,
-    width: deviceWidth * 1.3,
-
-    //  justifyContent: 'center',
-  },
-
-  innerContainer: {
-    margin: 50,
-    alignSelf: "center",
-    marginRight: "30%",
-    marginTop: "20%",
-    padding: 5,
-
-    backgroundColor: "rgba(239, 231, 225, .9)",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingBottom: 30,
-    borderRadius: 50,
-    borderColor: "navy",
+  backButton: {
+    color: "navy",
+    textAlign: "left",
+    fontSize: 20,
+    lineHeight: 40,
+    paddingLeft: 7.5,
   },
   title: {
-    marginTop: 25,
     marginBottom: 35,
     fontSize: 40,
-    fontStyle: "",
     color: "navy",
+    marginLeft: 10,
   },
-  textInput: {
-    marginBottom: 50,
+  titleMini: {
+    fontSize: 25,
+    color: "navy",
+    marginLeft: 20,
+    marginBottom: 15,
   },
-  input: {},
-  button: {
+
+  input: {
+    borderWidth: 1,
+    borderColor: "navy",
+    padding: 15,
+    width: "82.5%",
+    marginBottom: 20,
+    borderRadius: 50,
+    marginLeft: 30,
+  },
+  buttonsContainer: {
+    flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    width: 250,
-    borderRadius: 4,
-    height: 40,
+    justifyContent: "flex-end",
+    marginTop: 20,
+  },
+  button: {
     backgroundColor: "navy",
-    marginBottom: 30,
+    padding: 15,
+    borderRadius: 50,
+    paddingHorizontal: "27%",
+    marginBottom: "5%",
   },
   footer: {
-    fontSize: 30,
-    letterSpacing: 1,
+    paddingBottom: 100,
+    alignSelf: "center",
   },
 });
 

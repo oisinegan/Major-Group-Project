@@ -20,8 +20,6 @@ import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 
-
-
 // Get device width
 const deviceWidth = Dimensions.get("window").width;
 
@@ -40,38 +38,39 @@ function RegisterScreen({ navigation }) {
         style={{ width: "100%", height: "100%" }}
       >
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>Welcome!</Text>
-          <KeyboardAvoidingView style={styles.textInput}>
-            <TouchableOpacity style={styles.button}>
-              <Text
-                onPress={() => navigation.navigate("RegisterJobseeker")}
-                style={{
-                  color: "white",
-                  textAlign: "center",
-                  justifyContent: "center",
-                  fontSize: 20,
-                  lineHeight: 40,
-                }}
-              >
-                Sign Up as a Jobseeker
-              </Text>
-            </TouchableOpacity>
+          <Text style={styles.title}>Sign up!</Text>
 
-            <TouchableOpacity style={styles.button}>
-              <Text
-                onPress={() => navigation.navigate("RegisterCompany")}
-                style={{
-                  color: "white",
-                  textAlign: "center",
-                  justifyContent: "center",
-                  fontSize: 20,
-                  lineHeight: 40,
-                }}
-              >
-                Sign Up as a Company
-              </Text>
-            </TouchableOpacity>
-          </KeyboardAvoidingView>
+          <TouchableOpacity style={styles.button}>
+            <Text
+              onPress={() => navigation.navigate("RegisterJobseeker")}
+              style={{
+                color: "white",
+                textAlign: "center",
+                justifyContent: "center",
+                fontWeight: "500",
+                fontSize: 20,
+                lineHeight: 40,
+              }}
+            >
+              Jobseeker
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button}>
+            <Text
+              onPress={() => navigation.navigate("RegisterCompany")}
+              style={{
+                color: "white",
+                textAlign: "center",
+                justifyContent: "center",
+                fontWeight: "500",
+                fontSize: 20,
+                lineHeight: 40,
+              }}
+            >
+              Company
+            </Text>
+          </TouchableOpacity>
 
           <View style={styles.footer}>
             <Text style={{ fontSize: 20 }}>
@@ -79,7 +78,8 @@ function RegisterScreen({ navigation }) {
               <Text
                 style={{
                   textDecorationLine: "underline",
-                  color: "navy",
+                  color: "rgba(10, 10, 50.2, 0.8)",
+
                   fontSize: 20,
                 }}
                 onPress={() => navigation.navigate("Login")}
@@ -100,12 +100,10 @@ const styles = StyleSheet.create({
   imageContainer: {
     height: deviceWidth * 3,
     width: deviceWidth * 1.3,
-
-    //  justifyContent: 'center',
   },
 
   innerContainer: {
-    marginTop: 250,
+    marginTop: "50%",
     margin: 50,
     marginRight: 170,
     backgroundColor: "rgba(239, 231, 225, 0.75)",
@@ -119,21 +117,21 @@ const styles = StyleSheet.create({
     marginTop: 25,
     marginBottom: 35,
     fontSize: 40,
-    fontStyle: "",
-    color: "navy",
+    fontWeight: "600",
+    color: "rgba(10, 10, 50.2, 0.8)",
   },
   textInput: {
-    marginBottom: 50,
+    marginBottom: 10,
   },
   input: {},
+
   button: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: 250,
-    borderRadius: 4,
-    height: 40,
     backgroundColor: "navy",
-    marginBottom: 30,
+    backgroundColor: "rgba(10, 10, 50.2, 0.8)",
+    padding: 10,
+    borderRadius: 50,
+    paddingHorizontal: "20%",
+    marginBottom: "5%",
   },
   footer: {
     fontSize: 30,
