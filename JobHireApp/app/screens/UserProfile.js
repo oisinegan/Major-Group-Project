@@ -36,10 +36,45 @@ function UserProfile({ navigation }) {
     ).then((docSnap) => {
       let info = [];
       docSnap.forEach((doc) => {
-        const { email, pass, username } = doc.data();
-        //I can only read in these fields for the user profile page until joel is finished with the register page.
-        //When thats finished the databse will have more fields and i can fully finish it
-        info.push({ ...doc.data(), id: doc.id, email, pass, username });
+        const {
+          knowledge,
+          city,
+          collegeName,
+          email,
+          firstName,
+          jobTitle,
+          lastName,
+          number,
+          pass,
+          qualificationLevel,
+          qualificationName,
+          skills,
+          username,
+          yearEnd,
+          yearStart,
+          yearsExperience,
+        } = doc.data();
+
+        info.push({
+          ...doc.data(),
+          id: doc.id,
+          knowledge,
+          city,
+          collegeName,
+          email,
+          firstName,
+          jobTitle,
+          lastName,
+          number,
+          pass,
+          qualificationLevel,
+          qualificationName,
+          skills,
+          username,
+          yearEnd,
+          yearStart,
+          yearsExperience,
+        });
       });
 
       setUserInfo(info);
@@ -61,7 +96,7 @@ function UserProfile({ navigation }) {
       // error reading value
     }
   };
-
+  //note: the image of the horizontal line in the flatlist for structure is temporary until better styling is done. looks bad in code.
   return (
     <View style={styles.container}>
       <Text style={styles.company_username}>{username}</Text>
@@ -95,24 +130,37 @@ function UserProfile({ navigation }) {
           scrollEnabled={scroll}
           renderItem={({ item }) => (
             <View style={styles.innerContainer}>
-              <Text style={styles.info_titles}>Current user</Text>
+              <Text style={styles.experience_Head}>User Information</Text>
+
+              <Image
+                style={{
+                  width: 400,
+                  opacity: 0.2,
+                  height: 1,
+                  marginRight: 35,
+                  alignSelf: "center",
+                  marginTop: 5,
+                }}
+                source={require("../assets/line.png")}
+              />
+
+              <Text style={styles.info_titles}>First name</Text>
+              <Text style={styles.company_info}>{item.firstName}</Text>
+
+              <Text style={styles.info_titles}>Last name</Text>
+              <Text style={styles.company_info}>{item.lastName}</Text>
+
+              <Text style={styles.info_titles}>Username</Text>
               <Text style={styles.company_info}>{item.username}</Text>
 
-              <Image
-                style={{
-                  width: 400,
-                  opacity: 0.2,
-                  height: 1,
-                  marginRight: 35,
-                  alignSelf: "center",
-                  marginTop: 5,
-                }}
-                source={require("../assets/line.png")}
-              />
-
-              <Text style={styles.info_titles}>Email</Text>
+              <Text style={styles.info_titles}>email</Text>
               <Text style={styles.company_info}>{item.email}</Text>
 
+              <Text style={styles.info_titles}>Number</Text>
+              <Text style={styles.company_info}>{item.number}</Text>
+
+              <Text style={styles.experience_Head}>User experience</Text>
+
               <Image
                 style={{
                   width: 400,
@@ -124,12 +172,29 @@ function UserProfile({ navigation }) {
                 }}
                 source={require("../assets/line.png")}
               />
-              <Text style={styles.info_titles}>Password</Text>
-              <Text style={styles.company_info}>{item.pass}</Text>
+
+              <Text style={styles.info_titles}>Skills</Text>
+              <Text style={styles.company_info}>{item.skills}</Text>
+
+              <Text style={styles.info_titles}>Qualification Level</Text>
+              <Text style={styles.company_info}>{item.qualificationLevel}</Text>
+
+              <Text style={styles.info_titles}>Qualification Name</Text>
+              <Text style={styles.company_info}>{item.qualificationName}</Text>
+
+              <Text style={styles.info_titles}>Years experience</Text>
+              <Text style={styles.company_info}>{item.yearsExperience}</Text>
+
+              <Text style={styles.info_titles}>Current Employment</Text>
+              <Text style={styles.company_info}>{item.jobTitle}</Text>
+
+              <Text style={styles.info_titles}>College</Text>
+              <Text style={styles.company_info}>{item.collegeName}</Text>
             </View>
           )}
         />
       </View>
+
       <View style={{ flex: 0.5 }}></View>
 
       <View style={styles.navBar}>
@@ -279,6 +344,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 5,
+  },
+  experience_Head: {
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "navy",
+    fontSize: 20,
+    paddingTop: 15,
   },
 });
 

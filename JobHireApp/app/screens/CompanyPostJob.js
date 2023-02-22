@@ -8,6 +8,7 @@ import {
   Menu,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from "react-native";
 import * as React from "react";
 //Database imports
@@ -15,6 +16,7 @@ import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function CompanyPostJob({ navigation }) {
   const [title, setTitle] = useState("");
@@ -79,126 +81,133 @@ function CompanyPostJob({ navigation }) {
   ///////////////////////////////////////////////////////////////////////////////////
   const [isSelected, setSelection] = useState(false);
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Job form</Text>
-      <View>
-        <Text style={styles.heading_1}>Job/Project information</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.title}>Job form</Text>
+
+        <View style={styles.infoContent}>
+          <Text style={styles.heading_2}>Title</Text>
+          <TextInput
+            value={title}
+            onChangeText={(title) => setTitle(title)}
+            placeholder="Job/Project title"
+            style={styles.inputs}
+          ></TextInput>
+
+          <Text style={styles.heading_2}>Job info</Text>
+          <TextInput
+            value={info}
+            onChangeText={(info) => setInfo(info)}
+            placeholder="3 lines about the job summary"
+            style={styles.inputs}
+          ></TextInput>
+
+          <Text style={styles.heading_2}>Wage</Text>
+          <TextInput
+            value={wage}
+            onChangeText={(wage) => setWage(wage)}
+            placeholder="Wage"
+            style={styles.inputs}
+          ></TextInput>
+
+          <Text style={styles.heading_2}>Work type</Text>
+          <TextInput
+            value={type}
+            onChangeText={(type) => setType(type)}
+            placeholder="Type of work (Job/Project etc..)"
+            style={styles.inputs}
+          ></TextInput>
+
+          <Text style={styles.heading_2}>Job description</Text>
+          <TextInput
+            value={fullDescription}
+            onChangeText={(fullDescription) =>
+              setFullDescription(fullDescription)
+            }
+            placeholder="Full Job description"
+            style={styles.inputs}
+          ></TextInput>
+
+          <Text style={styles.heading_2}>Schedule</Text>
+          <TextInput
+            value={schedule}
+            onChangeText={(schedule) => setSchedule(schedule)}
+            placeholder="Work schedule"
+            style={styles.inputs}
+          ></TextInput>
+
+          <Text style={styles.heading_2}>Experience</Text>
+          <TextInput
+            value={experience}
+            onChangeText={(experience) => setExperience(experience)}
+            placeholder="Minimum experience required"
+            style={styles.inputs}
+          ></TextInput>
+
+          <Text style={styles.heading_2}>Qualification</Text>
+          <TextInput
+            value={qualification}
+            onChangeText={(qualification) => setQualification(qualification)}
+            placeholder="Required qualifications"
+            style={styles.inputs}
+          ></TextInput>
+
+          <Text style={styles.heading_2}>knowledge</Text>
+          <TextInput
+            value={knowledge}
+            onChangeText={(knowledge) => setKnowledge(knowledge)}
+            placeholder="Required knowledge"
+            style={styles.inputs}
+          ></TextInput>
+
+          <TouchableOpacity onPress={create} style={styles.button}>
+            <Text style={styles.buttonText}>SUBMIT</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.navBar}>
+          <TouchableOpacity
+            style={styles.navButtons}
+            onPress={() => navigation.navigate("CompanyHome")}
+          >
+            <Image
+              style={{ width: 30, height: 30, margin: 15 }}
+              source={require("../assets/Home.png")}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.navButtons}
+            onPress={() => navigation.navigate("CompanyPostJob")}
+          >
+            <Image
+              style={{ width: 25, height: 25, margin: 15 }}
+              source={require("../assets/PostJob.png")}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.navButtons}
+            onPress={() => navigation.navigate("CompanyMessages")}
+          >
+            <Image
+              style={{ width: 25, height: 25, margin: 15 }}
+              source={require("../assets/Msg.png")}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.navButtons}
+            onPress={() => navigation.navigate("CompanyProfileScreen")}
+          >
+            <Image
+              style={{ width: 25, height: 25, margin: 15 }}
+              source={require("../assets/Profile.png")}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <View style={styles.infoContent}>
-        <TextInput
-          value={title}
-          onChangeText={(title) => setTitle(title)}
-          placeholder="Job/Project title"
-          style={styles.inputs}
-        ></TextInput>
-        <TextInput
-          value={info}
-          onChangeText={(info) => setInfo(info)}
-          placeholder="3 lines about the job summary"
-          style={styles.inputs}
-        ></TextInput>
-        <TextInput
-          value={wage}
-          onChangeText={(wage) => setWage(wage)}
-          placeholder="Wage"
-          style={styles.inputs}
-        ></TextInput>
-        <TextInput
-          value={type}
-          onChangeText={(type) => setType(type)}
-          placeholder="Type of work (Job/Project etc..)"
-          style={styles.inputs}
-        ></TextInput>
-
-        <TextInput
-          value={fullDescription}
-          onChangeText={(fullDescription) =>
-            setFullDescription(fullDescription)
-          }
-          placeholder="Full Job description"
-          style={styles.inputs}
-        ></TextInput>
-      </View>
-      <View>
-        <Text style={styles.heading_2}>Requierments</Text>
-      </View>
-      <View style={styles.requirementContent}>
-        <TextInput
-          value={schedule}
-          onChangeText={(schedule) => setSchedule(schedule)}
-          placeholder="Work schedule"
-          style={styles.inputs}
-        ></TextInput>
-
-        <TextInput
-          value={experience}
-          onChangeText={(experience) => setExperience(experience)}
-          placeholder="Minimum experience required"
-          style={styles.inputs}
-        ></TextInput>
-
-        <TextInput
-          value={qualification}
-          onChangeText={(qualification) => setQualification(qualification)}
-          placeholder="Required qualifications"
-          style={styles.inputs}
-        ></TextInput>
-
-        <TextInput
-          value={knowledge}
-          onChangeText={(knowledge) => setKnowledge(knowledge)}
-          placeholder="Required knowledge"
-          style={styles.inputs}
-        ></TextInput>
-
-        <TouchableOpacity onPress={create} style={styles.button}>
-          <Text style={styles.buttonText}>SUBMIT</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.navBar}>
-        <TouchableOpacity
-          style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyHome")}
-        >
-          <Image
-            style={{ width: 30, height: 30, margin: 15 }}
-            source={require("../assets/Home.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyPostJob")}
-        >
-          <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/PostJob.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyMessages")}
-        >
-          <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Msg.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyProfileScreen")}
-        >
-          <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Profile.png")}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -213,11 +222,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontWeight: "bold",
-    letterSpacing: 1,
-    textDecorationLine: "underline",
     margin: 5,
-    fontSize: 25,
+    fontSize: 20,
     marginTop: 50,
     textAlign: "center",
   },
@@ -225,6 +231,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
     fontWeight: "bold",
     marginLeft: 10,
+    marginTop: 10,
   },
   heading_2: {
     opacity: 0.5,
@@ -257,16 +264,16 @@ const styles = StyleSheet.create({
   inputs: {
     marginLeft: 10,
     borderColor: "gray",
-    borderWidth: 1,
+    borderWidth: 2,
     marginTop: 20,
     padding: 10,
-    fontSize: 12,
+    fontSize: 15,
     width: 350,
-    height: 38,
-    borderRadius: 7,
+    height: 45,
+    borderRadius: 20,
   },
   button: {
-    backgroundColor: "seagreen",
+    backgroundColor: "navy",
     borderRadius: 10,
     marginTop: 35,
     width: 130,
