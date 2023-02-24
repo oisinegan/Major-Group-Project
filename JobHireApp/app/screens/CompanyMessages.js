@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   PermissionsAndroid,
+  SafeAreaView,
 } from "react-native";
 import * as React from "react";
 //Stream chat api imports
@@ -66,7 +67,10 @@ function CompanyMessages({ navigation }) {
 
   useEffect(() => getUsername(), [username]);
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.topNav}>
+        <Text style={styles.topNavTitle}>Messages</Text>
+      </View>
       <ChannelList
         onSelect={(channel) => {
           navigation.navigate("CompanyMessageScreen", { channel: channel });
@@ -115,15 +119,23 @@ function CompanyMessages({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F1F1F1",
-    backgroundColor: "",
+    backgroundColor: "white",
+  },
+  topNav: {
+    padding: 20,
+  },
+  topNavTitle: {
+    alignSelf: "center",
+    fontSize: 25,
+    fontWeight: "600",
+    color: "black",
   },
   navBar: {
     flexDirection: "row",

@@ -43,6 +43,7 @@ const client = StreamChat.getInstance("83shajg3euaq", {
 function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
+  const [seachParam, setSearchParam] = useState("");
 
   //After Log in button is pressed it searches Job seeker database first,
   //IF no match found then it search company database for match
@@ -70,14 +71,7 @@ function LoginScreen({ navigation }) {
         var userName = user[0].username.toString();
         //Send string(username) to async storage
         storeDataToAsyncStorage(userName);
-        //Alert user with success message
-        var successMsg = "Hello " + user[0].username;
-        Alert.alert("USER", successMsg, [
-          {
-            text: "Ok",
-            onPress: () => console.log("Ok Pressed"),
-          },
-        ]);
+
         //Navigate to user home screen
         navigation.navigate("UserHomeScreen");
       }
@@ -113,14 +107,7 @@ function LoginScreen({ navigation }) {
         var compName = comp[0].username.toString();
         //Send string(username) to async storage
         storeDataToAsyncStorage(compName);
-        //Alert user with success message
-        var successMsg = "Hello " + comp[0].username;
-        Alert.alert("COMPANY", successMsg, [
-          {
-            text: "Ok",
-            onPress: () => console.log("Ok Pressed"),
-          },
-        ]);
+
         //Navigate to company home screen
         navigation.navigate("CompanyHome");
       }

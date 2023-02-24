@@ -34,8 +34,18 @@ function CompanyProfileScreen({ navigation }) {
     ).then((docSnap) => {
       let info = [];
       docSnap.forEach((doc) => {
-        const { address, email, founded } = doc.data();
-        info.push({ ...doc.data(), id: doc.id, address, email, founded });
+        const { address, email, founded, companySize, industry, number } =
+          doc.data();
+        info.push({
+          ...doc.data(),
+          id: doc.id,
+          address,
+          email,
+          founded,
+          companySize,
+          industry,
+          number,
+        });
       });
 
       setCompanyInfo(info);
@@ -88,6 +98,8 @@ function CompanyProfileScreen({ navigation }) {
         <FlatList
           data={companyInfo}
           scrollEnabled={scroll}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.innerContainer}>
               <Text style={styles.company_info_title}></Text>
@@ -151,6 +163,51 @@ function CompanyProfileScreen({ navigation }) {
               />
               <Text style={styles.info_titles}>About</Text>
               <Text style={styles.company_info}>{item.info}</Text>
+
+              <Image
+                style={{
+                  width: 400,
+                  opacity: 0.2,
+                  height: 1,
+                  marginRight: 35,
+                  alignSelf: "center",
+                  marginTop: 5,
+                }}
+                source={require("../assets/line.png")}
+              />
+
+              <Text style={styles.info_titles}>Compant Size</Text>
+              <Text style={styles.company_info}>{item.companySize}</Text>
+
+              <Image
+                style={{
+                  width: 400,
+                  opacity: 0.2,
+                  height: 1,
+                  marginRight: 35,
+                  alignSelf: "center",
+                  marginTop: 5,
+                }}
+                source={require("../assets/line.png")}
+              />
+
+              <Text style={styles.info_titles}>Industry</Text>
+              <Text style={styles.company_info}>{item.industry}</Text>
+
+              <Image
+                style={{
+                  width: 400,
+                  opacity: 0.2,
+                  height: 1,
+                  marginRight: 35,
+                  alignSelf: "center",
+                  marginTop: 5,
+                }}
+                source={require("../assets/line.png")}
+              />
+
+              <Text style={styles.info_titles}>Number</Text>
+              <Text style={styles.company_info}>{item.number}</Text>
             </View>
           )}
         />
@@ -246,14 +303,14 @@ const styles = StyleSheet.create({
   company_username: {
     textAlign: "center",
     color: "navy",
-    fontSize: 25,
+    fontSize: 30,
     fontWeight: "bold",
     letterSpacing: 0,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
-    marginTop: 40,
+    marginTop: 70,
   },
   buttonTopNav: {
     borderRadius: 10,

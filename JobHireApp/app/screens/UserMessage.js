@@ -67,6 +67,9 @@ function UserMessage({ route, navigation }) {
   useEffect(() => getUsername(), [username]);
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.topNav}>
+        <Text style={styles.topNavTitle}>Messages</Text>
+      </View>
       <ChannelList
         onSelect={(channel) => {
           navigation.navigate("UserMessageScreen", { channel: channel });
@@ -125,6 +128,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     width: "100%",
+  },
+  topNav: {
+    padding: 20,
+  },
+  topNavTitle: {
+    alignSelf: "center",
+    fontSize: 25,
+    fontWeight: "600",
+    color: "black",
   },
   navBar: {
     flexDirection: "row",

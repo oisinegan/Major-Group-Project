@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import * as React from "react";
 //Database imports
@@ -16,7 +17,6 @@ import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 function CompanyPostJob({ navigation }) {
   const [title, setTitle] = useState("");
@@ -81,10 +81,9 @@ function CompanyPostJob({ navigation }) {
   ///////////////////////////////////////////////////////////////////////////////////
   const [isSelected, setSelection] = useState(false);
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
         <Text style={styles.title}>Job form</Text>
-
         <View style={styles.infoContent}>
           <Text style={styles.heading_2}>Title</Text>
           <TextInput
@@ -164,58 +163,55 @@ function CompanyPostJob({ navigation }) {
             <Text style={styles.buttonText}>SUBMIT</Text>
           </TouchableOpacity>
         </View>
+      </ScrollView>
+      <View style={styles.navBar}>
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyHome")}
+        >
+          <Image
+            style={{ width: 30, height: 30, margin: 15 }}
+            source={require("../assets/Home.png")}
+          />
+        </TouchableOpacity>
 
-        <View style={styles.navBar}>
-          <TouchableOpacity
-            style={styles.navButtons}
-            onPress={() => navigation.navigate("CompanyHome")}
-          >
-            <Image
-              style={{ width: 30, height: 30, margin: 15 }}
-              source={require("../assets/Home.png")}
-            />
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyPostJob")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/PostJob.png")}
+          />
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.navButtons}
-            onPress={() => navigation.navigate("CompanyPostJob")}
-          >
-            <Image
-              style={{ width: 25, height: 25, margin: 15 }}
-              source={require("../assets/PostJob.png")}
-            />
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyMessages")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Msg.png")}
+          />
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.navButtons}
-            onPress={() => navigation.navigate("CompanyMessages")}
-          >
-            <Image
-              style={{ width: 25, height: 25, margin: 15 }}
-              source={require("../assets/Msg.png")}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.navButtons}
-            onPress={() => navigation.navigate("CompanyProfileScreen")}
-          >
-            <Image
-              style={{ width: 25, height: 25, margin: 15 }}
-              source={require("../assets/Profile.png")}
-            />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyProfileScreen")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Profile.png")}
+          />
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F1F1F1",
-    backgroundColor: "",
     justifyContent: "center",
   },
   header: {
@@ -223,7 +219,8 @@ const styles = StyleSheet.create({
   },
   title: {
     margin: 5,
-    fontSize: 20,
+    fontSize: 30,
+    fontWeight: "600",
     marginTop: 50,
     textAlign: "center",
   },
@@ -248,6 +245,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     zIndex: 999,
+    width: "100%",
   },
   navButtons: {
     margin: 20,
@@ -268,7 +266,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 10,
     fontSize: 15,
-    width: 350,
+    width: 385,
+
     height: 45,
     borderRadius: 20,
   },
@@ -284,6 +283,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 5,
+    marginBottom: 100,
   },
   buttonText: {
     color: "white",

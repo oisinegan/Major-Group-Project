@@ -128,6 +128,8 @@ function UserProfile({ navigation }) {
         <FlatList
           data={userInfo}
           scrollEnabled={scroll}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.innerContainer}>
               <Text style={styles.experience_Head}>User Information</Text>
@@ -285,14 +287,14 @@ const styles = StyleSheet.create({
   company_username: {
     textAlign: "center",
     color: "navy",
-    fontSize: 25,
+    fontSize: 30,
     fontWeight: "bold",
     letterSpacing: 0,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
-    marginTop: 40,
+    marginTop: 70,
   },
   buttonTopNav: {
     borderRadius: 10,

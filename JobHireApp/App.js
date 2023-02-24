@@ -83,8 +83,16 @@ export default function App() {
               options={{ headerShown: false }}
             />
 
-            <Stack.Screen name="UserMessage" component={UserMessage} />
-            <Stack.Screen name="CompanyMessages" component={CompanyMessages} />
+            <Stack.Screen
+              name="UserMessage"
+              component={UserMessage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompanyMessages"
+              component={CompanyMessages}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="UserMessageScreen"
               component={UserMessageScreen}

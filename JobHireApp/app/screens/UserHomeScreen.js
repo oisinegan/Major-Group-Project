@@ -33,6 +33,7 @@ import { db } from "../database/config";
 function UserHomeScreen({ navigation }) {
   const [AdvertsUser, setAdvertsUser] = useState([]);
   const [numberJobs, setNumberJobs] = useState([]);
+  const [searchParam, setSearchParam] = useState([]);
 
   //Used store username read from async storage
   const [username, setUsername] = useState("");
@@ -68,6 +69,10 @@ function UserHomeScreen({ navigation }) {
     }
   };
 
+  function searchJobs() {
+    console.log("work");
+  }
+
   async function writeUserToJobAdvertDB(item) {
     const advertDocumentRef = doc(db, "Adverts", item.id);
 
@@ -91,16 +96,14 @@ function UserHomeScreen({ navigation }) {
       <View style={styles.topNav}>
         <View style={styles.seachBarContainer}>
           <TextInput
+            value={searchParam}
+            onChangeText={(searchParam) => setSearchParam(searchParam)}
             style={styles.seachBar}
             placeholder="Search Jobs"
           ></TextInput>
         </View>
-
-        <TouchableOpacity
-          style={styles.buttonTopNav}
-          onPress={() => navigation.navigate("HomeNotLoggedIn")}
-        >
-          <Text style={styles.buttonTopNavText}>Log out</Text>
+        <TouchableOpacity style={styles.buttonTopNav} onPress={searchJobs}>
+          <Text style={styles.buttonTopNavText}>Search</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.mainContainer}>
@@ -218,6 +221,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 10,
   },
+
   buttonTopNav: {
     backgroundColor: "navy",
     padding: 10,

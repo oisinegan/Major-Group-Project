@@ -69,7 +69,7 @@ function CompanyJobMoreInfo({ route, navigation }) {
             >
               <Image
                 style={styles.companyImage}
-                source={require("../assets/Profile.png")}
+                source={require("../assets/googleLogo.png")}
               />
             </TouchableOpacity>
             <Text style={styles.companyName}>{item.company}</Text>
@@ -163,14 +163,13 @@ const styles = StyleSheet.create({
 
   companyImageContainer: {
     borderRadius: 100,
-    borderWidth: 3,
-    padding: 40,
+
     marginTop: 20,
-    borderColor: "navy",
+    borderColor: "black",
   },
   companyImage: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     justifyContent: "center",
   },
 
