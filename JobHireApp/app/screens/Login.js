@@ -136,7 +136,7 @@ function LoginScreen({ navigation }) {
     <View style={styles.imageContainer}>
       <StatusBar barStyle="dark-content"></StatusBar>
       <ImageBackground
-        source={require("../assets/LoginImage.jpg")}
+        source={require("../assets/RegisterImage.webp")}
         style={{ width: "100%", height: "100%" }}
       >
         <View style={styles.innerContainer}>

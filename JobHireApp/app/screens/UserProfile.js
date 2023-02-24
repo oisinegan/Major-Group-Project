@@ -21,68 +21,102 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../database/config";
+import { set } from "react-native-reanimated";
 
 function UserProfile({ navigation }) {
   const [scroll, setScroll] = useState(true);
   const [username, setUsername] = useState("");
-  const [userInfo, setUserInfo] = useState([]);
+  const [userAbout, setUserAbout] = useState([]);
+  const [userSkill, setUserSkill] = useState([]);
+  const [userExperience, setUserExperience] = useState([]);
 
-  //main error happening here is that when i load this page up on the app, I don't see the database information until i refresh.
-  //something with async i imagine, tried loads of things.
-  function getUserInfo() {
+  function getUserAbout() {
+    setUserSkill([]);
+    setUserExperience([]);
     //Read all data from logged in company database.
     getDocs(
       query(collection(db, "Jobseekers"), where("username", "==", username))
     ).then((docSnap) => {
       let info = [];
       docSnap.forEach((doc) => {
-        const {
-          knowledge,
+        const { city, email, firstName, lastName, number, username, jobTitle } =
+          doc.data();
+
+        info.push({
+          ...doc.data(),
+          id: doc.id,
           city,
-          collegeName,
           email,
           firstName,
-          jobTitle,
           lastName,
           number,
-          pass,
+          username,
+          jobTitle,
+        });
+      });
+
+      setUserAbout(info);
+      getData();
+    });
+  }
+
+  function getUserSkill() {
+    setUserAbout([]);
+    setUserExperience([]);
+    getDocs(
+      query(collection(db, "Jobseekers"), where("username", "==", username))
+    ).then((docSnap) => {
+      let info = [];
+      docSnap.forEach((doc) => {
+        const { skills, Knowledge } = doc.data();
+
+        info.push({
+          ...doc.data(),
+          id: doc.id,
+          skills,
+          Knowledge,
+        });
+      });
+
+      setUserSkill(info);
+      getData();
+    });
+  }
+  function getUserExperience() {
+    setUserAbout([]);
+    setUserSkill([]);
+    getDocs(
+      query(collection(db, "Jobseekers"), where("username", "==", username))
+    ).then((docSnap) => {
+      let info = [];
+      docSnap.forEach((doc) => {
+        const {
           qualificationLevel,
           qualificationName,
-          skills,
-          username,
-          yearEnd,
-          yearStart,
           yearsExperience,
+          collegeName,
+          yearStart,
+          yearEnd,
         } = doc.data();
 
         info.push({
           ...doc.data(),
           id: doc.id,
-          knowledge,
-          city,
-          collegeName,
-          email,
-          firstName,
-          jobTitle,
-          lastName,
-          number,
-          pass,
           qualificationLevel,
           qualificationName,
-          skills,
-          username,
-          yearEnd,
-          yearStart,
           yearsExperience,
+          collegeName,
+          yearStart,
+          yearEnd,
         });
       });
 
-      setUserInfo(info);
+      setUserExperience(info);
       getData();
     });
   }
 
-  useEffect(() => getUserInfo(), [username]);
+  useEffect(() => getUserAbout(), [username]);
 
   const getData = async () => {
     try {
@@ -96,7 +130,7 @@ function UserProfile({ navigation }) {
       // error reading value
     }
   };
-  //note: the image of the horizontal line in the flatlist for structure is temporary until better styling is done. looks bad in code.
+
   return (
     <View style={styles.container}>
       <Text style={styles.company_username}>{username}</Text>
@@ -107,45 +141,59 @@ function UserProfile({ navigation }) {
           source={require("../assets/company_profile.png")}
         />
       </View>
-
-      <View style={styles.buttons}>
+      <View style={styles.profileButttons1}>
         <TouchableOpacity
-          style={styles.logOutButton}
+          style={styles.logout_b}
           onPress={() => navigation.navigate("HomeNotLoggedIn")}
         >
-          <Text style={styles.buttonTopNavText}>Log out</Text>
+          <Text style={styles.buttonText2}>Log out</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.buttonTopNav}
-          onPress={() => navigation.navigate("UserViewJobs")}
+          style={styles.viewjobs_b}
+          onPress={() => navigation.navigate("UserViewJob")}
         >
-          <Text style={styles.buttonTopNavText}>View active applicaitons</Text>
+          <Text style={styles.buttonText2}>View Jobs</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Image
+        style={{
+          width: 500,
+          opacity: 0.4,
+          height: 2,
+          marginRight: 40,
+          alignSelf: "center",
+          marginTop: 5,
+        }}
+        source={require("../assets/line.png")}
+      />
+
+      <View style={styles.profileButttons2}>
+        <TouchableOpacity style={styles.pb1} onPress={() => getUserAbout()}>
+          <Text style={styles.buttonText}>About</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.pb2} onPress={() => getUserSkill()}>
+          <Text style={styles.buttonText}>Skills</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.pb3}
+          onPress={() => getUserExperience()}
+        >
+          <Text style={styles.buttonText}>Experience</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.mainContainer}>
         <FlatList
-          data={userInfo}
+          data={userAbout}
           scrollEnabled={scroll}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.innerContainer}>
-              <Text style={styles.experience_Head}>User Information</Text>
-
-              <Image
-                style={{
-                  width: 400,
-                  opacity: 0.2,
-                  height: 1,
-                  marginRight: 35,
-                  alignSelf: "center",
-                  marginTop: 5,
-                }}
-                source={require("../assets/line.png")}
-              />
-
               <Text style={styles.info_titles}>First name</Text>
               <Text style={styles.company_info}>{item.firstName}</Text>
 
@@ -161,23 +209,34 @@ function UserProfile({ navigation }) {
               <Text style={styles.info_titles}>Number</Text>
               <Text style={styles.company_info}>{item.number}</Text>
 
-              <Text style={styles.experience_Head}>User experience</Text>
-
-              <Image
-                style={{
-                  width: 400,
-                  opacity: 0.2,
-                  height: 1,
-                  marginRight: 35,
-                  alignSelf: "center",
-                  marginTop: 5,
-                }}
-                source={require("../assets/line.png")}
-              />
-
+              <Text style={styles.info_titles}>City</Text>
+              <Text style={styles.company_info}>{item.city}</Text>
+            </View>
+          )}
+        />
+        <FlatList
+          data={userSkill}
+          scrollEnabled={scroll}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.innerContainer}>
               <Text style={styles.info_titles}>Skills</Text>
               <Text style={styles.company_info}>{item.skills}</Text>
 
+              <Text style={styles.info_titles}>knowledge</Text>
+              <Text style={styles.company_info}>{item.Knowledge}</Text>
+            </View>
+          )}
+        />
+
+        <FlatList
+          data={userExperience}
+          scrollEnabled={scroll}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.innerContainer}>
               <Text style={styles.info_titles}>Qualification Level</Text>
               <Text style={styles.company_info}>{item.qualificationLevel}</Text>
 
@@ -187,11 +246,14 @@ function UserProfile({ navigation }) {
               <Text style={styles.info_titles}>Years experience</Text>
               <Text style={styles.company_info}>{item.yearsExperience}</Text>
 
-              <Text style={styles.info_titles}>Current Employment</Text>
-              <Text style={styles.company_info}>{item.jobTitle}</Text>
-
               <Text style={styles.info_titles}>College</Text>
               <Text style={styles.company_info}>{item.collegeName}</Text>
+
+              <Text style={styles.info_titles}>Year start</Text>
+              <Text style={styles.company_info}>{item.yearStart}</Text>
+
+              <Text style={styles.info_titles}>Year finished</Text>
+              <Text style={styles.company_info}>{item.yearEnd}</Text>
             </View>
           )}
         />
@@ -247,13 +309,13 @@ function UserProfile({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F1F1F1",
+    backgroundColor: "ghostwhite",
     alignItems: "center",
     justifyContent: "center",
   },
   mainContainer: {
-    flex: 2,
-    width: 350,
+    flex: 3,
+    width: 500,
     margin: 15,
     backgroundColor: "ghostwhite",
     shadowColor: "#000",
@@ -262,8 +324,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     borderRadius: 40,
     borderWidth: 2,
-    borderColor: "navy",
+    borderColor: "grey",
   },
+  innerContainer: {},
   navBar: {
     flexDirection: "row",
     flex: 4,
@@ -353,6 +416,99 @@ const styles = StyleSheet.create({
     color: "navy",
     fontSize: 20,
     paddingTop: 15,
+  },
+  profileButttons1: {
+    flexDirection: "row",
+    marginBottom: 10,
+    alignSelf: "left",
+  },
+  profileButttons2: {
+    flexDirection: "row",
+    marginTop: 10,
+    alignSelf: "left",
+    marginLeft: 10,
+  },
+  pb1: {
+    padding: 5,
+    backgroundColor: "navy",
+    borderRadius: 0,
+    borderColor: "white",
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
+    width: 120,
+  },
+  pb2: {
+    padding: 5,
+    backgroundColor: "navy",
+    borderRadius: 0,
+    borderColor: "white",
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
+    width: 120,
+    marginLeft: 5,
+  },
+  pb3: {
+    padding: 5,
+    backgroundColor: "navy",
+    borderRadius: 0,
+    borderColor: "white",
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
+    width: 120,
+    marginLeft: 5,
+  },
+  pb4: {
+    padding: 5,
+    backgroundColor: "navy",
+    borderRadius: 40,
+    borderColor: "white",
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+    textAlign: "center",
+  },
+  logout_b: {
+    backgroundColor: "grey",
+    borderRadius: 40,
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
+    width: 120,
+    height: 25,
+    marginLeft: 10,
+  },
+  viewjobs_b: {
+    backgroundColor: "grey",
+    borderRadius: 40,
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
+    width: 120,
+    marginLeft: 130,
+  },
+  buttonText2: {
+    color: "white",
+    fontSize: 15,
+    textAlign: "center",
   },
 });
 
