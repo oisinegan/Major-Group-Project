@@ -91,11 +91,11 @@ function RegisterCompany({ navigation }) {
 
       <ScrollView style={styles.container}>
         <Text style={styles.title}>Create an Account</Text>
-        <Text style={styles.titleMini}>General Information</Text>
+        <Text style={styles.titleMini}>General information</Text>
         <TextInput
           value={username}
           onChangeText={(username) => setUsername(username)}
-          placeholder="Company Username"
+          placeholder="Username"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
@@ -133,7 +133,7 @@ function RegisterCompany({ navigation }) {
         <TextInput
           value={info}
           onChangeText={(info) => setInfo(info)}
-          placeholder="Summary of Company"
+          placeholder="Summary of company"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
@@ -147,14 +147,14 @@ function RegisterCompany({ navigation }) {
         <TextInput
           value={industry}
           onChangeText={(industry) => setIndustry(industry)}
-          placeholder="Industry Type"
+          placeholder="Industry type"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
         <TextInput
           value={companySize}
           onChangeText={(companySize) => setCompanySize(companySize)}
-          placeholder="Company Size"
+          placeholder="Company size"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
