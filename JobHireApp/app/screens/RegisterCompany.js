@@ -27,30 +27,32 @@ import { db } from "../database/config";
 const deviceWidth = Dimensions.get("window").width;
 
 function RegisterCompany({ navigation }) {
+  //Info
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [number, setNumber] = useState("");
+  const [address, setAddress] = useState("");
 
-  const [founded, setFounded] = useState("");
   const [info, setInfo] = useState("");
+  const [founded, setFounded] = useState("");
   const [industry, setIndustry] = useState("");
   const [companySize, setCompanySize] = useState("");
-  const [address, setAddress] = useState("");
 
   function companyCreate() {
     //Submit data
     //db= databse link (database/config),
-    //"jobseekers" = table name on firebase
+    //"company" = table name on firebase
     // username = id person being written to database,
     setDoc(doc(db, "Company", username), {
       username: username,
-      founded: founded,
-      info: info,
-      address: address,
-      email: email,
       pass: pass,
+      email: email,
       number: number,
+      address: address,
+
+      info: info,
+      founded: founded,
       industry: industry,
       companySize: companySize,
     })
@@ -67,6 +69,7 @@ function RegisterCompany({ navigation }) {
         ]);
       });
   } ////end companyCreate
+
   /******* METHOD TO STORE VARIABLE IN ASYNC STORAGE *******/
   //Pass username and store it in async storage
   const storeDataToAsyncStorage = async (value) => {

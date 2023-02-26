@@ -12,35 +12,16 @@ import {
   Image,
   Dimensions,
   ImageBackground,
+  StatusBar,
   SafeAreaView,
   ScrollView,
-  StatusBar,
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { LinearGradient } from "expo-linear-gradient";
 //Database imports
 import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
-
-//Stream chat api imports
-import {
-  Chat,
-  OverlayProvider,
-  ChannelList,
-  Channel,
-  MessageList,
-  MessageInput,
-  StreamChat,
-} from "stream-chat";
-
-// client-side you initialize the Chat client with your API key
-
-// client-side you initialize the Chat client with your API key
-const client = StreamChat.getInstance("83shajg3euaq", {
-  timeout: 6000,
-});
 
 // Get device width
 const deviceWidth = Dimensions.get("window").width;
@@ -49,12 +30,12 @@ function RegisterJobseeker({ navigation }) {
   //Info
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastname] = useState("");
-  const [number, setNumbername] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [number, setNumber] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
   //Qualifications
   const [qualificationName, setQualificationName] = useState("");
   const [qualificationLevel, setQualificationLevel] = useState("");
@@ -74,13 +55,14 @@ function RegisterJobseeker({ navigation }) {
     //"jobseekers" = table name on firebase
     // username = id person being written to database,
     setDoc(doc(db, "Jobseekers", username), {
+      firstName: firstName,
+      lastName: lastName,
       username: username,
       email: email,
       pass: pass,
-      firstName: firstName,
-      lastName: lastName,
       number: number,
       city: city,
+      country: country,
 
       qualificationName: qualificationName,
       qualificationLevel: qualificationLevel,
@@ -172,7 +154,7 @@ function RegisterJobseeker({ navigation }) {
         />
         <TextInput
           value={number}
-          onChangeText={(number) => setNumbername(number)}
+          onChangeText={(number) => setNumber(number)}
           placeholder="Number"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
@@ -195,18 +177,14 @@ function RegisterJobseeker({ navigation }) {
         <Text style={styles.titleMini}>Qualification</Text>
         <TextInput
           value={qualificationName}
-          onChangeText={(qualificationName) =>
-            setQualificationName(qualificationName)
-          }
+          onChangeText={(qualificationName) => setQualificationName(qualificationName)}
           placeholder="Qualification Name"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
         <TextInput
           value={qualificationLevel}
-          onChangeText={(qualificationLevel) =>
-            setQualificationLevel(qualificationLevel)
-          }
+          onChangeText={(qualificationLevel) => setQualificationLevel(qualificationLevel)}
           placeholder="Level"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
