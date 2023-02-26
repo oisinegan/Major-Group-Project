@@ -131,7 +131,7 @@ function RegisterJobseeker({ navigation }) {
       </TouchableOpacity>
       <ScrollView style={styles.container}>
         <Text style={styles.title}>Create an Account</Text>
-        <Text style={styles.titleMini}>General information</Text>
+        <Text style={styles.titleMini}>General Information</Text>
         <TextInput
           value={firstName}
           onChangeText={(firstName) => setFirstName(firstName)}
@@ -214,14 +214,14 @@ function RegisterJobseeker({ navigation }) {
         <TextInput
           value={collegeName}
           onChangeText={(collegeName) => setCollegeName(collegeName)}
-          placeholder="University/school name"
+          placeholder="University/School Name"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
         <TextInput
           value={yearStart}
           onChangeText={(yearStart) => setYearStart(yearStart)}
-          placeholder="Start year"
+          placeholder="Start Year"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
@@ -237,7 +237,7 @@ function RegisterJobseeker({ navigation }) {
         <TextInput
           value={jobTitle}
           onChangeText={(jobTitle) => setJobTitle(jobTitle)}
-          placeholder="Job title"
+          placeholder="Job Title"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
@@ -246,11 +246,11 @@ function RegisterJobseeker({ navigation }) {
           onChangeText={(yearsExperience) =>
             SetYearsExperience(yearsExperience)
           }
-          placeholder="Years experience"
+          placeholder="Years Experience"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
-        <Text style={styles.titleMini}>Knowledge and skills</Text>
+        <Text style={styles.titleMini}>Knowledge and Skills</Text>
         <TextInput
           value={skills}
           onChangeText={(skills) => setSkills(skills)}
