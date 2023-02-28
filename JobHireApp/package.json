@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/html-elements": "^0.4.1",
     "@expo/webpack-config": "^0.17.0",
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-native-community/netinfo": "9.3.0",
@@ -39,6 +40,7 @@
     "react-native-svg": "12.3.0",
     "react-native-unimodules": "^0.14.10",
     "react-native-web": "~0.18.7",
+    "react-native-webview": "^11.26.1",
     "react-navigation-stack": "^2.10.4",
     "react-navigation-tabs": "^2.11.2",
     "stream-chat-expo": "^5.9.1"

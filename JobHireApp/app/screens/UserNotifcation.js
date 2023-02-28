@@ -11,20 +11,22 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   PermissionsAndroid,
+  _ScrollView,
 } from "react-native";
 import * as React from "react";
 import UserNotificationScreen from "./UserNotificationScreen";
+import { WebView } from "react-native-webview";
+import { A } from "@expo/html-elements";
 
 function UserNotification({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text>user notification page</Text>
-      <View>
-        <Button
-          title="clicks on notification screen"
-          onPress={() => navigation.navigate("UserNotificationScreen")}
-        />
-      </View>
+      <ScrollView>
+        <Text>Hellos</Text>
+
+        <A href="https://172.20.10.4:3000">Go to Google</A>
+        <Text>Hellos</Text>
+      </ScrollView>
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
@@ -77,7 +79,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
+  webView: {
+    backgroundColor: "red",
+    width: "100%",
+    flex: "1",
+  },
   navBar: {
     flexDirection: "row",
     flex: 1,
