@@ -95,6 +95,7 @@ export default function App() {
             <Stack.Screen
               name="UserMessageScreen"
               component={UserMessageScreen}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="CompanyMessageScreen"
@@ -133,6 +134,7 @@ export default function App() {
             <Stack.Screen
               name="UserNotificationScreen"
               component={UserNotificationScreen}
+              options={{ headerShown: true }}
             />
             <Stack.Screen
               name="CompanyNotificationScreen"

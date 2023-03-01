@@ -17,15 +17,53 @@ import * as React from "react";
 import UserNotificationScreen from "./UserNotificationScreen";
 import { WebView } from "react-native-webview";
 import { A } from "@expo/html-elements";
+import { useState, useEffect } from "react/cjs/react.development";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function UserNotification({ navigation }) {
+  const [username, setUsername] = useState("");
+  const [url, setUrl] = useState("");
+  
+  /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
+  //Pass username and store it in async storage
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("Username");
+      console.log("test");
+      var usernameFromAsyncStorage = value.toString();
+      if (value !== null) {
+        // value previously stored
+        setUsername(usernameFromAsyncStorage);
+        console.log("test");
+      }
+    } catch (e) {
+      // error reading value
+      console.log("NOT WORKING-ERROR");
+    }
+  };
+
+  function createUrl() {
+    getData();
+  
+    setUrl("https://192.168.0.7:3000?name=" + username);
+  }
+
+  useEffect(() => createUrl(), [username]);
+
   return (
     <View style={styles.container}>
       <ScrollView>
         <Text>Hellos</Text>
 
-        <A href="https://172.20.10.4:3000">Go to Google</A>
+        <A href={url}>Go to Factime</A>
+
         <Text>Hellos</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("UserNotificationScreen")}
+        >
+          <Text>Go to webView test</Text>
+        </TouchableOpacity>
       </ScrollView>
       <View style={styles.navBar}>
         <TouchableOpacity

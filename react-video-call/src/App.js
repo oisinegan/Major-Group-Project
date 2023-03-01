@@ -1,24 +1,53 @@
 import "./App.css";
-import React, { useState } from "react";
-import AgoraUIKit from "agora-react-uikit";
+
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  redirect,
+} from "react-router-dom";
+
+import Login from "./pages/login";
+import VideoChat from "./pages/videochat";
+
+import React, { useEffect, useState } from "react";
+
+import { ReactSession } from "react-client-session";
 
 function App() {
-  const [videoCall, setVideoCall] = useState(true);
+  function checkUrl() {
+    //Url of page sent from expo app
+    const url = window.location.href;
 
-  const rtcProps = {
-    appId: "62cbe9f442384f1f89ce5d8dc97de70e",
-    channel: "Test",
-  };
-  const callbacks = {
-    EndCall: () => setVideoCall(false),
-  };
-  return videoCall ? (
-    <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
-      <h2>Camera not working</h2>
-      <AgoraUIKit rtcProps={rtcProps} callbacks={callbacks} />
-    </div>
-  ) : (
-    <h3 onClick={() => setVideoCall(true)}>Join</h3>
+    //Get username from url
+    const startIndex = url.indexOf("=") + 1;
+    const endIndex = url.indexOf("!");
+
+    //Get channel name from url
+    const channelStartIndex = url.indexOf("!") + 1;
+    const channelEndIndex = url.length;
+
+    //Username
+    const name = url.substring(startIndex, endIndex);
+
+    //Channel Name
+    const channelName = url.substring(channelStartIndex, channelEndIndex);
+
+    //Store username in session storage
+    ReactSession.set("Username", name);
+    ReactSession.set("ChannelName", channelName);
+
+    //Redirect to home page
+    redirect("/");
+  }
+  useEffect(checkUrl);
+
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/videochat" element={<VideoChat />} />
+    </Routes>
   );
 }
 
