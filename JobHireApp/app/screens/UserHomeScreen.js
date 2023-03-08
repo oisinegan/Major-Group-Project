@@ -26,7 +26,9 @@ import {
   getDocs,
   addDoc,
   updateDoc,
+  query,
   arrayUnion,
+  where,
 } from "firebase/firestore";
 import { db } from "../database/config";
 
@@ -37,23 +39,7 @@ function UserHomeScreen({ navigation }) {
 
   //Used store username read from async storage
   const [username, setUsername] = useState("");
-  useEffect(() => {
-    //Read all data from job adverts database
-    getDocs(collection(db, "Adverts")).then((docSnap) => {
-      let advert = [];
-      let numJobs = 0;
-      docSnap.forEach((doc) => {
-        const { title, info, wage, type } = doc.data();
-        advert.push({ ...doc.data(), id: doc.id, title, info, wage, type });
-        numJobs += 1;
-      });
-      setNumberJobs(numJobs);
-      setAdvertsUser(advert);
-
-      //Call method to read username from async storage
-      getData();
-    });
-  }, []);
+  useEffect(readAllJobs, []);
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
   const getData = async () => {
@@ -69,8 +55,65 @@ function UserHomeScreen({ navigation }) {
     }
   };
 
+  function readAllJobs() {
+    //Read all data from job adverts database
+    getDocs(collection(db, "Adverts")).then((docSnap) => {
+      let advert = [];
+      let numJobs = 0;
+      docSnap.forEach((doc) => {
+        const { title, info, wage, type } = doc.data();
+        advert.push({ ...doc.data(), id: doc.id, title, info, wage, type });
+        numJobs += 1;
+      });
+      setNumberJobs(numJobs);
+      setAdvertsUser(advert);
+
+      //Call method to read username from async storage
+      getData();
+    });
+  }
+
+  //Search job titles, if none found search company names
   function searchJobs() {
-    console.log("work");
+    if (searchParam.toString() === "") {
+      readAllJobs();
+    } else {
+      setAdvertsUser([]);
+      //Read  data from job adverts database where title = search parameter
+      getDocs(
+        query(collection(db, "Adverts"), where("title", "==", searchParam))
+      ).then((docSnap) => {
+        let advert = [];
+        let numJobs = 0;
+        docSnap.forEach((doc) => {
+          const { title, info, wage, type } = doc.data();
+          advert.push({ ...doc.data(), id: doc.id, title, info, wage, type });
+          numJobs += 1;
+        });
+
+        setNumberJobs(numJobs);
+
+        setAdvertsUser(advert);
+        if (numberJobs === 0) {
+          searchCompany();
+        }
+      });
+    }
+  }
+  function searchCompany() {
+    getDocs(
+      query(collection(db, "Adverts"), where("company", "==", searchParam))
+    ).then((docSnap) => {
+      let advert = [];
+      let numJobs = 0;
+      docSnap.forEach((doc) => {
+        const { title, info, wage, type } = doc.data();
+        advert.push({ ...doc.data(), id: doc.id, title, info, wage, type });
+        numJobs += 1;
+      });
+      setNumberJobs(numJobs);
+      setAdvertsUser(advert);
+    });
   }
 
   async function writeUserToJobAdvertDB(item) {
@@ -166,16 +209,6 @@ function UserHomeScreen({ navigation }) {
           <Image
             style={{ width: 25, height: 25, margin: 15 }}
             source={require("../assets/Msg.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navButtons}
-          onPress={() => navigation.navigate("UserNotification")}
-        >
-          <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Noti.png")}
           />
         </TouchableOpacity>
 

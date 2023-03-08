@@ -284,16 +284,6 @@ function UserProfile({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("UserNotification")}
-        >
-          <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Noti.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navButtons}
           onPress={() => navigation.navigate("UserProfile")}
         >
           <Image
@@ -333,6 +323,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
+    width: "100%",
     position: "absolute",
     bottom: 0,
     zIndex: 999,

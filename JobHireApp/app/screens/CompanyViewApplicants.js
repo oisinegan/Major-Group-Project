@@ -13,7 +13,11 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import * as React from "react";
-import { useState, useEffect } from "react/cjs/react.development";
+import {
+  useState,
+  useEffect,
+  useLayoutEffect,
+} from "react/cjs/react.development";
 import {
   collection,
   doc,
@@ -38,6 +42,7 @@ import {
 function CompanyViewApplicants({ route, navigation }) {
   const { item } = route.params;
   const [Applicants, setApplicants] = useState([]);
+  const [ApplicantData, setApplicantData] = useState([]);
 
   //Used store username read from async storage
   const [username, setUsername] = useState("");
@@ -57,21 +62,48 @@ function CompanyViewApplicants({ route, navigation }) {
     }
   };
 
-  //Read applicants on selected job
-  function readApplicantsOnAdvert() {
+  function readApplicantData() {
     getData();
-    //Read  data from job adverts database where username(Gotten from login) equals company in adverts
-    getDocs(
-      query(collection(db, "Adverts"), where("title", "==", item.id))
-    ).then((docSnap) => {
-      let applicantsForAd = [];
+    let info = [];
+    let test = [];
+    console.log("Before loop");
+    console.log(ApplicantData);
+    for (var i = 0; i < item.Applicants.length; i++) {
+      getDocs(
+        query(
+          collection(db, "Jobseekers"),
+          where("username", "==", item.Applicants[i])
+        )
+      ).then((docSnap) => {
+        docSnap.forEach((doc) => {
+          const {
+            city,
+            email,
+            firstName,
+            lastName,
+            number,
+            username,
+            jobTitle,
+          } = doc.data();
 
-      docSnap.forEach((doc) => {
-        applicantsForAd.push({ ...doc.data(), id: doc.id });
+          info.push({
+            ...doc.data(),
+            id: doc.id,
+            city,
+            email,
+            firstName,
+            lastName,
+            number,
+            username,
+            jobTitle,
+          });
+        });
+
+        setApplicantData(info);
       });
-      setApplicants(applicantsForAd[0].Applicants);
-      console.log(Applicants);
-    });
+    }
+    console.log("Outsude if loop");
+    console.log(ApplicantData);
   }
 
   function createTextChannel(user) {
@@ -90,13 +122,12 @@ function CompanyViewApplicants({ route, navigation }) {
     // fetch the channel state, subscribe to future updates
     const state = channel.watch();
 
-    navigation.navigate("UserMessageScreen", { channel: channel });
+    navigation.navigate("CompanyMessageScreen", { channel: channel });
   }
 
-  useEffect(() => readApplicantsOnAdvert(), []);
-
-  //Company home -> more info and view applicants
-  // regardless of number of applicants redirect to companyViewApplicants and display msg
+  //With one use effect, the applicants display for a second then disappears
+  useEffect(readApplicantData, []);
+  useEffect(readApplicantData, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -115,11 +146,9 @@ function CompanyViewApplicants({ route, navigation }) {
 
         <Text style={styles.blank}></Text>
       </View>
-
-      <View style={styles.mainContainer}>
-        <FlatList
-          data={Applicants}
-          renderItem={({ item }) => (
+      <ScrollView style={styles.mainContainer}>
+        {ApplicantData.map((data) => {
+          return (
             <View style={styles.innerContainer}>
               <View style={styles.infoContainer}>
                 <View style={styles.imageContainer}>
@@ -129,8 +158,8 @@ function CompanyViewApplicants({ route, navigation }) {
                   />
                 </View>
                 <View style={styles.innerInfoContainer}>
-                  <Text style={styles.applicantName}>{item}</Text>
-                  <Text style={styles.applicantEmail}>Email@email.com</Text>
+                  <Text style={styles.applicantName}>{data.username}</Text>
+                  <Text style={styles.applicantEmail}>{data.email}</Text>
                 </View>
               </View>
               <View style={styles.buttonContainer}>
@@ -148,9 +177,9 @@ function CompanyViewApplicants({ route, navigation }) {
                 </TouchableOpacity>
               </View>
             </View>
-          )}
-        />
-      </View>
+          );
+        })}
+      </ScrollView>
 
       <View style={styles.navBar}>
         <TouchableOpacity
@@ -289,6 +318,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     position: "absolute",
     bottom: 0,
+    width: "100%",
     zIndex: 999,
   },
   navButtons: {
@@ -297,3 +327,24 @@ const styles = StyleSheet.create({
 });
 
 export default CompanyViewApplicants;
+
+/*
+//Read applicants on selected job
+  function readApplicantsOnAdvert() {
+    //Read  data from job adverts database where username(Gotten from login) equals company in adverts
+    getDocs(
+      query(collection(db, "Adverts"), where("title", "==", item.id))
+    ).then((docSnap) => {
+      let applicantsForAd = [];
+
+      docSnap.forEach((doc) => {
+        applicantsForAd.push({ ...doc.data(), id: doc.id });
+      });
+      setApplicants(applicantsForAd[0].Applicants);
+      console.log(applicantsForAd[0].Applicants);
+      console.log(Applicants);
+    });
+
+  }
+
+*/

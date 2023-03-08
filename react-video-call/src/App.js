@@ -4,14 +4,13 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
   redirect,
 } from "react-router-dom";
 
 import Login from "./pages/login";
 import VideoChat from "./pages/videochat";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { ReactSession } from "react-client-session";
 

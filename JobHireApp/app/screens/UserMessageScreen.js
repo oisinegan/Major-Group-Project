@@ -29,8 +29,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 function UserMessageScreen({ route, navigation }) {
   const { channel } = route.params;
   const [username, setUsername] = useState("");
-  const [channelTitleCompany, setChannelTitleCompany] = useState("");
-  const [channelTitleUser, setChannelTitleUser] = useState("");
   const [url, setUrl] = useState("");
 
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
@@ -55,7 +53,7 @@ function UserMessageScreen({ route, navigation }) {
     getData();
     console.log(username);
     console.log(channel.id);
-    setUrl("https://192.168.0.7:3000?name=" + username + "!" + channel.id);
+    setUrl("https://172.20.10.4:3000?name=" + username + "!" + channel.id);
   }
 
   useEffect(() => createUrl(), [username]);

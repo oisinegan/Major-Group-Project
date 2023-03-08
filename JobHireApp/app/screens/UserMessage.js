@@ -17,18 +17,9 @@ import * as React from "react";
 import UserMessageScreen from "./UserMessageScreen";
 import { useState, useEffect } from "react/cjs/react.development";
 import { ChannelList } from "stream-chat-expo";
-import { chatApiKey, chatUserId } from "../config/chatConfig";
+
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const filters = {
-  members: {
-    $in: [chatUserId],
-  },
-};
-
-const sort = {
-  last_message_at: -1,
-};
 
 function UserMessage({ route, navigation }) {
   //Used store username read from async storage
@@ -101,16 +92,6 @@ function UserMessage({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("UserNotification")}
-        >
-          <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Noti.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navButtons}
           onPress={() => navigation.navigate("UserProfile")}
         >
           <Image
@@ -143,8 +124,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     position: "absolute",
+    width: "100%",
     bottom: 0,
     zIndex: 999,
   },

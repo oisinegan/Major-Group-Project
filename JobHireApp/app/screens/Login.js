@@ -36,7 +36,7 @@ import {
 const deviceWidth = Dimensions.get("window").width;
 
 // client-side you initialize the Chat client with your API key
-const client = StreamChat.getInstance("83shajg3euaq", {
+const client = StreamChat.getInstance("pvj8fdby4epj", {
   timeout: 6000,
 });
 

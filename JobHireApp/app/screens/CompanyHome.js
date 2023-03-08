@@ -41,6 +41,7 @@ function CompanyHomeScreen({ navigation }) {
   const [AdvertsCompany, setAdvertsCompany] = useState([]);
   const [Applicants, setApplicants] = useState([]);
   const [numberJobs, setNumberJobs] = useState([]);
+  const [searchParam, setSearchParam] = useState([]);
 
   //Model
   const [modalVisible, setModalVisible] = useState(false);
@@ -113,6 +114,31 @@ function CompanyHomeScreen({ navigation }) {
 
   useEffect(() => readCompanyAdverts(), [username]);
 
+  //Search job titles, if none found search company names
+  function searchJobs() {
+    if (searchParam.toString() === "") {
+      readCompanyAdverts();
+    } else {
+      setAdvertsCompany([]);
+      //Read  data from job adverts database where title = search parameter
+      getDocs(
+        query(collection(db, "Adverts"), where("title", "==", searchParam))
+      ).then((docSnap) => {
+        let advert = [];
+        let numJobs = 0;
+        docSnap.forEach((doc) => {
+          const { title, info, wage, type } = doc.data();
+          advert.push({ ...doc.data(), id: doc.id, title, info, wage, type });
+          numJobs += 1;
+        });
+
+        setNumberJobs(numJobs);
+
+        setAdvertsCompany(AdvertsCompany);
+      });
+    }
+  }
+
   const flatListHeader = () => {
     return (
       <View style={styles.headerFooterStyle}>
@@ -128,15 +154,14 @@ function CompanyHomeScreen({ navigation }) {
       <View style={styles.topNav}>
         <View style={styles.seachBarContainer}>
           <TextInput
+            value={searchParam}
+            onChangeText={(searchParam) => setSearchParam(searchParam)}
             style={styles.seachBar}
             placeholder="Search Jobs"
           ></TextInput>
         </View>
-        <TouchableOpacity
-          style={styles.buttonTopNav}
-          onPress={() => navigation.navigate("HomeNotLoggedIn")}
-        >
-          <Text style={styles.buttonTopNavText}>Log out</Text>
+        <TouchableOpacity style={styles.buttonTopNav} onPress={searchJobs}>
+          <Text style={styles.buttonTopNavText}>Search</Text>
         </TouchableOpacity>
       </View>
 

@@ -100,6 +100,7 @@ export default function App() {
             <Stack.Screen
               name="CompanyMessageScreen"
               component={CompanyMessageScreen}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="UserNotification"
