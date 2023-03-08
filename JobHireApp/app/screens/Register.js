@@ -31,6 +31,66 @@ function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
 
+  function jobseekersCreate() {
+    //Submit data
+    //db= databse link (database/config),
+    //"jobseekers" = table name on firebase
+    // username = id person being written to database,
+    setDoc(doc(db, "Jobseekers", username), {
+      username: username,
+      qualifications: qualifications,
+      experience: experience,
+      skills: skills,
+      email: email,
+      pass: pass,
+    })
+      .then(() => {
+        //Successfully written to database
+        Alert.alert("Success", "Data Submitted", [
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ]);
+      })
+      .catch((error) => {
+        //failed
+        Alert.alert("ERROR", "Data not submitted", [
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ]);
+      });
+  } ////end jobseekersCreate
+
+  function companyCreate() {
+    //Submit data
+    //db= databse link (database/config),
+    //"jobseekers" = table name on firebase
+    // username = id person being written to database,
+    setDoc(doc(db, "Company", username), {
+      username: username,
+      email: email,
+      pass: pass,
+    })
+      .then(() => {
+        //Successfully written to database
+        Alert.alert("Success", "Data Submitted", [
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ]);
+      })
+      .catch((error) => {
+        //failed
+        Alert.alert("ERROR", "Data not submitted", [
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ]);
+      });
+  } ////end companyCreate
+  /******* METHOD TO STORE VARIABLE IN ASYNC STORAGE *******/
+  //Pass username and store it in async storage
+  const storeDataToAsyncStorage = async (value) => {
+    try {
+      await AsyncStorage.setItem("Username", value);
+    } catch (e) {
+      // saving error
+    }
+  };
+
   return (
     <View style={styles.imageContainer}>
       <ImageBackground
