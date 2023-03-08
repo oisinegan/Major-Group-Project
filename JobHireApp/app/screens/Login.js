@@ -226,14 +226,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingBottom: 30,
     borderRadius: 50,
-    borderColor: "navy",
+    borderColor: "midnightblue",
   },
   title: {
     marginTop: 25,
     marginBottom: 35,
     fontSize: 40,
     fontStyle: "",
-    color: "navy",
+    color: "midnightblue",
   },
   textInput: {
     marginBottom: 50,
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     width: 100,
     borderRadius: 4,
     height: 40,
-    backgroundColor: "navy",
+    backgroundColor: "midnightblue",
     marginBottom: 30,
   },
   footer: {

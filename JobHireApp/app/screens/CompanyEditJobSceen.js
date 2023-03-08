@@ -20,6 +20,7 @@ import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 function CompanyEditJobScreen({ route, navigation }) {
+  //this one works fine
   const { item } = route.params;
 
   const [title, setTitle] = useState("");
@@ -33,11 +34,6 @@ function CompanyEditJobScreen({ route, navigation }) {
   const [qualification, setQualification] = useState("");
   const [knowledge, setKnowledge] = useState("");
 
-  //Used store username read from async storage
-  const [username, setUsername] = useState("");
-
-  /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
-  //Pass username and store it in async storage
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("Username");

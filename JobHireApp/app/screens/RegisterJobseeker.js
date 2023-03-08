@@ -177,14 +177,18 @@ function RegisterJobseeker({ navigation }) {
         <Text style={styles.titleMini}>Qualification</Text>
         <TextInput
           value={qualificationName}
-          onChangeText={(qualificationName) => setQualificationName(qualificationName)}
+          onChangeText={(qualificationName) =>
+            setQualificationName(qualificationName)
+          }
           placeholder="Qualification Name"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
         <TextInput
           value={qualificationLevel}
-          onChangeText={(qualificationLevel) => setQualificationLevel(qualificationLevel)}
+          onChangeText={(qualificationLevel) =>
+            setQualificationLevel(qualificationLevel)
+          }
           placeholder="Level"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
@@ -267,7 +271,7 @@ function RegisterJobseeker({ navigation }) {
             <Text
               style={{
                 textDecorationLine: "underline",
-                color: "navy",
+                color: "midnightblue",
                 fontSize: 20,
               }}
               onPress={() => navigation.navigate("HomeNotLoggedIn")}
@@ -289,7 +293,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAF9F6",
   },
   backButton: {
-    color: "navy",
+    color: "midnightblue",
     textAlign: "left",
     fontSize: 20,
     lineHeight: 40,
@@ -298,19 +302,19 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 35,
     fontSize: 40,
-    color: "navy",
+    color: "midnightblue",
     marginLeft: 10,
   },
   titleMini: {
     fontSize: 25,
-    color: "navy",
+    color: "midnightblue",
     marginLeft: 20,
     marginBottom: 15,
   },
 
   input: {
     borderWidth: 1,
-    borderColor: "navy",
+    borderColor: "midnightblue",
     padding: 15,
     width: "82.5%",
     marginBottom: 20,
@@ -324,7 +328,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    backgroundColor: "navy",
+    backgroundColor: "midnightblue",
     padding: 15,
     borderRadius: 50,
     paddingHorizontal: "27%",
