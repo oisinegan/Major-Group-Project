@@ -25,34 +25,62 @@ function CompanyProfileScreen({ navigation }) {
   const [scroll, setScroll] = useState(true);
   const [username, setUsername] = useState("");
   const [companyInfo, setCompanyInfo] = useState([]);
+  const [companyAbout, setCompanyAbout] = useState([]);
+  const [companyContact, setCompanyContact] = useState([]);
+  const [activeTab, setActiveTab] = useState(0);
 
-  function getCompanyInfo() {
-    getData();
-    //Read all data from logged in company database.
+  function getCompanyAbout() {
+    setActiveTab(1);
+
+    setCompanyContact([]);
+
     getDocs(
       query(collection(db, "Company"), where("username", "==", username))
     ).then((docSnap) => {
       let info = [];
       docSnap.forEach((doc) => {
-        const { address, email, founded, companySize, industry, number } =
-          doc.data();
+        const { address, founded, companySize, industry } = doc.data();
+
         info.push({
           ...doc.data(),
           id: doc.id,
           address,
-          email,
           founded,
           companySize,
           industry,
+        });
+      });
+
+      setCompanyAbout(info);
+      getData();
+    });
+  }
+
+  function getCompanyContact() {
+    setActiveTab(2);
+
+    setCompanyAbout([]);
+    getDocs(
+      query(collection(db, "Company"), where("username", "==", username))
+    ).then((docSnap) => {
+      let info = [];
+      docSnap.forEach((doc) => {
+        const { email, number } = doc.data();
+
+        info.push({
+          ...doc.data(),
+          id: doc.id,
+          email,
           number,
         });
       });
 
-      setCompanyInfo(info);
+      setCompanyContact(info);
+      getData();
     });
   }
 
-  useEffect(() => getCompanyInfo(), [username]);
+  useEffect(() => getCompanyAbout(), [username]);
 
   const getData = async () => {
     try {
@@ -69,142 +97,89 @@ function CompanyProfileScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.company_username}>{username}</Text>
+      <Text style={styles.company_username}>Welcome, {username}.</Text>
 
       <View style={styles.userImg}>
         <Image
-          style={{ width: 100, height: 110, marginTop: 20 }}
-          source={require("../assets/company_profile.png")}
+          style={{
+            width: 180,
+            height: 100,
+            marginTop: 20,
+          }}
+          source={require("../assets/company_profile_pic.png")}
         />
       </View>
 
-      <View style={styles.buttons}>
+      <View style={styles.buttonsTopNav}>
         <TouchableOpacity
-          style={styles.logOutButton}
+          style={styles.profileButttons}
           onPress={() => navigation.navigate("HomeNotLoggedIn")}
         >
-          <Text style={styles.buttonTopNavText}>Log out</Text>
+          <Text style={styles.buttonTextTop}>Log out</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.buttonTopNav}
-          onPress={() => navigation.navigate("CompanyViewJobs")}
+          style={styles.profileButttons}
+          onPress={() => navigation.navigate("UserViewJob")}
         >
-          <Text style={styles.buttonTopNavText}>View listed jobs</Text>
+          <Text style={styles.buttonTextTop}>View Jobs</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Image
+        style={{ width: 600, height: 1, marginBottom: 10 }}
+        source={require("../assets/line.png")}
+      />
+      <View style={styles.profileTabs}>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 1 && styles.activeButton]}
+          onPress={() => getCompanyAbout()}
+        >
+          <Text style={styles.tabText}>About</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 2 && styles.activeButton]}
+          onPress={() => getCompanyContact()}
+        >
+          <Text style={styles.tabText}>Contact</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.mainContainer}>
         <FlatList
-          data={companyInfo}
+          data={companyAbout}
           scrollEnabled={scroll}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.innerContainer}>
-              <Text style={styles.company_info_title}></Text>
-
-              <Text style={styles.info_titles}>Company name</Text>
+              <Text style={styles.info_titles}>Company title</Text>
               <Text style={styles.company_info}>{username}</Text>
-
-              <Image
-                style={{
-                  width: 400,
-                  opacity: 0.2,
-                  height: 1,
-                  marginRight: 35,
-                  alignSelf: "center",
-                  marginTop: 5,
-                }}
-                source={require("../assets/line.png")}
-              />
-
-              <Text style={styles.info_titles}>Address</Text>
-              <Text style={styles.company_info}>{item.address}</Text>
-
-              <Image
-                style={{
-                  width: 400,
-                  opacity: 0.2,
-                  height: 1,
-                  marginRight: 35,
-                  alignSelf: "center",
-                  marginTop: 5,
-                }}
-                source={require("../assets/line.png")}
-              />
-              <Text style={styles.info_titles}>Email</Text>
-              <Text style={styles.company_info}>{item.email}</Text>
-
-              <Image
-                style={{
-                  width: 400,
-                  opacity: 0.2,
-                  height: 1,
-                  marginRight: 35,
-                  alignSelf: "center",
-                  marginTop: 5,
-                }}
-                source={require("../assets/line.png")}
-              />
-              <Text style={styles.info_titles}>Founded</Text>
-              <Text style={styles.company_info}>{item.founded}</Text>
-
-              <Image
-                style={{
-                  width: 400,
-                  opacity: 0.2,
-                  height: 1,
-                  marginRight: 35,
-                  alignSelf: "center",
-                  marginTop: 5,
-                }}
-                source={require("../assets/line.png")}
-              />
-              <Text style={styles.info_titles}>About</Text>
-              <Text style={styles.company_info}>{item.info}</Text>
-
-              <Image
-                style={{
-                  width: 400,
-                  opacity: 0.2,
-                  height: 1,
-                  marginRight: 35,
-                  alignSelf: "center",
-                  marginTop: 5,
-                }}
-                source={require("../assets/line.png")}
-              />
-
-              <Text style={styles.info_titles}>Compant Size</Text>
-              <Text style={styles.company_info}>{item.companySize}</Text>
-
-              <Image
-                style={{
-                  width: 400,
-                  opacity: 0.2,
-                  height: 1,
-                  marginRight: 35,
-                  alignSelf: "center",
-                  marginTop: 5,
-                }}
-                source={require("../assets/line.png")}
-              />
 
               <Text style={styles.info_titles}>Industry</Text>
               <Text style={styles.company_info}>{item.industry}</Text>
 
-              <Image
-                style={{
-                  width: 400,
-                  opacity: 0.2,
-                  height: 1,
-                  marginRight: 35,
-                  alignSelf: "center",
-                  marginTop: 5,
-                }}
-                source={require("../assets/line.png")}
-              />
+              <Text style={styles.info_titles}>Company Size</Text>
+              <Text style={styles.company_info}>{item.companySize}</Text>
+
+              <Text style={styles.info_titles}>Founded</Text>
+              <Text style={styles.company_info}>{item.email}</Text>
+
+              <Text style={styles.info_titles}>Number</Text>
+              <Text style={styles.company_info}>{item.founded}</Text>
+            </View>
+          )}
+        />
+        <FlatList
+          data={companyContact}
+          scrollEnabled={scroll}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.innerContainer}>
+              <Text style={styles.info_titles}>Address</Text>
+              <Text style={styles.company_info}>{item.address}</Text>
 
               <Text style={styles.info_titles}>Number</Text>
               <Text style={styles.company_info}>{item.number}</Text>
@@ -212,9 +187,6 @@ function CompanyProfileScreen({ navigation }) {
           )}
         />
       </View>
-
-      <View style={{ flex: 0.5 }}></View>
-
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
@@ -263,23 +235,18 @@ function CompanyProfileScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F1F1F1",
+    backgroundColor: "ghostwhite",
     alignItems: "center",
     justifyContent: "center",
   },
   mainContainer: {
     flex: 2,
-    width: 350,
+    width: 500,
     margin: 15,
     backgroundColor: "ghostwhite",
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    borderRadius: 40,
-    borderWidth: 2,
-    borderColor: "navy",
+    marginBottom: 120,
   },
+  innerContainer: {},
   navBar: {
     flexDirection: "row",
     flex: 4,
@@ -301,44 +268,45 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   company_username: {
-    textAlign: "center",
-    color: "navy",
-    fontSize: 30,
+    alignSelf: "left",
+    color: "midnightblue",
     fontWeight: "bold",
-    letterSpacing: 0,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    marginTop: 70,
+    fontSize: 30,
+    letterSpacing: 1,
+    marginTop: 60,
+    marginLeft: 20,
   },
-  buttonTopNav: {
-    borderRadius: 10,
-    marginLeft: 5,
-    backgroundColor: "navy",
+  buttonsTopNav: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+  profileButttons: {
+    backgroundColor: "midnightblue",
+    margin: 8,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    borderRadius: 30,
-    marginLeft: 10,
+    borderRadius: 50,
+    width: 100,
     shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  buttons: {
-    flexDirection: "row",
-  },
-  buttonTopNavText: {
+  buttonTextTop: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 15,
     textAlign: "center",
   },
   company_info: {
     color: "black",
     textAlign: "center",
     marginBottom: 10,
-    margin: 2,
+    margin: 5,
     fontWeight: "bold",
     fontSize: 15,
   },
@@ -346,21 +314,56 @@ const styles = StyleSheet.create({
     fontSize: 20,
     opacity: 0.5,
     marginTop: 15,
+    marginLeft: 8,
+    textAlign: "center",
+    fontFamily: "Cochin",
+  },
+
+  experience_Head: {
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "navy",
+    fontSize: 20,
+    paddingTop: 15,
+  },
+
+  profileTabs: {
+    flexDirection: "row",
+  },
+  activeButton: {
+    backgroundColor: "midnightblue",
+  },
+  tab: {
+    borderWidth: 0,
+    width: 100,
+    height: 80,
+    borderRadius: 0,
+    backgroundColor: "darkgrey",
+    margin: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  tabText: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "white",
     textAlign: "center",
   },
-  logOutButton: {
-    borderRadius: 10,
-    marginLeft: 5,
-    backgroundColor: "navy",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 30,
-    marginLeft: 10,
-    width: 100,
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
+
+  buttonText: {
+    color: "white",
+    fontSize: 15,
+    marginTop: 10,
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });
 

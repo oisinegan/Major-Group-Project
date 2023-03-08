@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAF9F6",
   },
   backButton: {
-    color: "navy",
+    color: "midnightblue",
     textAlign: "left",
     fontSize: 20,
     lineHeight: 40,
@@ -217,19 +217,19 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 35,
     fontSize: 40,
-    color: "navy",
+    color: "midnightblue",
     marginLeft: 10,
   },
   titleMini: {
     fontSize: 25,
-    color: "navy",
+    color: "midnightblue",
     marginLeft: 20,
     marginBottom: 15,
   },
 
   input: {
     borderWidth: 1,
-    borderColor: "navy",
+    borderColor: "midnightblue",
     padding: 15,
     width: "82.5%",
     marginBottom: 20,
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    backgroundColor: "navy",
+    backgroundColor: "midnightblue",
     padding: 15,
     borderRadius: 50,
     paddingHorizontal: "27%",

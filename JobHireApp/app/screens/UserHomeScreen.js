@@ -250,16 +250,24 @@ const styles = StyleSheet.create({
     placeholder: "Search bar",
     borderRadius: 50,
     borderWidth: 1,
-    borderColor: "navy",
+    borderColor: "midnightblue",
     backgroundColor: "white",
     padding: 10,
   },
 
   buttonTopNav: {
-    backgroundColor: "navy",
+    backgroundColor: "midnightblue",
     padding: 10,
     borderRadius: 50,
     marginLeft: 7,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonTopNavText: {
     color: "white",
@@ -274,7 +282,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   userNameStyle: {
-    color: "navy",
+    color: "midnightblue",
     fontWeight: "bold",
     padding: "5%",
     fontSize: "30%",
@@ -296,7 +304,7 @@ const styles = StyleSheet.create({
   },
 
   companyName: {
-    color: "darkblue",
+    color: "midnightblue",
     fontSize: 20,
     paddingLeft: 12.5,
     paddingBottom: 5,
@@ -317,13 +325,21 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   button: {
-    backgroundColor: "navy",
+    backgroundColor: "midnightblue",
     padding: 15,
     borderRadius: 50,
     marginLeft: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonApply: {
-    backgroundColor: "navy",
+    backgroundColor: "midnightblue",
     paddingHorizontal: 25,
     paddingVertical: 15,
     borderRadius: 50,
@@ -336,7 +352,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    color: "navy",
+    color: "midnightblue",
     fontWeight: "bold",
     fontSize: 25,
     padding: 12,

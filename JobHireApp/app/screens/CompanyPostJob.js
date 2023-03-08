@@ -17,6 +17,7 @@ import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ceil } from "react-native-reanimated";
 
 function CompanyPostJob({ navigation }) {
   const [title, setTitle] = useState("");
@@ -85,7 +86,7 @@ function CompanyPostJob({ navigation }) {
       <ScrollView>
         <Text style={styles.title}>Job form</Text>
         <View style={styles.infoContent}>
-          <Text style={styles.heading_2}>Title</Text>
+          <Text style={styles.headings}>General Information</Text>
           <TextInput
             value={title}
             onChangeText={(title) => setTitle(title)}
@@ -93,7 +94,6 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
-          <Text style={styles.heading_2}>Job info</Text>
           <TextInput
             value={info}
             onChangeText={(info) => setInfo(info)}
@@ -101,7 +101,6 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
-          <Text style={styles.heading_2}>Wage</Text>
           <TextInput
             value={wage}
             onChangeText={(wage) => setWage(wage)}
@@ -109,7 +108,6 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
-          <Text style={styles.heading_2}>Work type</Text>
           <TextInput
             value={type}
             onChangeText={(type) => setType(type)}
@@ -117,7 +115,6 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
-          <Text style={styles.heading_2}>Job description</Text>
           <TextInput
             value={fullDescription}
             onChangeText={(fullDescription) =>
@@ -127,7 +124,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
-          <Text style={styles.heading_2}>Schedule</Text>
+          <Text style={styles.headings}>Work Requirements</Text>
           <TextInput
             value={schedule}
             onChangeText={(schedule) => setSchedule(schedule)}
@@ -135,7 +132,6 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
-          <Text style={styles.heading_2}>Experience</Text>
           <TextInput
             value={experience}
             onChangeText={(experience) => setExperience(experience)}
@@ -143,7 +139,6 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
-          <Text style={styles.heading_2}>Qualification</Text>
           <TextInput
             value={qualification}
             onChangeText={(qualification) => setQualification(qualification)}
@@ -151,7 +146,6 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
-          <Text style={styles.heading_2}>knowledge</Text>
           <TextInput
             value={knowledge}
             onChangeText={(knowledge) => setKnowledge(knowledge)}
@@ -219,22 +213,19 @@ const styles = StyleSheet.create({
   },
   title: {
     margin: 5,
-    fontSize: 30,
-    fontWeight: "600",
-    marginTop: 50,
+    fontSize: 20,
+    textDecorationLine: "underline",
+    marginTop: 20,
+    marginBottom: 20,
     textAlign: "center",
   },
-  heading_1: {
-    opacity: 0.5,
+  headings: {
+    opacity: 1,
+    fontSize: 20,
     fontWeight: "bold",
-    marginLeft: 10,
-    marginTop: 10,
-  },
-  heading_2: {
-    opacity: 0.5,
-    fontWeight: "bold",
-    marginTop: 25,
-    marginLeft: 10,
+    marginBottom: 5,
+    marginLeft: 30,
+    color: "navy",
   },
   navBar: {
     flexDirection: "row",
@@ -250,47 +241,38 @@ const styles = StyleSheet.create({
   navButtons: {
     margin: 20,
   },
-
-  infoContent: {
-    flex: 2,
-    marginTop: -10,
-  },
-  requirementContent: {
-    flex: 3,
-    marginTop: -10,
-  },
   inputs: {
-    marginLeft: 10,
-    borderColor: "gray",
-    borderWidth: 2,
-    marginTop: 20,
-    padding: 10,
-    fontSize: 15,
-    width: 385,
-
-    height: 45,
-    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "navy",
+    padding: 15,
+    width: "82.5%",
+    marginBottom: 20,
+    borderRadius: 50,
+    marginLeft: 30,
+    opacity: 1,
   },
   button: {
     backgroundColor: "navy",
-    borderRadius: 10,
-    marginTop: 35,
-    width: 130,
-    height: 40,
-    borderWidth: 1,
+    padding: 15,
+    width: 200,
     alignSelf: "center",
+    borderRadius: 50,
+    marginBottom: 80,
+    opacity: 0.8,
     shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    marginBottom: 100,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
     fontSize: 18,
     textAlign: "center",
-    marginTop: 6,
   },
 });
 

@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  TouchableHighlight,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as React from "react";
@@ -21,19 +22,24 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../database/config";
-import { set } from "react-native-reanimated";
+import { exp, set } from "react-native-reanimated";
 
-function UserProfile({ navigation }) {
+function UserProfile({ route, navigation }) {
   const [scroll, setScroll] = useState(true);
   const [username, setUsername] = useState("");
   const [userAbout, setUserAbout] = useState([]);
   const [userSkill, setUserSkill] = useState([]);
   const [userExperience, setUserExperience] = useState([]);
+  const [activeTab, setActiveTab] = useState(0);
+
+  //when I try to pass the item variable to the edit job screen with, { item: item }, it gives me an error saying item is undefined.
+  //If I define it with '  const { item } = route.params;', it gives me the first error I showed you.
 
   function getUserAbout() {
+    setActiveTab(1);
     setUserSkill([]);
     setUserExperience([]);
-    //Read all data from logged in company database.
+
     getDocs(
       query(collection(db, "Jobseekers"), where("username", "==", username))
     ).then((docSnap) => {
@@ -61,6 +67,8 @@ function UserProfile({ navigation }) {
   }
 
   function getUserSkill() {
+    setActiveTab(2);
+
     setUserAbout([]);
     setUserExperience([]);
     getDocs(
@@ -83,8 +91,10 @@ function UserProfile({ navigation }) {
     });
   }
   function getUserExperience() {
+    setActiveTab(3);
     setUserAbout([]);
     setUserSkill([]);
+
     getDocs(
       query(collection(db, "Jobseekers"), where("username", "==", username))
     ).then((docSnap) => {
@@ -133,56 +143,67 @@ function UserProfile({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.company_username}>{username}</Text>
-
+      <Text style={styles.company_username}>Hi, {username}.</Text>
       <View style={styles.userImg}>
+        <View style={styles.EditNav}>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => navigation.navigate("UserEditProfile")}
+          >
+            <Text style={styles.editText}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+
         <Image
-          style={{ width: 100, height: 110, marginTop: 20 }}
-          source={require("../assets/company_profile.png")}
+          style={{
+            width: 110,
+            height: 110,
+            marginTop: 20,
+          }}
+          source={require("../assets/profilepic.png")}
         />
       </View>
-      <View style={styles.profileButttons1}>
+      <View style={styles.buttonsTopNav}>
         <TouchableOpacity
-          style={styles.logout_b}
+          style={styles.profileButttons}
           onPress={() => navigation.navigate("HomeNotLoggedIn")}
         >
-          <Text style={styles.buttonText2}>Log out</Text>
+          <Text style={styles.buttonTextTop}>Log out</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.viewjobs_b}
+          style={styles.profileButttons}
           onPress={() => navigation.navigate("UserViewJob")}
         >
-          <Text style={styles.buttonText2}>View Jobs</Text>
+          <Text style={styles.buttonTextTop}>View Jobs</Text>
         </TouchableOpacity>
       </View>
 
       <Image
-        style={{
-          width: 500,
-          opacity: 0.4,
-          height: 2,
-          marginRight: 40,
-          alignSelf: "center",
-          marginTop: 5,
-        }}
+        style={{ width: 600, height: 2, marginBottom: 10 }}
         source={require("../assets/line.png")}
       />
 
-      <View style={styles.profileButttons2}>
-        <TouchableOpacity style={styles.pb1} onPress={() => getUserAbout()}>
-          <Text style={styles.buttonText}>About</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.pb2} onPress={() => getUserSkill()}>
-          <Text style={styles.buttonText}>Skills</Text>
+      <View style={styles.profileTabs}>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 1 && styles.activeButton]}
+          onPress={() => getUserAbout()}
+        >
+          <Text style={styles.tabText}>About</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.pb3}
+          style={[styles.tab, activeTab === 2 && styles.activeButton]}
+          onPress={() => getUserSkill()}
+        >
+          <Text style={styles.tabText}>Skills</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 3 && styles.activeButton]}
           onPress={() => getUserExperience()}
         >
-          <Text style={styles.buttonText}>Experience</Text>
+          <Text style={styles.tabText}>Experience</Text>
         </TouchableOpacity>
       </View>
 
@@ -258,9 +279,7 @@ function UserProfile({ navigation }) {
           )}
         />
       </View>
-
       <View style={{ flex: 0.5 }}></View>
-
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
@@ -304,17 +323,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   mainContainer: {
-    flex: 3,
+    flex: 2,
     width: 500,
     margin: 15,
     backgroundColor: "ghostwhite",
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    borderRadius: 40,
-    borderWidth: 2,
-    borderColor: "grey",
   },
   innerContainer: {},
   navBar: {
@@ -339,39 +351,64 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   company_username: {
-    textAlign: "center",
-    color: "navy",
-    fontSize: 30,
+    alignSelf: "left",
+    color: "midnightblue",
     fontWeight: "bold",
-    letterSpacing: 0,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    marginTop: 70,
+    fontSize: 30,
+    letterSpacing: 1,
+    marginTop: 60,
+    marginLeft: 20,
   },
-  buttonTopNav: {
-    borderRadius: 10,
-    marginLeft: 5,
-    backgroundColor: "navy",
+  buttonsTopNav: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+  profileButttons: {
+    backgroundColor: "midnightblue",
+    margin: 8,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    borderRadius: 30,
-    marginLeft: 10,
+    borderRadius: 50,
+    width: 100,
     shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  buttons: {
-    flexDirection: "row",
-  },
-  buttonTopNavText: {
+  buttonTextTop: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 15,
     textAlign: "center",
   },
+  editButton: {
+    backgroundColor: "midnightblue",
+    margin: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 50,
+    width: 100,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  editText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 15,
+    textAlign: "center",
+  },
+  EditNav: { justifyContent: "flex-end" },
+
   company_info: {
     color: "black",
     textAlign: "center",
@@ -386,21 +423,9 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginLeft: 8,
     textAlign: "center",
+    fontFamily: "Cochin",
   },
-  logOutButton: {
-    borderRadius: 10,
-    marginLeft: 5,
-    backgroundColor: "navy",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 30,
-    marginLeft: 10,
-    width: 100,
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-  },
+
   experience_Head: {
     textAlign: "center",
     fontWeight: "bold",
@@ -408,98 +433,44 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingTop: 15,
   },
-  profileButttons1: {
+
+  profileTabs: {
     flexDirection: "row",
-    marginBottom: 10,
-    alignSelf: "left",
   },
-  profileButttons2: {
-    flexDirection: "row",
-    marginTop: 10,
-    alignSelf: "left",
-    marginLeft: 10,
+  activeButton: {
+    backgroundColor: "midnightblue",
   },
-  pb1: {
-    padding: 5,
-    backgroundColor: "navy",
+  tab: {
+    borderWidth: 0,
+    width: 100,
+    height: 80,
     borderRadius: 0,
-    borderColor: "white",
-    borderWidth: 1,
+    backgroundColor: "darkgrey",
+    margin: 10,
+    justifyContent: "center",
+    alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 1,
-    width: 120,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  pb2: {
-    padding: 5,
-    backgroundColor: "navy",
-    borderRadius: 0,
-    borderColor: "white",
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 1,
-    width: 120,
-    marginLeft: 5,
+  tabText: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
   },
-  pb3: {
-    padding: 5,
-    backgroundColor: "navy",
-    borderRadius: 0,
-    borderColor: "white",
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 1,
-    width: 120,
-    marginLeft: 5,
-  },
-  pb4: {
-    padding: 5,
-    backgroundColor: "navy",
-    borderRadius: 40,
-    borderColor: "white",
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 1,
-  },
+
   buttonText: {
     color: "white",
-    fontSize: 18,
-    textAlign: "center",
-  },
-  logout_b: {
-    backgroundColor: "grey",
-    borderRadius: 40,
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 1,
-    width: 120,
-    height: 25,
-    marginLeft: 10,
-  },
-  viewjobs_b: {
-    backgroundColor: "grey",
-    borderRadius: 40,
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 1,
-    width: 120,
-    marginLeft: 130,
-  },
-  buttonText2: {
-    color: "white",
     fontSize: 15,
+    marginTop: 10,
     textAlign: "center",
+    fontWeight: "bold",
   },
 });
 

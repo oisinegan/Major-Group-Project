@@ -30,6 +30,7 @@ import CompanyMessageScreen from "./app/screens/CompanyMessageScreen";
 import RegisterJobseeker from "./app/screens/RegisterJobseeker";
 import RegisterCompany from "./app/screens/RegisterCompany";
 import CompanyViewApplicants from "./app/screens/CompanyViewApplicants";
+import UserEditProfile from "./app/screens/UserEditProfile";
 
 //Chat API
 import { useChatClient } from "./app/chat/useChatClient";
@@ -109,6 +110,11 @@ export default function App() {
             <Stack.Screen
               name="UserProfile"
               component={UserProfile}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="UserEditProfile"
+              component={UserEditProfile}
               options={{ headerShown: false }}
             />
             <Stack.Screen
