@@ -4,6 +4,7 @@ import {
   View,
   Button,
   Alert,
+  FlatList,
   TouchableOpacity,
   Image,
   SafeAreaView,
@@ -14,11 +15,41 @@ import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //Database imports
 import { useState, useEffect } from "react/cjs/react.development";
-import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDocs,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../database/config";
 
 function JobScreen({ route, navigation }) {
   const { item } = route.params;
+
+  const [profilePic, setProfilePic] = useState(".");
+
+  function loadImage() {
+    getDocs(
+      query(collection(db, "Company"), where("username", "==", item.company))
+    ).then((docSnap) => {
+      let info = [];
+      docSnap.forEach((doc) => {
+        const { image } = doc.data();
+
+        info.push({
+          ...doc.data(),
+          id: doc.id,
+
+          image,
+        });
+      });
+      setProfilePic(info);
+      getData();
+    });
+  }
 
   //Used store username read from async storage
   const [username, setUsername] = useState("");
@@ -39,8 +70,10 @@ function JobScreen({ route, navigation }) {
   };
 
   useEffect(() => {
+    console.log(item.company);
     getData();
   }, []);
+  useEffect(() => loadImage(), [username]);
 
   async function writeUserToJobAdvertDB(item) {
     const advertDocumentRef = doc(db, "Adverts", item.id);
@@ -67,23 +100,27 @@ function JobScreen({ route, navigation }) {
 
         <Text style={styles.blank}></Text>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.outerContainerTop}>
-          <View style={styles.innerContainerTop}>
-            <TouchableOpacity
-              style={styles.companyImageContainer}
-              onPress={() => navigation.navigate("JobScreen")}
-            >
-              <Image
-                style={styles.companyImage}
-                source={require("../assets/googleLogo.png")}
-              />
-            </TouchableOpacity>
-            <Text style={styles.companyName}>{item.company}</Text>
-            <Text style={styles.companyLocation}>Location</Text>
-          </View>
-        </View>
 
+      <View style={styles.outerContainerTop}>
+        <View style={styles.innerContainerTop}>
+          <View style={styles.imgContainer}>
+            <FlatList
+              data={profilePic}
+              scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <View style={styles.innerContainer}>
+                  <Image style={styles.userImg} source={{ uri: item.image }} />
+                </View>
+              )}
+            />
+          </View>
+          <Text style={styles.companyName}>{item.company}</Text>
+          <Text style={styles.companyLocation}>Location</Text>
+        </View>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.innerContainerBottom}>
           <Text style={styles.heading}>Job title</Text>
           <Text style={styles.info}> {item.id}</Text>
@@ -174,16 +211,26 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
 
+  imgContainer: {
+    height: 150,
+    marginTop: 40,
+    borderWidth: 2,
+  },
+  userImg: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    marginBottom: 90,
+
+    width: 150,
+    height: 150,
+  },
   companyImageContainer: {
     borderRadius: 100,
 
     marginTop: 20,
     borderColor: "black",
-  },
-  companyImage: {
-    width: 150,
-    height: 150,
-    justifyContent: "center",
   },
 
   companyName: {

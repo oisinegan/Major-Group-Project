@@ -84,6 +84,7 @@ function CompanyViewApplicants({ route, navigation }) {
             number,
             username,
             jobTitle,
+            image,
           } = doc.data();
 
           info.push({
@@ -96,6 +97,7 @@ function CompanyViewApplicants({ route, navigation }) {
             number,
             username,
             jobTitle,
+            image,
           });
         });
 
@@ -104,6 +106,7 @@ function CompanyViewApplicants({ route, navigation }) {
     }
     console.log("Outsude if loop");
     console.log(ApplicantData);
+    console.log(username);
   }
 
   function createTextChannel(user) {
@@ -154,24 +157,32 @@ function CompanyViewApplicants({ route, navigation }) {
                 <View style={styles.imageContainer}>
                   <Image
                     style={styles.companyImage}
-                    source={require("../assets/Profile.png")}
+                    source={{ uri: data.image }}
                   />
                 </View>
                 <View style={styles.innerInfoContainer}>
-                  <Text style={styles.applicantName}>{data.username}</Text>
+                  <Text style={styles.applicantName}>
+                    {data.firstName} {data.lastName}
+                  </Text>
                   <Text style={styles.applicantEmail}>{data.email}</Text>
+                  <Text style={styles.applicantEmail}>{data.city}</Text>
                 </View>
               </View>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={styles.buttonViewApplicants}
-                  onPress={() => createTextChannel(item.toString())}
+                  onPress={() => createTextChannel(data.username.toString())}
                 >
                   <Text style={styles.buttonText}>Contact</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.buttonViewApplicants}
-                  onPress={() => console.log("View profile: " + item)}
+                  onPress={() =>
+                    navigation.navigate("CompanyViewApplicantProfile", {
+                      item: data.username,
+                    })
+                  }
+                  //CompanyViewApplicantProfile
                 >
                   <Text style={styles.buttonText}>View Profile</Text>
                 </TouchableOpacity>
@@ -184,7 +195,7 @@ function CompanyViewApplicants({ route, navigation }) {
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("UserHomeScreen")}
+          onPress={() => navigation.navigate("CompanyHome")}
         >
           <Image
             style={{ width: 30, height: 30, margin: 15 }}
@@ -194,7 +205,17 @@ function CompanyViewApplicants({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("UserMessage")}
+          onPress={() => navigation.navigate("CompanyPostJob")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/PostJob.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyMessages")}
         >
           <Image
             style={{ width: 25, height: 25, margin: 15 }}
@@ -204,17 +225,7 @@ function CompanyViewApplicants({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("UserNotification")}
-        >
-          <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Noti.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navButtons}
-          onPress={() => navigation.navigate("UserProfile")}
+          onPress={() => navigation.navigate("CompanyProfileScreen")}
         >
           <Image
             style={{ width: 25, height: 25, margin: 15 }}
@@ -230,12 +241,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-
-    padding: 0,
   },
   innerContainer: {
     backgroundColor: "#ECE7E0",
-    borderColor: "#E1DEE9",
+    borderColor: "black",
     marginTop: 15,
     padding: 2,
     borderWidth: 3,
@@ -247,6 +256,7 @@ const styles = StyleSheet.create({
   },
   innerInfoContainer: {
     marginTop: "5%",
+    marginBottom: "5%",
   },
   applicantName: {
     fontSize: 25,
@@ -273,11 +283,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   imageContainer: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   companyImage: {
-    width: 60,
-    height: 60,
+    width: 110,
+    height: 110,
+    borderRadius: 1000,
+    borderWidth: 2,
+    borderColor: "black",
   },
   nav: {
     backgroundColor: "white",
@@ -309,11 +323,13 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: "white",
+    marginBottom: "20%",
   },
   navBar: {
     flexDirection: "row",
     flex: 1,
     backgroundColor: "white",
+
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",

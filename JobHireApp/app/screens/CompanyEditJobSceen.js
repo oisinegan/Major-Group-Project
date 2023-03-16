@@ -92,6 +92,7 @@ function CompanyEditJobScreen({ route, navigation }) {
     deleteDoc(doc(db, "Adverts", title));
     navigation.navigate("CompanyHome");
   }
+  
 
   return (
     <SafeAreaView style={styles.container}>

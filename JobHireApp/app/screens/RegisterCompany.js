@@ -23,6 +23,8 @@ import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 
+import * as ImagePicker from "expo-image-picker";
+
 // Get device width
 const deviceWidth = Dimensions.get("window").width;
 
@@ -39,6 +41,25 @@ function RegisterCompany({ navigation }) {
   const [industry, setIndustry] = useState("");
   const [companySize, setCompanySize] = useState("");
 
+  //Image
+  const [image, setImage] = useState(null);
+  async function pickImage() {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result.uri);
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.uri);
+    }
+  }
+
   function companyCreate() {
     //Submit data
     //db= databse link (database/config),
@@ -50,6 +71,7 @@ function RegisterCompany({ navigation }) {
       email: email,
       number: number,
       address: address,
+      image: image,
 
       info: info,
       founded: founded,
@@ -131,6 +153,26 @@ function RegisterCompany({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+
+        <Text style={styles.titleMini}>Profile Picture</Text>
+        <Button
+          title="Pick a profile picture from camera roll"
+          onPress={pickImage}
+        />
+        {image && (
+          <Image
+            source={{ uri: image }}
+            style={{
+              alignSelf: "center",
+              marginVertical: 20,
+              width: 200,
+              height: 200,
+              borderColor: "black",
+              borderWidth: 3,
+              marginBottom: 10,
+            }}
+          />
+        )}
 
         <Text style={styles.titleMini}>Company Information</Text>
         <TextInput

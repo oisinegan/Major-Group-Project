@@ -14,6 +14,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import * as React from "react";
+
 import {
   Chat,
   OverlayProvider,
@@ -53,7 +54,7 @@ function CompanyMessageScreen({ route, navigation }) {
     getData();
     console.log(username);
     console.log(channel.id);
-    setUrl("https://172.20.10.4:3000?name=" + username + "!" + channel.id);
+    setUrl("https://192.168.0.7:3000?name=" + username + "!" + channel.id);
   }
 
   useEffect(() => createUrl(), [username]);
@@ -64,7 +65,8 @@ function CompanyMessageScreen({ route, navigation }) {
         <TouchableOpacity style={styles.backButton}>
           <Text
             style={styles.backText}
-            onPress={() => navigation.navigate("CompanyMessages")}
+            // onPress={() => navigation.navigate("CompanyMessages")}
+            onPress={() => navigation.goBack()}
           >
             Back
           </Text>
@@ -105,6 +107,7 @@ const styles = StyleSheet.create({
   },
   topNavTitle: {
     alignSelf: "center",
+    marginLeft: -40,
     fontSize: 25,
     fontWeight: "600",
     color: "black",

@@ -23,6 +23,8 @@ import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 
+import * as ImagePicker from "expo-image-picker";
+
 // Get device width
 const deviceWidth = Dimensions.get("window").width;
 
@@ -49,6 +51,25 @@ function RegisterJobseeker({ navigation }) {
   const [skills, setSkills] = useState("");
   const [Knowledge, setKnowledge] = useState("");
 
+  //Image
+  const [image, setImage] = useState(null);
+  async function pickImage() {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result.uri);
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.uri);
+    }
+  }
+
   function jobseekersCreate() {
     //Submit data
     //db= databse link (database/config),
@@ -63,6 +84,7 @@ function RegisterJobseeker({ navigation }) {
       number: number,
       city: city,
       country: country,
+      image: image,
 
       qualificationName: qualificationName,
       qualificationLevel: qualificationLevel,
@@ -173,6 +195,24 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.titleMini}>Profile Picture</Text>
+        <Button
+          title="Pick a profile picture from camera roll"
+          onPress={pickImage}
+        />
+        {image && (
+          <Image
+            source={{ uri: image }}
+            style={{
+              alignSelf: "center",
+              marginVertical: 20,
+              width: 200,
+              height: 200,
+              borderColor: "black",
+              borderWidth: 3,
+            }}
+          />
+        )}
 
         <Text style={styles.titleMini}>Qualification</Text>
         <TextInput

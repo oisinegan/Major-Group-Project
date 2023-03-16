@@ -14,7 +14,7 @@ export function VideoChat() {
     setChannelName(value1);
     console.log("CHANNEL" + channel);
     console.log("NAME" + name);
-    setUrl("https://172.20.10.4:3000?name=" + name + "!" + channel);
+    setUrl("https://192.168.0.7:3000?name=" + name + "!" + channel);
   }
   useEffect(getNameFromSession);
 

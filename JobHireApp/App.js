@@ -26,6 +26,7 @@ import HomeLoggedIn from "./app/screens/HomeLoggedIn";
 import CompanyMessages from "./app/screens/CompanyMessages";
 import CompanyViewJobs from "./app/screens/CompanyViewJobs";
 import CompanyMessageScreen from "./app/screens/CompanyMessageScreen";
+import CompanyViewApplicantProfile from "./app/screens/CompanyViewApplicantProfile";
 
 import RegisterJobseeker from "./app/screens/RegisterJobseeker";
 import RegisterCompany from "./app/screens/RegisterCompany";
@@ -80,6 +81,11 @@ export default function App() {
             <Stack.Screen
               name="UserHomeScreen"
               component={UserHomeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompanyViewApplicantProfile"
+              component={CompanyViewApplicantProfile}
               options={{ headerShown: false }}
             />
 

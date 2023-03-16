@@ -28,6 +28,27 @@ function CompanyProfileScreen({ navigation }) {
   const [companyAbout, setCompanyAbout] = useState([]);
   const [companyContact, setCompanyContact] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [profilePic, setProfilePic] = useState(".");
+
+  function loadImage() {
+    getDocs(
+      query(collection(db, "Company"), where("username", "==", username))
+    ).then((docSnap) => {
+      let info = [];
+      docSnap.forEach((doc) => {
+        const { image } = doc.data();
+
+        info.push({
+          ...doc.data(),
+          id: doc.id,
+
+          image,
+        });
+      });
+      setProfilePic(info);
+      getData();
+    });
+  }
 
   function getCompanyAbout() {
     setActiveTab(1);
@@ -37,21 +58,22 @@ function CompanyProfileScreen({ navigation }) {
     getDocs(
       query(collection(db, "Company"), where("username", "==", username))
     ).then((docSnap) => {
-      let info = [];
+      let infor = [];
       docSnap.forEach((doc) => {
-        const { address, founded, companySize, industry } = doc.data();
+        const { address, founded, companySize, industry, info } = doc.data();
 
-        info.push({
+        infor.push({
           ...doc.data(),
           id: doc.id,
           address,
           founded,
           companySize,
           industry,
+          info,
         });
       });
 
-      setCompanyAbout(info);
+      setCompanyAbout(infor);
       getData();
     });
   }
@@ -81,6 +103,7 @@ function CompanyProfileScreen({ navigation }) {
   }
 
   useEffect(() => getCompanyAbout(), [username]);
+  useEffect(() => loadImage(), [username]);
 
   const getData = async () => {
     try {
@@ -99,30 +122,25 @@ function CompanyProfileScreen({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.company_username}>Welcome, {username}.</Text>
 
-      <View style={styles.userImg}>
-        <Image
-          style={{
-            width: 180,
-            height: 100,
-            marginTop: 20,
-          }}
-          source={require("../assets/company_profile_pic.png")}
+      <View style={styles.imgContainer}>
+        <FlatList
+          data={profilePic}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.innerContainer}>
+              <Image style={styles.userImg} source={{ uri: item.image }} />
+            </View>
+          )}
         />
       </View>
-
       <View style={styles.buttonsTopNav}>
         <TouchableOpacity
           style={styles.profileButttons}
           onPress={() => navigation.navigate("HomeNotLoggedIn")}
         >
           <Text style={styles.buttonTextTop}>Log out</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.profileButttons}
-          onPress={() => navigation.navigate("UserViewJob")}
-        >
-          <Text style={styles.buttonTextTop}>View Jobs</Text>
         </TouchableOpacity>
       </View>
 
@@ -157,6 +175,9 @@ function CompanyProfileScreen({ navigation }) {
               <Text style={styles.info_titles}>Company title</Text>
               <Text style={styles.company_info}>{username}</Text>
 
+              <Text style={styles.info_titles}>About {username}</Text>
+              <Text style={styles.company_info}>{item.info}</Text>
+
               <Text style={styles.info_titles}>Industry</Text>
               <Text style={styles.company_info}>{item.industry}</Text>
 
@@ -164,9 +185,6 @@ function CompanyProfileScreen({ navigation }) {
               <Text style={styles.company_info}>{item.companySize}</Text>
 
               <Text style={styles.info_titles}>Founded</Text>
-              <Text style={styles.company_info}>{item.email}</Text>
-
-              <Text style={styles.info_titles}>Number</Text>
               <Text style={styles.company_info}>{item.founded}</Text>
             </View>
           )}
@@ -183,6 +201,9 @@ function CompanyProfileScreen({ navigation }) {
 
               <Text style={styles.info_titles}>Number</Text>
               <Text style={styles.company_info}>{item.number}</Text>
+
+              <Text style={styles.info_titles}>Email</Text>
+              <Text style={styles.company_info}>{item.email}</Text>
             </View>
           )}
         />
@@ -242,9 +263,9 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 2,
     width: 500,
-    margin: 15,
+   // margin: 15,
     backgroundColor: "ghostwhite",
-    marginBottom: 120,
+    marginBottom: 100,
   },
   innerContainer: {},
   navBar: {
@@ -260,12 +281,20 @@ const styles = StyleSheet.create({
   navButtons: {
     margin: 20,
   },
+  imgContainer: {
+    height: 150,
+    marginTop: 40,
+    borderWidth: 2,
+  },
   userImg: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    marginBottom: 10,
+    marginBottom: 90,
+
+    width: 150,
+    height: 150,
   },
   company_username: {
     alignSelf: "left",
@@ -279,6 +308,7 @@ const styles = StyleSheet.create({
   buttonsTopNav: {
     flexDirection: "row",
     marginBottom: 20,
+    marginTop: 20,
   },
   profileButttons: {
     backgroundColor: "midnightblue",
@@ -336,8 +366,8 @@ const styles = StyleSheet.create({
   tab: {
     borderWidth: 0,
     width: 100,
-    height: 80,
-    borderRadius: 0,
+    height: 40,
+    borderRadius: 10,
     backgroundColor: "darkgrey",
     margin: 10,
     justifyContent: "center",

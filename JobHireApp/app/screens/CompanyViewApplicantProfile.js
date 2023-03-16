@@ -23,10 +23,23 @@ import {
 } from "firebase/firestore";
 import { db } from "../database/config";
 import { exp, set } from "react-native-reanimated";
+//Stream chat api imports
+import {
+  Chat,
+  OverlayProvider,
+  ChannelList,
+  Channel,
+  MessageList,
+  MessageInput,
+  StreamChat,
+} from "stream-chat";
 
-function UserProfile({ route, navigation }) {
+function CompanyViewApplicantProfile({ route, navigation }) {
+  const { item } = route.params;
+  // console.log(item);
   const [scroll, setScroll] = useState(true);
   const [username, setUsername] = useState("");
+  const [compUsername, setCompUsername] = useState("");
   const [userAbout, setUserAbout] = useState([]);
   const [userSkill, setUserSkill] = useState([]);
   const [userExperience, setUserExperience] = useState([]);
@@ -156,6 +169,25 @@ function UserProfile({ route, navigation }) {
     });
   }
 
+  function createTextChannel(user) {
+    console.log("Create channel with: " + user + " by: " + compUsername);
+    // client-side you initialize the Chat client with your API key
+    const client = StreamChat.getInstance("83shajg3euaq", {
+      timeout: 6000,
+    });
+    //Write User to stream chat api to allow for messaging
+    const chanName = compUsername + "_" + user;
+    const channel = client.channel("messaging", chanName.toString(), {
+      name: chanName.toString(),
+      members: [compUsername.toString(), user.toString()],
+    });
+
+    // fetch the channel state, subscribe to future updates
+    const state = channel.watch();
+
+    navigation.navigate("CompanyMessageScreen", { channel: channel });
+  }
+
   useEffect(() => getUserAbout(), [username]);
 
   useEffect(() => loadImage(), [username]);
@@ -166,25 +198,37 @@ function UserProfile({ route, navigation }) {
       var usernameFromAsyncStorage = value.toString();
       if (value !== null) {
         // value previously stored
-        setUsername(usernameFromAsyncStorage);
+        setCompUsername(usernameFromAsyncStorage);
       }
     } catch (e) {
       // error reading value
     }
+
+    setUsername(item);
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.company_username}>Hi, {username}.</Text>
-      <View style={styles.userImg}>
-        <View style={styles.EditNav}>
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => navigation.navigate("UserEditProfile")}
+    <SafeAreaView style={styles.container}>
+      <View style={styles.nav}>
+        <TouchableOpacity style={styles.navButton}>
+          <Text style={styles.navText} onPress={() => navigation.goBack()}>
+            Back
+          </Text>
+        </TouchableOpacity>
+
+        <Text style={styles.titleNav}>{username}</Text>
+
+        <TouchableOpacity style={styles.navButton}>
+          <Text
+            style={styles.navText}
+            onPress={() => createTextChannel(username)}
           >
-            <Text style={styles.editText}>Edit</Text>
-          </TouchableOpacity>
-        </View>
+            Message
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.userImg}>
         <View style={styles.imgContainer}>
           <FlatList
             data={profilePic}
@@ -198,29 +242,6 @@ function UserProfile({ route, navigation }) {
             )}
           />
         </View>
-        <Image
-          style={{
-            width: 110,
-            height: 110,
-            marginTop: 20,
-          }}
-          // source={{ uri: userAbout[0].image }}
-        />
-      </View>
-      <View style={styles.buttonsTopNav}>
-        <TouchableOpacity
-          style={styles.profileButttons}
-          onPress={() => navigation.navigate("HomeNotLoggedIn")}
-        >
-          <Text style={styles.buttonTextTop}>Log out</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.profileButttons}
-          onPress={() => navigation.navigate("UserViewJob")}
-        >
-          <Text style={styles.buttonTextTop}>View Jobs</Text>
-        </TouchableOpacity>
       </View>
 
       <Image
@@ -323,11 +344,11 @@ function UserProfile({ route, navigation }) {
           )}
         />
       </View>
-      <View style={{ flex: 0.5 }}></View>
+
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("UserHomeScreen")}
+          onPress={() => navigation.navigate("CompanyHome")}
         >
           <Image
             style={{ width: 30, height: 30, margin: 15 }}
@@ -337,7 +358,17 @@ function UserProfile({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("UserMessage")}
+          onPress={() => navigation.navigate("CompanyPostJob")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/PostJob.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
+          onPress={() => navigation.navigate("CompanyMessages")}
         >
           <Image
             style={{ width: 25, height: 25, margin: 15 }}
@@ -347,7 +378,7 @@ function UserProfile({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("UserProfile")}
+          onPress={() => navigation.navigate("CompanyProfileScreen")}
         >
           <Image
             style={{ width: 25, height: 25, margin: 15 }}
@@ -355,7 +386,7 @@ function UserProfile({ route, navigation }) {
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -366,15 +397,49 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  nav: {
+    backgroundColor: "ghostwhite",
+    width: "100%",
+    flexDirection: "row",
+  },
+  navButton: {
+    alignSelf: "left",
+    padding: 10,
+    backgroundColor: "midnightblue",
+    margin: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 50,
+    flex: 0.22,
+  },
+  navText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 17.5,
+    textAlign: "center",
+  },
+  titleNav: {
+    marginTop: 50,
+    alignSelf: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    color: "navy",
+    fontWeight: "bold",
+    fontSize: 40,
+    flex: 0.55,
+  },
+
   mainContainer: {
     flex: 2,
     width: 500,
-    margin: 15,
+    margin: 0,
+    paddingBottom: 80,
     backgroundColor: "ghostwhite",
   },
   imgContainer: {
-    height: 300,
+    height: 150,
     marginTop: 15,
+    borderWidth: 2,
   },
   innerContainer: {},
   navBar: {
@@ -396,69 +461,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    marginBottom: 90,
-
+    marginBottom: 40,
     width: 150,
     height: 150,
   },
-  company_username: {
-    alignSelf: "left",
-    color: "midnightblue",
-    fontWeight: "bold",
-    fontSize: 30,
-    letterSpacing: 1,
-    marginTop: 60,
-    marginLeft: 20,
-  },
+
   buttonsTopNav: {
     flexDirection: "row",
     marginBottom: 20,
   },
-  profileButttons: {
-    backgroundColor: "midnightblue",
-    margin: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 50,
-    width: 100,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  buttonTextTop: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 15,
-    textAlign: "center",
-  },
-  editButton: {
-    backgroundColor: "midnightblue",
-    margin: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 50,
-    width: 100,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  editText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 15,
-    textAlign: "center",
-  },
-  EditNav: { alignSelf: "center" },
 
   company_info: {
     color: "black",
@@ -494,10 +505,10 @@ const styles = StyleSheet.create({
   tab: {
     borderWidth: 0,
     width: 100,
-    height: 80,
-    borderRadius: 0,
+    height: 50,
+    borderRadius: 10,
     backgroundColor: "darkgrey",
-    margin: 10,
+    margin: 5,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
@@ -525,4 +536,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserProfile;
+export default CompanyViewApplicantProfile;

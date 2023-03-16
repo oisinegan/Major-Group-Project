@@ -54,7 +54,7 @@ function UserEditProfile({ route, navigation }) {
   };
   useEffect(() => {
     getData();
-    setEmail(item.email);
+    /*setEmail(item.email);
     setFirstName(item.firstName);
     setLastName(item.lastName);
     setNumber(item.number);
@@ -67,7 +67,7 @@ function UserEditProfile({ route, navigation }) {
     setYearsExperience(item.yearsExperience);
     setCollegeName(item.collegeName);
     setYearStart(item.yearStart);
-    setYearEnd(item.yearEnd);
+    setYearEnd(item.yearEnd); */
   }, []);
 
   function create() {
@@ -77,10 +77,9 @@ function UserEditProfile({ route, navigation }) {
       firstName: firstName,
       lastName: lastName,
       number: number,
-      username: username,
       jobTitle: jobTitle,
       skills: skills,
-      knowledge: Knowledge,
+      knowledge: knowledge,
       qualificationLevel: qualificationLevel,
       qualificationName: qualificationName,
       yearsExperience: yearsExperience,
@@ -116,6 +115,15 @@ function UserEditProfile({ route, navigation }) {
         </TouchableOpacity>
 
         <Text style={styles.titleNav}>Edit profile</Text>
+
+        <TouchableOpacity style={styles.buttonDelete}>
+          <Text
+            style={styles.buttonDeleteText}
+            onPress={() => console.log("delete")}
+          >
+            Delete
+          </Text>
+        </TouchableOpacity>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.labels}>First Name</Text>
@@ -133,15 +141,6 @@ function UserEditProfile({ route, navigation }) {
           style={styles.inputBox}
         ></TextInput>
 
-        <Text style={styles.labels}>Username</Text>
-        <TextInput
-          multiline
-          numberOfLines={5}
-          value={username}
-          onChangeText={(username) => setUsername(username)}
-          placeholder="Username"
-          style={styles.inputBox}
-        ></TextInput>
         <Text style={styles.labels}>Email</Text>
         <TextInput
           value={email}
@@ -257,7 +256,7 @@ function UserEditProfile({ route, navigation }) {
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText} onPress={create}>
+            <Text style={styles.buttonText} onPress={console.log("pressed")}>
               Update
             </Text>
           </TouchableOpacity>

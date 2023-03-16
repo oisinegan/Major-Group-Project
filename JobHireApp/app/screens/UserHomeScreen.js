@@ -214,6 +214,16 @@ function UserHomeScreen({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
+          onPress={() => navigation.navigate("UserNotification")}
+        >
+          <Image
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Msg.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navButtons}
           onPress={() => navigation.navigate("UserProfile")}
         >
           <Image
