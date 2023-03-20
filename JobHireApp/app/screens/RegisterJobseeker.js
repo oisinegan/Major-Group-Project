@@ -138,6 +138,7 @@ function RegisterJobseeker({ navigation }) {
         <Text style={styles.titleMini}>General Information</Text>
         <TextInput
           value={firstName}
+          maxLength = {30}
           onChangeText={(firstName) => setFirstName(firstName)}
           placeholder="First Name"
           placeholderTextColor={"#4f5250"}
@@ -145,6 +146,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={lastName}
+          maxLength = {30}
           onChangeText={(lastName) => setLastname(lastName)}
           placeholder="Last Name"
           placeholderTextColor={"#4f5250"}
@@ -152,6 +154,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={username}
+          maxLength = {30}
           onChangeText={(username) => setUsername(username)}
           placeholder="Username"
           placeholderTextColor={"#4f5250"}
@@ -160,6 +163,7 @@ function RegisterJobseeker({ navigation }) {
 
         <TextInput
           value={email}
+          maxLength = {30}
           onChangeText={(email) => setEmail(email)}
           placeholder="Email"
           placeholderTextColor={"#4f5250"}
@@ -168,6 +172,7 @@ function RegisterJobseeker({ navigation }) {
 
         <TextInput
           value={pass}
+          maxLength = {30}
           onChangeText={(pass) => setPass(pass)}
           secureTextEntry={true}
           style={styles.input}
@@ -176,6 +181,7 @@ function RegisterJobseeker({ navigation }) {
         />
         <TextInput
           value={number}
+          maxLength = {30}
           onChangeText={(number) => setNumber(number)}
           placeholder="Number"
           placeholderTextColor={"#4f5250"}
@@ -183,6 +189,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={city}
+          maxLength = {30}
           onChangeText={(city) => setCity(city)}
           placeholder="City"
           placeholderTextColor={"#4f5250"}
@@ -190,6 +197,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={country}
+          maxLength = {30}
           onChangeText={(country) => setCountry(country)}
           placeholder="Country"
           placeholderTextColor={"#4f5250"}
@@ -204,7 +212,7 @@ function RegisterJobseeker({ navigation }) {
           <Image
             source={{ uri: image }}
             style={{
-              alignSelf: "center",
+              //alignSelf: "center",
               marginVertical: 20,
               width: 200,
               height: 200,
@@ -217,6 +225,7 @@ function RegisterJobseeker({ navigation }) {
         <Text style={styles.titleMini}>Qualification</Text>
         <TextInput
           value={qualificationName}
+          maxLength = {30}
           onChangeText={(qualificationName) =>
             setQualificationName(qualificationName)
           }
@@ -226,6 +235,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={qualificationLevel}
+          maxLength = {30}
           onChangeText={(qualificationLevel) =>
             setQualificationLevel(qualificationLevel)
           }
@@ -235,6 +245,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={collegeName}
+          maxLength = {30}
           onChangeText={(collegeName) => setCollegeName(collegeName)}
           placeholder="University/School Name"
           placeholderTextColor={"#4f5250"}
@@ -242,6 +253,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={yearStart}
+          maxLength = {30}
           onChangeText={(yearStart) => setYearStart(yearStart)}
           placeholder="Start Year"
           placeholderTextColor={"#4f5250"}
@@ -249,6 +261,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={yearEnd}
+          maxLength = {30}
           onChangeText={(yearEnd) => setYearEnd(yearEnd)}
           placeholder="Start End"
           placeholderTextColor={"#4f5250"}
@@ -258,6 +271,7 @@ function RegisterJobseeker({ navigation }) {
         <Text style={styles.titleMini}>Experience</Text>
         <TextInput
           value={jobTitle}
+          maxLength = {30}
           onChangeText={(jobTitle) => setJobTitle(jobTitle)}
           placeholder="Job Title"
           placeholderTextColor={"#4f5250"}
@@ -265,6 +279,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={yearsExperience}
+          maxLength = {30}
           onChangeText={(yearsExperience) =>
             SetYearsExperience(yearsExperience)
           }
@@ -275,6 +290,7 @@ function RegisterJobseeker({ navigation }) {
         <Text style={styles.titleMini}>Knowledge and Skills</Text>
         <TextInput
           value={skills}
+          maxLength = {30}
           onChangeText={(skills) => setSkills(skills)}
           placeholder="Skills"
           placeholderTextColor={"#4f5250"}
@@ -282,6 +298,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={Knowledge}
+          maxLength = {30}
           onChangeText={(Knowledge) => setKnowledge(Knowledge)}
           placeholder="Knowledge"
           placeholderTextColor={"#4f5250"}
@@ -296,7 +313,7 @@ function RegisterJobseeker({ navigation }) {
                 textAlign: "center",
                 justifyContent: "center",
                 fontWeight: "bold",
-                fontSize: 20,
+                //fontSize: 20,
                 lineHeight: 40,
               }}
             >
@@ -312,7 +329,7 @@ function RegisterJobseeker({ navigation }) {
               style={{
                 textDecorationLine: "underline",
                 color: "midnightblue",
-                fontSize: 20,
+                //fontSize: 20,
               }}
               onPress={() => navigation.navigate("HomeNotLoggedIn")}
             >
@@ -335,18 +352,18 @@ const styles = StyleSheet.create({
   backButton: {
     color: "midnightblue",
     textAlign: "left",
-    fontSize: 20,
+    //fontSize: 20,
     lineHeight: 40,
     paddingLeft: 7.5,
   },
   title: {
     marginBottom: 35,
-    fontSize: 40,
+    //fontSize: 40,
     color: "midnightblue",
     marginLeft: 10,
   },
   titleMini: {
-    fontSize: 25,
+    //fontSize: 25,
     color: "midnightblue",
     marginLeft: 20,
     marginBottom: 15,
@@ -377,7 +394,7 @@ const styles = StyleSheet.create({
 
   footer: {
     paddingBottom: 100,
-    alignSelf: "center",
+    //alignSelf: "center",
   },
 });
 

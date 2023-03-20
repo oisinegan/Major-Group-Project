@@ -144,6 +144,7 @@ function LoginScreen({ navigation }) {
           <KeyboardAvoidingView style={styles.textInput}>
             <TextInput
               value={username}
+              maxLength = {30}
               onChangeText={(username) => setUsername(username)}
               placeholder="Username"
               placeholderTextColor={"#4f5250"}
@@ -159,6 +160,7 @@ function LoginScreen({ navigation }) {
 
             <TextInput
               value={pass}
+              maxLength = {30}
               onChangeText={(pass) => setPass(pass)}
               secureTextEntry={true}
               style={{
@@ -180,7 +182,7 @@ function LoginScreen({ navigation }) {
                 color: "white",
                 textAlign: "center",
                 justifyContent: "center",
-                fontSize: 20,
+                //fontSize: 20,
                 lineHeight: 40,
               }}
             >
@@ -195,7 +197,7 @@ function LoginScreen({ navigation }) {
                 style={{
                   textDecorationLine: "underline",
                   color: "navy",
-                  fontSize: 20,
+                  //fontSize: 20,
                 }}
                 onPress={() => navigation.navigate("Register")}
               >
@@ -231,7 +233,7 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 25,
     marginBottom: 35,
-    fontSize: 40,
+    //fontSize: 40,
     fontStyle: "",
     color: "midnightblue",
   },
@@ -249,7 +251,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   footer: {
-    fontSize: 30,
+    //fontSize: 30,
     letterSpacing: 1,
   },
 });
