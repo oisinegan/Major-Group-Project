@@ -32,7 +32,8 @@ import RegisterJobseeker from "./app/screens/RegisterJobseeker";
 import RegisterCompany from "./app/screens/RegisterCompany";
 import CompanyViewApplicants from "./app/screens/CompanyViewApplicants";
 import UserEditProfile from "./app/screens/UserEditProfile";
-
+import CompanyEditProfile from "./app/screens/CompanyEditProfile";
+//CompanyEditProfile
 //Chat API
 import { useChatClient } from "./app/chat/useChatClient";
 import { StreamChat } from "stream-chat";
@@ -137,6 +138,11 @@ export default function App() {
             <Stack.Screen
               name="CompanyEditJobScreen"
               component={CompanyEditJobScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CompanyEditProfile"
+              component={CompanyEditProfile}
               options={{ headerShown: false }}
             />
             <Stack.Screen

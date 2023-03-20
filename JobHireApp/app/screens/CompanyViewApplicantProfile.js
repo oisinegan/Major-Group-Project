@@ -210,15 +210,14 @@ function CompanyViewApplicantProfile({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.nav}>
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity style={styles.navButton1}>
           <Text style={styles.navText} onPress={() => navigation.goBack()}>
             Back
           </Text>
         </TouchableOpacity>
+        <Text style={styles.navButtonEmpty}></Text>
 
-        <Text style={styles.titleNav}>{username}</Text>
-
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity style={styles.navButton2}>
           <Text
             style={styles.navText}
             onPress={() => createTextChannel(username)}
@@ -228,21 +227,20 @@ function CompanyViewApplicantProfile({ route, navigation }) {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.userImg}>
-        <View style={styles.imgContainer}>
-          <FlatList
-            data={profilePic}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View style={styles.innerContainer}>
-                <Image style={styles.userImg} source={{ uri: item.image }} />
-              </View>
-            )}
-          />
-        </View>
+      <View style={styles.imgContainer}>
+        <FlatList
+          data={profilePic}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.innerContainer}>
+              <Image style={styles.userImg} source={{ uri: item.image }} />
+            </View>
+          )}
+        />
       </View>
+      <Text style={styles.username}>{username}</Text>
 
       <Image
         style={{ width: 600, height: 2, marginBottom: 10 }}
@@ -402,7 +400,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
   },
-  navButton: {
+  navButton1: {
     alignSelf: "left",
     padding: 10,
     backgroundColor: "midnightblue",
@@ -410,7 +408,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 50,
-    flex: 0.22,
+
+    flex: 0.25,
+  },
+  navButtonEmpty: {
+    flex: 0.6,
+  },
+  navButton2: {
+    alignSelf: "right",
+    padding: 10,
+    backgroundColor: "midnightblue",
+    margin: 8,
+
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 50,
+    flex: 0.25,
   },
   navText: {
     color: "white",
@@ -428,7 +441,14 @@ const styles = StyleSheet.create({
     fontSize: 40,
     flex: 0.55,
   },
-
+  username: {
+    alignSelf: "center",
+    color: "midnightblue",
+    fontWeight: "bold",
+    fontSize: 30,
+    letterSpacing: 1,
+    marginBottom: 10,
+  },
   mainContainer: {
     flex: 2,
     width: 500,
@@ -438,7 +458,7 @@ const styles = StyleSheet.create({
   },
   imgContainer: {
     height: 150,
-    marginTop: 15,
+    marginVertical: 15,
     borderWidth: 2,
   },
   innerContainer: {},

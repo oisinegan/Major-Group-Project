@@ -66,8 +66,6 @@ function CompanyHomeScreen({ navigation }) {
 
   //Read logged in Company job posts
   function readCompanyAdverts() {
-    //Call method to read username from async storage
-    getData();
     console.log("Username1=" + username);
     //Read  data from job adverts database where username(Gotten from login) equals company in adverts
     getDocs(
@@ -93,6 +91,8 @@ function CompanyHomeScreen({ navigation }) {
       setAdvertsCompany(advert);
     });
     console.log("Username2=" + username);
+    //Call method to read username from async storage
+    getData();
   }
 
   //Read applicants on selected job
@@ -112,12 +112,13 @@ function CompanyHomeScreen({ navigation }) {
     //setModel(true);
   }
 
-  useEffect(() => readCompanyAdverts(), [username]);
+  useEffect(readCompanyAdverts, [username]);
 
   //Search job titles, if none found search company names
   function searchJobs() {
     if (searchParam.toString() === "") {
       readCompanyAdverts();
+      console.log("CALL 1");
     } else {
       setAdvertsCompany([]);
       //Read  data from job adverts database where title = search parameter
@@ -131,10 +132,10 @@ function CompanyHomeScreen({ navigation }) {
           advert.push({ ...doc.data(), id: doc.id, title, info, wage, type });
           numJobs += 1;
         });
-
+        console.log("CALL 2");
         setNumberJobs(numJobs);
 
-        setAdvertsCompany(AdvertsCompany);
+        setAdvertsCompany(advert);
       });
     }
   }

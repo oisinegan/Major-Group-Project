@@ -119,9 +119,18 @@ function CompanyProfileScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.company_username}>Welcome, {username}.</Text>
-
+    <SafeAreaView style={styles.container}>
+      <View style={styles.topNav}>
+        <Text style={styles.company_username}>Welcome, {username}.</Text>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() =>
+            navigation.navigate("CompanyEditProfile", { item: username })
+          }
+        >
+          <Text style={styles.editText}>Edit</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.imgContainer}>
         <FlatList
           data={profilePic}
@@ -249,7 +258,7 @@ function CompanyProfileScreen({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -260,12 +269,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  topNav: {
+    flexDirection: "row",
+    width: "100%",
+  },
   mainContainer: {
     flex: 2,
     width: 500,
-   // margin: 15,
     backgroundColor: "ghostwhite",
-    marginBottom: 100,
+    marginBottom: 80,
   },
   innerContainer: {},
   navBar: {
@@ -283,7 +295,7 @@ const styles = StyleSheet.create({
   },
   imgContainer: {
     height: 150,
-    marginTop: 40,
+    marginTop: 20,
     borderWidth: 2,
   },
   userImg: {
@@ -297,13 +309,38 @@ const styles = StyleSheet.create({
     height: 150,
   },
   company_username: {
-    alignSelf: "left",
+    alignSelf: "center",
     color: "midnightblue",
     fontWeight: "bold",
     fontSize: 30,
     letterSpacing: 1,
-    marginTop: 60,
+    flex: ".78",
     marginLeft: 20,
+  },
+  editButton: {
+    backgroundColor: "midnightblue",
+    margin: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    alignSelf: "right",
+    justifyContent: "flex-end",
+    flex: ".22",
+    borderRadius: 50,
+    width: 100,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  editText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
+    textAlign: "center",
   },
   buttonsTopNav: {
     flexDirection: "row",
@@ -312,7 +349,7 @@ const styles = StyleSheet.create({
   },
   profileButttons: {
     backgroundColor: "midnightblue",
-    margin: 8,
+    marginHorizontal: 8,
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 50,

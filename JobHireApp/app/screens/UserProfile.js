@@ -174,39 +174,33 @@ function UserProfile({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.company_username}>Hi, {username}.</Text>
-      <View style={styles.userImg}>
-        <View style={styles.EditNav}>
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => navigation.navigate("UserEditProfile")}
-          >
-            <Text style={styles.editText}>Edit</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.imgContainer}>
-          <FlatList
-            data={profilePic}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View style={styles.innerContainer}>
-                <Image style={styles.userImg} source={{ uri: item.image }} />
-              </View>
-            )}
-          />
-        </View>
-        <Image
-          style={{
-            width: 110,
-            height: 110,
-            marginTop: 20,
-          }}
-          // source={{ uri: userAbout[0].image }}
+    <SafeAreaView style={styles.container}>
+      <View style={styles.topNav}>
+        <Text style={styles.company_username}>Hi, {username}.</Text>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() =>
+            navigation.navigate("UserEditProfile", { item: username })
+          }
+        >
+          <Text style={styles.editText}>Edit</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.imgContainer}>
+        <FlatList
+          data={profilePic}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.innerContainer}>
+              <Image style={styles.userImg} source={{ uri: item.image }} />
+            </View>
+          )}
         />
       </View>
+
       <View style={styles.buttonsTopNav}>
         <TouchableOpacity
           style={styles.profileButttons}
@@ -217,7 +211,7 @@ function UserProfile({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.profileButttons}
-          onPress={() => navigation.navigate("UserViewJob")}
+          onPress={() => navigation.navigate("UserViewJobs")}
         >
           <Text style={styles.buttonTextTop}>View Jobs</Text>
         </TouchableOpacity>
@@ -355,7 +349,7 @@ function UserProfile({ route, navigation }) {
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -366,15 +360,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  topNav: {
+    flexDirection: "row",
+    width: "100%",
+  },
   mainContainer: {
     flex: 2,
     width: 500,
-    margin: 15,
     backgroundColor: "ghostwhite",
+    marginBottom: 0,
   },
   imgContainer: {
-    height: 300,
-    marginTop: 15,
+    height: 150,
+    marginTop: 20,
+    borderWidth: 2,
   },
   innerContainer: {},
   navBar: {
@@ -402,21 +401,48 @@ const styles = StyleSheet.create({
     height: 150,
   },
   company_username: {
-    alignSelf: "left",
+    alignSelf: "center",
     color: "midnightblue",
     fontWeight: "bold",
     fontSize: 30,
     letterSpacing: 1,
-    marginTop: 60,
+    flex: ".78",
     marginLeft: 20,
   },
+  editButton: {
+    backgroundColor: "midnightblue",
+    margin: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    alignSelf: "right",
+    justifyContent: "flex-end",
+    flex: ".22",
+    borderRadius: 50,
+    width: 100,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  editText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
+    textAlign: "center",
+  },
+
   buttonsTopNav: {
     flexDirection: "row",
     marginBottom: 20,
+    marginTop: 20,
   },
   profileButttons: {
     backgroundColor: "midnightblue",
-    margin: 8,
+    marginHorizontal: 8,
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 50,
@@ -436,29 +462,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: "center",
   },
-  editButton: {
-    backgroundColor: "midnightblue",
-    margin: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 50,
-    width: 100,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  editText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 15,
-    textAlign: "center",
-  },
-  EditNav: { alignSelf: "center" },
 
   company_info: {
     color: "black",
@@ -494,8 +497,8 @@ const styles = StyleSheet.create({
   tab: {
     borderWidth: 0,
     width: 100,
-    height: 80,
-    borderRadius: 0,
+    height: 40,
+    borderRadius: 10,
     backgroundColor: "darkgrey",
     margin: 10,
     justifyContent: "center",

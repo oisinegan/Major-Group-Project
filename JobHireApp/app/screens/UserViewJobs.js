@@ -27,7 +27,7 @@ function UserViewJobs({ navigation }) {
   const [userJobs, setUserJobs] = useState([]);
 
   //Read all data from logged in company database.
-  getDocs(
+  /* getDocs(
     query(collection(db, "Adverts"), where("Applicants", "==", username))
   ).then((docSnap) => {
     let jobs = [];
@@ -36,7 +36,7 @@ function UserViewJobs({ navigation }) {
     });
     setUserJobs(jobs);
     getData();
-  });
+  }); */
 
   const getData = async () => {
     try {

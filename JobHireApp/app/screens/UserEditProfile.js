@@ -16,14 +16,26 @@ import {
 import * as React from "react";
 import { db } from "../database/config";
 import { useState, useEffect } from "react/cjs/react.development";
-import { doc, setDoc, deleteDoc } from "firebase/firestore";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  query,
+  deleteDoc,
+  where,
+} from "firebase/firestore";
 
 function UserEditProfile({ route, navigation }) {
   //this one is causing an error
-  //const { item } = route.params;
+  const { item } = route.params;
+  console.log(item);
 
+  const [username, setUsername] = useState("");
+  const [pass, setPass] = useState("");
   const [city, setCity] = useState("");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -52,40 +64,79 @@ function UserEditProfile({ route, navigation }) {
       // error reading value
     }
   };
+
+  function readUserInfo() {
+    getDocs(
+      query(collection(db, "Jobseekers"), where("username", "==", item))
+    ).then((docSnap) => {
+      docSnap.forEach((doc) => {
+        const {
+          city,
+          email,
+          firstName,
+          lastName,
+          number,
+          jobTitle,
+          skills,
+          Knowledge,
+          qualificationLevel,
+          qualificationName,
+          yearsExperience,
+          collegeName,
+          yearStart,
+          yearEnd,
+          username,
+          pass,
+          //  image,
+        } = doc.data();
+
+        setEmail(email);
+        setFirstName(firstName);
+        setLastName(lastName);
+        setNumber(number);
+        setJobTitle(jobTitle);
+        setSkills(skills);
+        setCity(city);
+        setKnowledge(Knowledge);
+        setQualificationLevel(qualificationLevel);
+        setQualificationName(qualificationName);
+        setYearsExperience(yearsExperience);
+        setCollegeName(collegeName);
+        setYearStart(yearStart);
+        setYearEnd(yearEnd);
+        setPass(pass);
+        setUsername(username);
+      });
+    });
+  }
   useEffect(() => {
-    getData();
-    /*setEmail(item.email);
-    setFirstName(item.firstName);
-    setLastName(item.lastName);
-    setNumber(item.number);
-    setUsername(item.username);
-    setJobTitle(item.jobTitle);
-    setSkills(item.skills);
-    setKnowledge(item.knowledge);
-    setQualificationLevel(item.qualificationLevel);
-    setQualificationName(item.qualificationName);
-    setYearsExperience(item.yearsExperience);
-    setCollegeName(item.collegeName);
-    setYearStart(item.yearStart);
-    setYearEnd(item.yearEnd); */
+    readUserInfo();
   }, []);
+
+  function deleteUser() {
+    deleteDoc(doc(db, "Jobseekers", item));
+    navigation.navigate("HomeNotLoggedIn");
+  }
 
   function create() {
     getData();
-    setDoc(doc(db, "Jobseekers", username), {
+    setDoc(doc(db, "Jobseekers", item), {
       email: email,
+      city: city,
       firstName: firstName,
       lastName: lastName,
       number: number,
       jobTitle: jobTitle,
       skills: skills,
-      knowledge: knowledge,
+      Knowledge: knowledge,
       qualificationLevel: qualificationLevel,
       qualificationName: qualificationName,
       yearsExperience: yearsExperience,
       collegeName: collegeName,
       yearStart: yearStart,
       yearEnd: yearEnd,
+      username: username,
+      pass: pass,
     })
       .then(() => {
         //Successfully written to database
@@ -116,16 +167,12 @@ function UserEditProfile({ route, navigation }) {
 
         <Text style={styles.titleNav}>Edit profile</Text>
 
-        <TouchableOpacity style={styles.buttonDelete}>
-          <Text
-            style={styles.buttonDeleteText}
-            onPress={() => console.log("delete")}
-          >
-            Delete
-          </Text>
+        <TouchableOpacity style={styles.buttonDelete} onPress={deleteUser}>
+          <Text style={styles.buttonDeleteText}>Delete</Text>
         </TouchableOpacity>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={styles.titleMini}>General Information</Text>
         <Text style={styles.labels}>First Name</Text>
         <TextInput
           value={firstName}
@@ -136,6 +183,7 @@ function UserEditProfile({ route, navigation }) {
 
         <Text style={styles.labels}>Last Name</Text>
         <TextInput
+          value={lastName}
           placeholder="Last name"
           onChangeText={(title) => setLastName(lastName)}
           style={styles.inputBox}
@@ -167,6 +215,7 @@ function UserEditProfile({ route, navigation }) {
           style={styles.inputBox}
         ></TextInput>
 
+        <Text style={styles.titleMini}>Skills and experience</Text>
         <Text style={styles.labels}>Skills</Text>
         <TextInput
           value={skills}
@@ -184,31 +233,6 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Knowledge"
           style={styles.inputBox}
         ></TextInput>
-        <Text style={styles.labels}>Qualification Level</Text>
-        <TextInput
-          multiline
-          maxLength={1000}
-          numberOfLines={5}
-          value={qualificationLevel}
-          onChangeText={(qualificationLevel) =>
-            setQualificationLevel(qualificationLevel)
-          }
-          placeholder="Qualification level"
-          style={styles.inputBox}
-        ></TextInput>
-        <Text style={styles.labels}>Qualification Name</Text>
-        <TextInput
-          multiline
-          maxLength={1000}
-          numberOfLines={5}
-          value={qualificationName}
-          onChangeText={(qualificationName) =>
-            setQualificationName(qualificationName)
-          }
-          placeholder="Name of qualification"
-          style={styles.inputBox}
-        ></TextInput>
-
         <Text style={styles.labels}>Years Experience</Text>
         <TextInput
           multiline
@@ -221,6 +245,32 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Years of experience"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.titleMini}>Education</Text>
+        <Text style={styles.labels}>Qualification Name</Text>
+        <TextInput
+          multiline
+          maxLength={1000}
+          numberOfLines={5}
+          value={qualificationName}
+          onChangeText={(qualificationName) =>
+            setQualificationName(qualificationName)
+          }
+          placeholder="Name of qualification"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>Qualification Level</Text>
+        <TextInput
+          multiline
+          maxLength={1000}
+          numberOfLines={5}
+          value={qualificationLevel}
+          onChangeText={(qualificationLevel) =>
+            setQualificationLevel(qualificationLevel)
+          }
+          placeholder="Qualification level"
+          style={styles.inputBox}
+        ></TextInput>
+
         <Text style={styles.labels}>College</Text>
         <TextInput
           multiline
@@ -255,7 +305,7 @@ function UserEditProfile({ route, navigation }) {
         ></TextInput>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={create}>
             <Text style={styles.buttonText} onPress={console.log("pressed")}>
               Update
             </Text>
@@ -285,6 +335,7 @@ const styles = StyleSheet.create({
   backText: {
     color: "navy",
     textAlign: "center",
+    fontWeight: "600",
     fontSize: 20,
   },
   titleNav: {
@@ -294,7 +345,7 @@ const styles = StyleSheet.create({
     color: "navy",
     fontWeight: "bold",
     paddingLeft: 15,
-    fontSize: 35,
+    fontSize: 30,
     flex: 0.6,
   },
 
@@ -347,6 +398,14 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     fontWeight: "700",
+  },
+  titleMini: {
+    fontSize: 35,
+    color: "black",
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+    marginLeft: 20,
+    marginVertical: 25,
   },
 });
 

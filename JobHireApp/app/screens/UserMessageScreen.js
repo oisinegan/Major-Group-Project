@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     color: "navy",
     textAlign: "center",
     fontSize: 20,
-    marginHorizontal: 20,
+    marginHorizontal: 5,
   },
   topNavTitle: {
     alignSelf: "center",
