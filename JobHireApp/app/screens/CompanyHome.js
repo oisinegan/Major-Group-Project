@@ -16,9 +16,10 @@ import {
   Touchable,
   Modal,
   StatusBar,
+  RefreshControl,
 } from "react-native";
 import * as React from "react";
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //Database imports
 import { useState, useEffect } from "react/cjs/react.development";
@@ -42,6 +43,7 @@ function CompanyHomeScreen({ navigation }) {
   const [Applicants, setApplicants] = useState([]);
   const [numberJobs, setNumberJobs] = useState([]);
   const [searchParam, setSearchParam] = useState([]);
+  const [profilePic, setProfilePic] = useState("");
 
   //Model
   const [modalVisible, setModalVisible] = useState(false);
@@ -64,9 +66,21 @@ function CompanyHomeScreen({ navigation }) {
     }
   };
 
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    readCompanyAdverts();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
+
   //Read logged in Company job posts
   function readCompanyAdverts() {
+    getData();
     console.log("Username1=" + username);
+
     //Read  data from job adverts database where username(Gotten from login) equals company in adverts
     getDocs(
       query(collection(db, "Adverts"), where("company", "==", username))
@@ -91,28 +105,53 @@ function CompanyHomeScreen({ navigation }) {
       setAdvertsCompany(advert);
     });
     console.log("Username2=" + username);
-    //Call method to read username from async storage
-    getData();
   }
 
-  //Read applicants on selected job
-  function readApplicantsOnAdvert(item) {
-    //Read  data from job adverts database where username(Gotten from login) equals company in adverts
-    getDocs(
-      query(collection(db, "Adverts"), where("title", "==", item.id))
-    ).then((docSnap) => {
-      let applicantsForAd = [];
-      docSnap.forEach((doc) => {
-        applicantsForAd.push({ ...doc.data(), id: doc.id });
+  //ADD image url to user firestore
+  function addImageURLtoFireStore() {
+    var isUrlReady = false;
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Company/" + username))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+        isUrlReady = true;
+        writeURLtoFireStore();
+      })
+      .catch((e) => {
+        console.log("IMAGE NOT FOUND");
+        console.log(e);
       });
-      setApplicants(applicantsForAd[0].Applicants);
-    });
-    console.log(Applicants);
+  }
 
-    //setModel(true);
+  function writeURLtoFireStore() {
+    console.log("called");
+    console.log(username);
+    console.log(profilePic);
+    setDoc(
+      doc(db, "Company", username),
+      {
+        imageURL: profilePic,
+      },
+      { merge: true }
+    )
+      .then(() => {
+        console.log("IMAGE ADDED TO USER COMPANY STORAGE!");
+      })
+      .catch((error) => {
+        //failed
+        console.log("ERROR adding image url to firestore!");
+      });
   }
 
   useEffect(readCompanyAdverts, [username]);
+
+  useEffect(() => addImageURLtoFireStore());
 
   //Search job titles, if none found search company names
   function searchJobs() {
@@ -123,7 +162,10 @@ function CompanyHomeScreen({ navigation }) {
       setAdvertsCompany([]);
       //Read  data from job adverts database where title = search parameter
       getDocs(
-        query(collection(db, "Adverts"), where("title", "==", searchParam))
+        query(
+          collection(db, "Adverts"),
+          where("title", "==", searchParam.trim())
+        )
       ).then((docSnap) => {
         let advert = [];
         let numJobs = 0;
@@ -145,6 +187,7 @@ function CompanyHomeScreen({ navigation }) {
       <View style={styles.headerFooterStyle}>
         <Text style={styles.userNameStyle}>Hello {username}</Text>
         <Text style={styles.mainTitle}>Total results: {numberJobs} </Text>
+        <Text style={styles.mainTitle}>Pull down to refresh page! </Text>
       </View>
     );
   };
@@ -193,6 +236,9 @@ function CompanyHomeScreen({ navigation }) {
           <FlatList
             ListHeaderComponent={flatListHeader}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             data={AdvertsCompany}
             renderItem={({ item }) => (
               <View style={styles.innerContainer}>
@@ -233,7 +279,7 @@ function CompanyHomeScreen({ navigation }) {
           onPress={() => navigation.navigate("CompanyHome")}
         >
           <Image
-            style={{ width: 30, height: 30, margin: 15 }}
+            style={{ width: 35, height: 35 }}
             source={require("../assets/Home.png")}
           />
         </TouchableOpacity>
@@ -243,7 +289,7 @@ function CompanyHomeScreen({ navigation }) {
           onPress={() => navigation.navigate("CompanyPostJob")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 30, height: 30 }}
             source={require("../assets/PostJob.png")}
           />
         </TouchableOpacity>
@@ -253,7 +299,7 @@ function CompanyHomeScreen({ navigation }) {
           onPress={() => navigation.navigate("CompanyMessages")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 35, height: 35 }}
             source={require("../assets/Msg.png")}
           />
         </TouchableOpacity>
@@ -263,8 +309,14 @@ function CompanyHomeScreen({ navigation }) {
           onPress={() => navigation.navigate("CompanyProfileScreen")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Profile.png")}
+            style={{
+              width: 45,
+              height: 45,
+              borderRadius: 100,
+              borderWidth: 2,
+              borderColor: "black",
+            }}
+            source={{ uri: profilePic }}
           />
         </TouchableOpacity>
       </View>
@@ -391,9 +443,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 999,
     width: "100%",
+    borderTopColor: "black",
+    borderTopWidth: 2,
   },
   navButtons: {
-    margin: 20,
+    marginVertical: 20,
+    marginHorizontal: 30,
   },
   companyName: {
     color: "darkblue",

@@ -28,6 +28,7 @@ function CompanyEditJobScreen({ route, navigation }) {
   const [wage, setWage] = useState("");
   const [type, setType] = useState("");
   //new text input for show job details screen
+  const [location, setLocation] = useState("");
   const [fullDescription, setFullDescription] = useState("");
   const [schedule, setSchedule] = useState("");
   const [experience, setExperience] = useState("");
@@ -54,6 +55,7 @@ function CompanyEditJobScreen({ route, navigation }) {
     setInfo(item.info);
     setWage(item.wage);
     setType(item.type);
+    setLocation(item.location);
     setFullDescription(item.fullDescription);
     setSchedule(item.schedule);
     setExperience(item.experience);
@@ -68,6 +70,7 @@ function CompanyEditJobScreen({ route, navigation }) {
       info: info,
       wage: wage,
       type: type,
+      location: location,
       fullDescription: fullDescription,
       schedule: schedule,
       experience: experience,
@@ -88,11 +91,19 @@ function CompanyEditJobScreen({ route, navigation }) {
       });
   }
 
+  function deleteUserWarning() {
+    Alert.alert("Are you sure?", "You won't be able to get your advert back!", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+      },
+      { text: "Yes delete!", onPress: () => deletePost() },
+    ]);
+  }
   function deletePost() {
     deleteDoc(doc(db, "Adverts", title));
     navigation.navigate("CompanyHome");
   }
-  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -110,7 +121,7 @@ function CompanyEditJobScreen({ route, navigation }) {
         <Text style={styles.titleNav}> Edit job</Text>
 
         <TouchableOpacity style={styles.buttonDelete}>
-          <Text style={styles.buttonDeleteText} onPress={deletePost}>
+          <Text style={styles.buttonDeleteText} onPress={deleteUserWarning}>
             Delete
           </Text>
         </TouchableOpacity>
@@ -124,7 +135,12 @@ function CompanyEditJobScreen({ route, navigation }) {
           style={styles.inputBox}
         ></TextInput>
         <Text style={styles.labels}>Location </Text>
-        <TextInput placeholder="location" style={styles.inputBox}></TextInput>
+        <TextInput
+          value={location}
+          onChangeText={(location) => setLocation(location)}
+          placeholder="location"
+          style={styles.inputBox}
+        ></TextInput>
         <Text style={styles.labels}>Small description </Text>
         <TextInput
           multiline

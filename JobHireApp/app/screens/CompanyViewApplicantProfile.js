@@ -21,6 +21,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../database/config";
 import { exp, set } from "react-native-reanimated";
 //Stream chat api imports
@@ -45,11 +46,13 @@ function CompanyViewApplicantProfile({ route, navigation }) {
   const [userExperience, setUserExperience] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
   const [profilePic, setProfilePic] = useState(".");
+  const [compPofilePic, setCompProfilePic] = useState(".");
 
   //when I try to pass the item variable to the edit job screen with, { item: item }, it gives me an error saying item is undefined.
   //If I define it with '  const { item } = route.params;', it gives me the first error I showed you.
 
   function loadImage() {
+    getImageFromStorage();
     getDocs(
       query(collection(db, "Jobseekers"), where("username", "==", username))
     ).then((docSnap) => {
@@ -67,6 +70,24 @@ function CompanyViewApplicantProfile({ route, navigation }) {
       setProfilePic(info);
       getData();
     });
+  }
+
+  function getImageFromStorage() {
+    console.log("called");
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Company/" + compUsername))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setCompProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+      })
+      .catch(() => {
+        console.log("IMAGE NOT FOUND");
+      });
   }
 
   function getUserAbout() {
@@ -235,7 +256,7 @@ function CompanyViewApplicantProfile({ route, navigation }) {
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.innerContainer}>
-              <Image style={styles.userImg} source={{ uri: item.image }} />
+              <Image style={styles.userImg} source={{ uri: item.imageURL }} />
             </View>
           )}
         />
@@ -349,7 +370,7 @@ function CompanyViewApplicantProfile({ route, navigation }) {
           onPress={() => navigation.navigate("CompanyHome")}
         >
           <Image
-            style={{ width: 30, height: 30, margin: 15 }}
+            style={{ width: 35, height: 35 }}
             source={require("../assets/Home.png")}
           />
         </TouchableOpacity>
@@ -359,7 +380,7 @@ function CompanyViewApplicantProfile({ route, navigation }) {
           onPress={() => navigation.navigate("CompanyPostJob")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 30, height: 30 }}
             source={require("../assets/PostJob.png")}
           />
         </TouchableOpacity>
@@ -369,7 +390,7 @@ function CompanyViewApplicantProfile({ route, navigation }) {
           onPress={() => navigation.navigate("CompanyMessages")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 35, height: 35 }}
             source={require("../assets/Msg.png")}
           />
         </TouchableOpacity>
@@ -379,8 +400,14 @@ function CompanyViewApplicantProfile({ route, navigation }) {
           onPress={() => navigation.navigate("CompanyProfileScreen")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Profile.png")}
+            style={{
+              width: 45,
+              height: 45,
+              borderRadius: 100,
+              borderWidth: 2,
+              borderColor: "black",
+            }}
+            source={{ uri: compPofilePic }}
           />
         </TouchableOpacity>
       </View>
@@ -458,23 +485,27 @@ const styles = StyleSheet.create({
   },
   imgContainer: {
     height: 150,
-    marginVertical: 15,
+    marginVertical: 1,
     borderWidth: 2,
+    borderRadius: 100,
   },
   innerContainer: {},
   navBar: {
     flexDirection: "row",
-    flex: 4,
+    flex: 1,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
     position: "absolute",
     bottom: 0,
     zIndex: 999,
+    width: "100%",
+    borderTopColor: "black",
+    borderTopWidth: 2,
   },
   navButtons: {
-    margin: 20,
+    marginVertical: 20,
+    marginHorizontal: 30,
   },
   userImg: {
     shadowColor: "#000",
@@ -483,7 +514,8 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     marginBottom: 40,
     width: 150,
-    height: 150,
+    height: 146,
+    borderRadius: 100,
   },
 
   buttonsTopNav: {

@@ -17,12 +17,32 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react/cjs/react.development";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../database/config";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function CompanyJobMoreInfo({ route, navigation }) {
   const { item } = route.params;
 
   //Used store username read from async storage
   const [username, setUsername] = useState("");
+  const [profilePic, setProfilePic] = useState(".");
+
+  function getImageFromStorage() {
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Company/" + username))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+      })
+      .catch(() => {
+        console.log(username);
+        console.log("IMAGE NOT FOUND");
+      });
+  }
 
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
@@ -42,6 +62,8 @@ function CompanyJobMoreInfo({ route, navigation }) {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => getImageFromStorage(), [username]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -67,10 +89,7 @@ function CompanyJobMoreInfo({ route, navigation }) {
               style={styles.companyImageContainer}
               onPress={() => navigation.navigate("JobScreen")}
             >
-              <Image
-                style={styles.companyImage}
-                source={require("../assets/googleLogo.png")}
-              />
+              <Image style={styles.companyImage} source={{ uri: profilePic }} />
             </TouchableOpacity>
             <Text style={styles.companyName}>{item.company}</Text>
             <Text style={styles.companyLocation}>Location</Text>
@@ -151,7 +170,6 @@ const styles = StyleSheet.create({
     flex: 0.2,
   },
   innerContainerTop: {
-    flexDirection: "column",
     backgroundColor: "white",
     alignSelf: "center",
   },
@@ -161,16 +179,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
 
-  companyImageContainer: {
-    borderRadius: 100,
-
-    marginTop: 20,
-    borderColor: "black",
-  },
   companyImage: {
     width: 150,
     height: 150,
+    borderRadius: 100,
+    borderWidth: 2,
+    marginTop: 20,
+    borderColor: "black",
     justifyContent: "center",
+    alignSelf: "center",
   },
 
   companyName: {

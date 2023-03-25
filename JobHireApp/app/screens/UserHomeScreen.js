@@ -14,11 +14,13 @@ import {
   SafeAreaView,
   Touchable,
   StatusBar,
+  RefreshControl,
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //Database imports
 import { useState, useEffect } from "react/cjs/react.development";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   collection,
   doc,
@@ -39,8 +41,22 @@ function UserHomeScreen({ navigation }) {
 
   //Used store username read from async storage
   const [username, setUsername] = useState("");
+  const [profilePic, setProfilePic] = useState("");
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    searchJobs();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
 
   useEffect(searchJobs, []);
+  useEffect(() => addImageURLtoFireStore());
+
+  //addImageURLtoFireStore
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
   const getData = async () => {
@@ -55,6 +71,48 @@ function UserHomeScreen({ navigation }) {
       // error reading value
     }
   };
+
+  //ADD image url to user firestore
+  function addImageURLtoFireStore() {
+    var isUrlReady = false;
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Jobseeker/" + username))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+        isUrlReady = true;
+        writeURLtoFireStore();
+      })
+      .catch((e) => {
+        console.log("IMAGE NOT FOUND");
+        console.log(e);
+      });
+  }
+
+  function writeURLtoFireStore() {
+    console.log("called");
+    console.log(username);
+    console.log(profilePic);
+    setDoc(
+      doc(db, "Jobseekers", username),
+      {
+        imageURL: profilePic,
+      },
+      { merge: true }
+    )
+      .then(() => {
+        console.log("IMAGE ADDED TO USER JOBSEEKER STORAGE!");
+      })
+      .catch((error) => {
+        //failed
+        console.log("ERROR adding image url to firestore!");
+      });
+  }
 
   function readAllJobs() {
     //Read all data from job adverts database
@@ -76,6 +134,7 @@ function UserHomeScreen({ navigation }) {
 
   //Search job titles, if none found search company names
   function searchJobs() {
+    addImageURLtoFireStore();
     if (searchParam.toString() === "") {
       readAllJobs();
     } else {
@@ -104,7 +163,10 @@ function UserHomeScreen({ navigation }) {
   }
   function searchCompany() {
     getDocs(
-      query(collection(db, "Adverts"), where("company", "==", searchParam))
+      query(
+        collection(db, "Adverts"),
+        where("company", "==", searchParam.trim())
+      )
     ).then((docSnap) => {
       let advert = [];
       let numJobs = 0;
@@ -131,6 +193,7 @@ function UserHomeScreen({ navigation }) {
       <View style={styles.headerFooterStyle}>
         <Text style={styles.userNameStyle}>Hello {username}</Text>
         <Text style={styles.mainTitle}>Total results: {numberJobs} </Text>
+        <Text style={styles.mainTitle}>Pull down to refresh page! </Text>
       </View>
     );
   };
@@ -156,11 +219,22 @@ function UserHomeScreen({ navigation }) {
           <FlatList
             ListHeaderComponent={flatListHeader}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             data={AdvertsUser}
             renderItem={({ item }) => (
               <View style={styles.innerContainer}>
                 <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.companyName}>{item.company}</Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("UserViewCompanyProfile", {
+                      item: item.company,
+                    })
+                  }
+                >
+                  <Text style={styles.companyName}>{item.company}</Text>
+                </TouchableOpacity>
                 <Text style={styles.info}>{item.info}</Text>
                 <Text style={styles.wage}>${item.wage}</Text>
                 <Text style={styles.type}>Type: {item.type}</Text>
@@ -199,7 +273,7 @@ function UserHomeScreen({ navigation }) {
           onPress={() => navigation.navigate("UserHomeScreen")}
         >
           <Image
-            style={{ width: 30, height: 30, margin: 15 }}
+            style={{ width: 45, height: 45 }}
             source={require("../assets/Home.png")}
           />
         </TouchableOpacity>
@@ -209,7 +283,7 @@ function UserHomeScreen({ navigation }) {
           onPress={() => navigation.navigate("UserMessage")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 45, height: 40 }}
             source={require("../assets/Msg.png")}
           />
         </TouchableOpacity>
@@ -219,8 +293,15 @@ function UserHomeScreen({ navigation }) {
           onPress={() => navigation.navigate("UserProfile")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Profile.png")}
+            style={{
+              width: 55,
+              height: 55,
+
+              borderColor: "black",
+              borderWidth: 2,
+              borderRadius: 50,
+            }}
+            source={{ uri: profilePic }}
           />
         </TouchableOpacity>
       </View>
@@ -294,7 +375,7 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     backgroundColor: "#FCFCFF",
-    paddingBottom: 120,
+    paddingBottom: 135,
   },
   innerContainer: {
     backgroundColor: "#ECE7E0",
@@ -394,9 +475,12 @@ const styles = StyleSheet.create({
     zIndex: 999,
     alignSelf: "center",
     width: "100%",
+    borderTopWidth: 2,
+    borderTopColor: "black",
   },
   navButtons: {
-    margin: 20,
+    marginVertical: 20,
+    marginHorizontal: 40,
   },
 });
 export default UserHomeScreen;

@@ -113,6 +113,19 @@ function UserEditProfile({ route, navigation }) {
     readUserInfo();
   }, []);
 
+  function deleteUserWarning() {
+    Alert.alert(
+      "Are you sure?",
+      "You won't be able to get your account back!",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+        },
+        { text: "Yes delete!", onPress: () => deleteUser() },
+      ]
+    );
+  }
   function deleteUser() {
     deleteDoc(doc(db, "Jobseekers", item));
     navigation.navigate("HomeNotLoggedIn");
@@ -167,7 +180,10 @@ function UserEditProfile({ route, navigation }) {
 
         <Text style={styles.titleNav}>Edit profile</Text>
 
-        <TouchableOpacity style={styles.buttonDelete} onPress={deleteUser}>
+        <TouchableOpacity
+          style={styles.buttonDelete}
+          onPress={deleteUserWarning}
+        >
           <Text style={styles.buttonDeleteText}>Delete</Text>
         </TouchableOpacity>
       </View>
@@ -176,7 +192,7 @@ function UserEditProfile({ route, navigation }) {
         <Text style={styles.labels}>First Name</Text>
         <TextInput
           value={firstName}
-          onChangeText={(title) => setFirstName(firstName)}
+          onChangeText={(title) => setFirstName(firstName.replace(/\s+/g, ""))}
           placeholder="First name"
           style={styles.inputBox}
         ></TextInput>
@@ -185,21 +201,21 @@ function UserEditProfile({ route, navigation }) {
         <TextInput
           value={lastName}
           placeholder="Last name"
-          onChangeText={(title) => setLastName(lastName)}
+          onChangeText={(title) => setLastName(lastName.replace(/\s+/g, ""))}
           style={styles.inputBox}
         ></TextInput>
 
         <Text style={styles.labels}>Email</Text>
         <TextInput
           value={email}
-          onChangeText={(email) => setEmail(email)}
+          onChangeText={(email) => setEmail(email.replace(/\s+/g, ""))}
           placeholder="Email"
           style={styles.inputBox}
         ></TextInput>
         <Text style={styles.labels}>Number</Text>
         <TextInput
           value={number}
-          onChangeText={(number) => setNumber(number)}
+          onChangeText={(number) => setNumber(number.replace(/\s+/g, ""))}
           placeholder="Number"
           style={styles.inputBox}
         ></TextInput>

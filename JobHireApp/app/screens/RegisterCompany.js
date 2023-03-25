@@ -18,11 +18,12 @@ import {
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 //Database imports
 import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 
 // Get device width
@@ -43,6 +44,9 @@ function RegisterCompany({ navigation }) {
 
   //Image
   const [image, setImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [imageBlob, setImageBlob] = useState(null);
+
   async function pickImage() {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -52,26 +56,31 @@ function RegisterCompany({ navigation }) {
       quality: 1,
     });
 
-    console.log(result.uri);
-    console.log(result);
-
-    if (!result.canceled) {
+    if (!result.cancelled) {
+      //Assing response to image user picked
+      const response = await fetch(result.uri);
+      //convert image to blob to be stored in firebase
+      const blob = await response.blob();
+      //Gets firebase storage info
+      const storage = getStorage();
+      //Upload image to firebase
+      const storageRef = ref(storage, "Company/" + username);
+      uploadBytes(storageRef, blob).then((snapshot) => {
+        console.log("Uploaded a blob!");
+      });
       setImage(result.uri);
+      setImageBlob(blob);
+      console.log();
     }
   }
 
-  function companyCreate() {
-    //Submit data
-    //db= databse link (database/config),
-    //"company" = table name on firebase
-    // username = id person being written to database,
+  async function companyCreate() {
     setDoc(doc(db, "Company", username), {
       username: username,
       pass: pass,
       email: email,
       number: number,
       address: address,
-      image: image,
 
       info: info,
       founded: founded,
@@ -119,16 +128,16 @@ function RegisterCompany({ navigation }) {
         <Text style={styles.titleMini}>General Information</Text>
         <TextInput
           value={username}
-          maxLength = {30}
-          onChangeText={(username) => setUsername(username)}
+          maxLength={30}
+          onChangeText={(username) => setUsername(username.replace(/\s+/g, ""))}
           placeholder="Company Username"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
         <TextInput
           value={pass}
-          maxLength = {30}
-          onChangeText={(pass) => setPass(pass)}
+          maxLength={30}
+          onChangeText={(pass) => setPass(pass.replace(/\s+/g, ""))}
           secureTextEntry={true}
           style={styles.input}
           placeholder="Password"
@@ -136,23 +145,23 @@ function RegisterCompany({ navigation }) {
         />
         <TextInput
           value={email}
-          maxLength = {30}
-          onChangeText={(email) => setEmail(email)}
+          maxLength={30}
+          onChangeText={(email) => setEmail(email.replace(/\s+/g, ""))}
           placeholder="Email"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
         <TextInput
           value={number}
-          maxLength = {30}
-          onChangeText={(number) => setNumber(number)}
+          maxLength={30}
+          onChangeText={(number) => setNumber(number.replace(/\s+/g, ""))}
           placeholder="Number"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
         <TextInput
           value={address}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(address) => setAddress(address)}
           placeholder="Address"
           placeholderTextColor={"#4f5250"}
@@ -168,7 +177,7 @@ function RegisterCompany({ navigation }) {
           <Image
             source={{ uri: image }}
             style={{
-              //alignSelf: "center",
+              alignSelf: "center",
               marginVertical: 20,
               width: 200,
               height: 200,
@@ -182,7 +191,7 @@ function RegisterCompany({ navigation }) {
         <Text style={styles.titleMini}>Company Information</Text>
         <TextInput
           value={info}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(info) => setInfo(info)}
           placeholder="Summary of Company"
           placeholderTextColor={"#4f5250"}
@@ -190,7 +199,7 @@ function RegisterCompany({ navigation }) {
         ></TextInput>
         <TextInput
           value={founded}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(founded) => setFounded(founded)}
           placeholder="Founded"
           placeholderTextColor={"#4f5250"}
@@ -198,7 +207,7 @@ function RegisterCompany({ navigation }) {
         ></TextInput>
         <TextInput
           value={industry}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(industry) => setIndustry(industry)}
           placeholder="Industry Type"
           placeholderTextColor={"#4f5250"}
@@ -206,7 +215,7 @@ function RegisterCompany({ navigation }) {
         ></TextInput>
         <TextInput
           value={companySize}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(companySize) => setCompanySize(companySize)}
           placeholder="Company Size"
           placeholderTextColor={"#4f5250"}
@@ -221,7 +230,7 @@ function RegisterCompany({ navigation }) {
                 color: "white",
                 textAlign: "center",
                 justifyContent: "center",
-                ////fontSize: 20,
+                fontSize: 20,
                 fontWeight: "bold",
                 lineHeight: 40,
               }}
@@ -238,7 +247,7 @@ function RegisterCompany({ navigation }) {
               style={{
                 textDecorationLine: "underline",
                 color: "navy",
-                //fontSize: 20,
+                fontSize: 20,
               }}
               onPress={() => navigation.navigate("HomeNotLoggedIn")}
             >
@@ -261,18 +270,18 @@ const styles = StyleSheet.create({
   backButton: {
     color: "midnightblue",
     textAlign: "left",
-    //fontSize: 20,
+    fontSize: 20,
     lineHeight: 40,
     paddingLeft: 7.5,
   },
   title: {
     marginBottom: 35,
-    //fontSize: 40,
+    fontSize: 40,
     color: "midnightblue",
     marginLeft: 10,
   },
   titleMini: {
-    //fontSize: 25,
+    fontSize: 25,
     color: "midnightblue",
     marginLeft: 20,
     marginBottom: 15,
@@ -302,7 +311,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingBottom: 100,
-    //alignSelf: "center",
+    alignSelf: "center",
   },
 });
 

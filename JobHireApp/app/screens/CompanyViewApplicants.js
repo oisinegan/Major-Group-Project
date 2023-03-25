@@ -27,6 +27,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../database/config";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 //Stream chat api imports
 import {
@@ -47,6 +48,26 @@ function CompanyViewApplicants({ route, navigation }) {
   //Used store username read from async storage
   const [username, setUsername] = useState("");
 
+  const [profilePic, setProfilePic] = useState("");
+
+  function getImageFromStorage() {
+    console.log("called");
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Company/" + username))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+      })
+      .catch(() => {
+        console.log("IMAGE NOT FOUND");
+      });
+  }
+
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
   const getData = async () => {
@@ -64,6 +85,7 @@ function CompanyViewApplicants({ route, navigation }) {
 
   function readApplicantData() {
     getData();
+
     let info = [];
     let test = [];
     console.log("Before loop");
@@ -84,7 +106,7 @@ function CompanyViewApplicants({ route, navigation }) {
             number,
             username,
             jobTitle,
-            image,
+            imageURL,
           } = doc.data();
 
           info.push({
@@ -97,7 +119,7 @@ function CompanyViewApplicants({ route, navigation }) {
             number,
             username,
             jobTitle,
-            image,
+            imageURL,
           });
         });
 
@@ -131,6 +153,7 @@ function CompanyViewApplicants({ route, navigation }) {
   //With one use effect, the applicants display for a second then disappears
   useEffect(readApplicantData, []);
   useEffect(readApplicantData, []);
+  useEffect(() => getImageFromStorage());
 
   return (
     <SafeAreaView style={styles.container}>
@@ -157,7 +180,7 @@ function CompanyViewApplicants({ route, navigation }) {
                 <View style={styles.imageContainer}>
                   <Image
                     style={styles.companyImage}
-                    source={{ uri: data.image }}
+                    source={{ uri: data.imageURL }}
                   />
                 </View>
                 <View style={styles.innerInfoContainer}>
@@ -198,7 +221,7 @@ function CompanyViewApplicants({ route, navigation }) {
           onPress={() => navigation.navigate("CompanyHome")}
         >
           <Image
-            style={{ width: 30, height: 30, margin: 15 }}
+            style={{ width: 35, height: 35 }}
             source={require("../assets/Home.png")}
           />
         </TouchableOpacity>
@@ -208,7 +231,7 @@ function CompanyViewApplicants({ route, navigation }) {
           onPress={() => navigation.navigate("CompanyPostJob")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 30, height: 30 }}
             source={require("../assets/PostJob.png")}
           />
         </TouchableOpacity>
@@ -218,7 +241,7 @@ function CompanyViewApplicants({ route, navigation }) {
           onPress={() => navigation.navigate("CompanyMessages")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 35, height: 35 }}
             source={require("../assets/Msg.png")}
           />
         </TouchableOpacity>
@@ -228,8 +251,14 @@ function CompanyViewApplicants({ route, navigation }) {
           onPress={() => navigation.navigate("CompanyProfileScreen")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Profile.png")}
+            style={{
+              width: 45,
+              height: 45,
+              borderRadius: 100,
+              borderWidth: 2,
+              borderColor: "black",
+            }}
+            source={{ uri: profilePic }}
           />
         </TouchableOpacity>
       </View>
@@ -329,16 +358,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flex: 1,
     backgroundColor: "white",
-
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
     bottom: 0,
-    width: "100%",
     zIndex: 999,
+    width: "100%",
+    borderTopColor: "black",
+    borderTopWidth: 2,
   },
   navButtons: {
-    margin: 20,
+    marginVertical: 20,
+    marginHorizontal: 30,
   },
 });
 

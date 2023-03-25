@@ -23,6 +23,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../database/config";
 import { exp, set } from "react-native-reanimated";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function UserProfile({ route, navigation }) {
   const [scroll, setScroll] = useState(true);
@@ -33,27 +34,21 @@ function UserProfile({ route, navigation }) {
   const [activeTab, setActiveTab] = useState(0);
   const [profilePic, setProfilePic] = useState(".");
 
-  //when I try to pass the item variable to the edit job screen with, { item: item }, it gives me an error saying item is undefined.
-  //If I define it with '  const { item } = route.params;', it gives me the first error I showed you.
-
-  function loadImage() {
-    getDocs(
-      query(collection(db, "Jobseekers"), where("username", "==", username))
-    ).then((docSnap) => {
-      let info = [];
-      docSnap.forEach((doc) => {
-        const { image } = doc.data();
-
-        info.push({
-          ...doc.data(),
-          id: doc.id,
-
-          image,
-        });
+  function getImageFromStorage() {
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Jobseeker/" + username))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+      })
+      .catch(() => {
+        console.log("IMAGE NOT FOUND");
       });
-      setProfilePic(info);
-      getData();
-    });
   }
 
   function getUserAbout() {
@@ -158,7 +153,7 @@ function UserProfile({ route, navigation }) {
 
   useEffect(() => getUserAbout(), [username]);
 
-  useEffect(() => loadImage(), [username]);
+  useEffect(() => getImageFromStorage(), [username]);
 
   const getData = async () => {
     try {
@@ -195,7 +190,7 @@ function UserProfile({ route, navigation }) {
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.innerContainer}>
-              <Image style={styles.userImg} source={{ uri: item.image }} />
+              <Image style={styles.userImg} source={{ uri: profilePic }} />
             </View>
           )}
         />
@@ -324,7 +319,7 @@ function UserProfile({ route, navigation }) {
           onPress={() => navigation.navigate("UserHomeScreen")}
         >
           <Image
-            style={{ width: 30, height: 30, margin: 15 }}
+            style={{ width: 45, height: 45 }}
             source={require("../assets/Home.png")}
           />
         </TouchableOpacity>
@@ -334,7 +329,7 @@ function UserProfile({ route, navigation }) {
           onPress={() => navigation.navigate("UserMessage")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 45, height: 40 }}
             source={require("../assets/Msg.png")}
           />
         </TouchableOpacity>
@@ -344,8 +339,15 @@ function UserProfile({ route, navigation }) {
           onPress={() => navigation.navigate("UserProfile")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Profile.png")}
+            style={{
+              width: 55,
+              height: 55,
+
+              borderColor: "black",
+              borderWidth: 2,
+              borderRadius: 50,
+            }}
+            source={{ uri: profilePic }}
           />
         </TouchableOpacity>
       </View>
@@ -374,21 +376,26 @@ const styles = StyleSheet.create({
     height: 150,
     marginTop: 20,
     borderWidth: 2,
+    borderRadius: 100,
   },
   innerContainer: {},
   navBar: {
     flexDirection: "row",
-    flex: 4,
+    flex: 1,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
     position: "absolute",
     bottom: 0,
     zIndex: 999,
+    alignSelf: "center",
+    width: "100%",
+    borderTopWidth: 2,
+    borderTopColor: "black",
   },
   navButtons: {
-    margin: 20,
+    marginVertical: 20,
+    marginHorizontal: 40,
   },
   userImg: {
     shadowColor: "#000",
@@ -396,9 +403,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 2,
     marginBottom: 90,
-
-    width: 150,
-    height: 150,
+    borderRadius: 100,
+    width: 140,
+    height: 146,
   },
   company_username: {
     alignSelf: "center",

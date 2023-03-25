@@ -188,14 +188,14 @@ function CompanyEditProfile({ route, navigation }) {
         <Text style={styles.labels}>Email</Text>
         <TextInput
           value={email}
-          onChangeText={(email) => setEmail(email)}
+          onChangeText={(email) => setEmail(email.replace(/\s+/g, ""))}
           placeholder="Email"
           style={styles.inputBox}
         ></TextInput>
         <Text style={styles.labels}>Number</Text>
         <TextInput
           value={number}
-          onChangeText={(number) => setNumber(number)}
+          onChangeText={(number) => setNumber(number.replace(/\s+/g, ""))}
           placeholder="Number"
           style={styles.inputBox}
         ></TextInput>

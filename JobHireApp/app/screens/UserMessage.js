@@ -18,12 +18,30 @@ import UserMessageScreen from "./UserMessageScreen";
 import { useState, useEffect } from "react/cjs/react.development";
 import { ChannelList } from "stream-chat-expo";
 
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function UserMessage({ route, navigation }) {
   //Used store username read from async storage
   const [username, setUsername] = useState("");
+  const [profilePic, setProfilePic] = useState("");
+
+  function getImageFromStorage() {
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Jobseeker/" + username))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+      })
+      .catch(() => {
+        console.log("IMAGE NOT FOUND");
+      });
+  }
 
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
@@ -41,7 +59,7 @@ function UserMessage({ route, navigation }) {
   };
   function getUsername() {
     getData();
-
+    getImageFromStorage();
     console.log("Username=" + username);
   }
 
@@ -75,7 +93,7 @@ function UserMessage({ route, navigation }) {
           onPress={() => navigation.navigate("UserHomeScreen")}
         >
           <Image
-            style={{ width: 30, height: 30, margin: 15 }}
+            style={{ width: 45, height: 45 }}
             source={require("../assets/Home.png")}
           />
         </TouchableOpacity>
@@ -85,7 +103,7 @@ function UserMessage({ route, navigation }) {
           onPress={() => navigation.navigate("UserMessage")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 45, height: 40 }}
             source={require("../assets/Msg.png")}
           />
         </TouchableOpacity>
@@ -95,8 +113,15 @@ function UserMessage({ route, navigation }) {
           onPress={() => navigation.navigate("UserProfile")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Profile.png")}
+            style={{
+              width: 55,
+              height: 55,
+
+              borderColor: "black",
+              borderWidth: 2,
+              borderRadius: 50,
+            }}
+            source={{ uri: profilePic }}
           />
         </TouchableOpacity>
       </View>
@@ -124,14 +149,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
     position: "absolute",
-    width: "100%",
     bottom: 0,
     zIndex: 999,
+    alignSelf: "center",
+    width: "100%",
+    borderTopWidth: 2,
+    borderTopColor: "black",
   },
   navButtons: {
-    margin: 20,
+    marginVertical: 20,
+    marginHorizontal: 40,
   },
 });
 

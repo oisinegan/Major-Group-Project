@@ -13,11 +13,12 @@ import {
 } from "react-native";
 import * as React from "react";
 //Database imports
-import { useState } from "react/cjs/react.development";
+import { useState, useEffect } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ceil } from "react-native-reanimated";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function CompanyPostJob({ navigation }) {
   const [title, setTitle] = useState("");
@@ -26,14 +27,37 @@ function CompanyPostJob({ navigation }) {
   const [type, setType] = useState("");
 
   //new text input for show job details screen
+  const [location, setLocation] = useState("");
   const [fullDescription, setFullDescription] = useState("");
   const [schedule, setSchedule] = useState("");
   const [experience, setExperience] = useState("");
   const [qualification, setQualification] = useState("");
   const [knowledge, setKnowledge] = useState("");
+  const [applicants, setApplicants] = useState(["blank"]);
 
   //Used store username read from async storage
   const [username, setUsername] = useState("");
+
+  const [profilePic, setProfilePic] = useState("");
+
+  function getImageFromStorage() {
+    getData();
+    console.log("called");
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Company/" + username))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+      })
+      .catch(() => {
+        console.log("IMAGE NOT FOUND");
+      });
+  }
 
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
@@ -53,22 +77,25 @@ function CompanyPostJob({ navigation }) {
 
   function create() {
     getData();
+    getImageFromStorage();
     setDoc(doc(db, "Adverts", title), {
-      title: title,
-      info: info,
-      wage: wage,
-      type: type,
-      company: username,
-      fullDescription: fullDescription,
-      schedule: schedule,
-      experience: experience,
-      qualification: qualification,
-      knowledge: knowledge,
+      title: title.trim(),
+      info: info.trim(),
+      wage: wage.trim(),
+      type: type.trim(),
+      company: username.trim(),
+      location: location.trim(),
+      fullDescription: fullDescription.trim(),
+      schedule: schedule.trim(),
+      experience: experience.trim(),
+      qualification: qualification.trim(),
+      knowledge: knowledge.trim(),
+      Applicants: applicants,
     })
       .then(() => {
         //Successfully written to database
         Alert.alert("Sucess", "Data Submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
+          { text: "OK", onPress: () => navigation.navigate("CompanyHome") },
         ]);
       })
       .catch((error) => {
@@ -79,6 +106,7 @@ function CompanyPostJob({ navigation }) {
       });
   }
 
+  useEffect(() => getImageFromStorage());
   ///////////////////////////////////////////////////////////////////////////////////
   const [isSelected, setSelection] = useState(false);
   return (
@@ -124,6 +152,13 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
+          <TextInput
+            value={location}
+            onChangeText={(location) => setLocation(location)}
+            placeholder="Location"
+            style={styles.inputs}
+          ></TextInput>
+
           <Text style={styles.headings}>Work Requirements</Text>
           <TextInput
             value={schedule}
@@ -164,7 +199,7 @@ function CompanyPostJob({ navigation }) {
           onPress={() => navigation.navigate("CompanyHome")}
         >
           <Image
-            style={{ width: 30, height: 30, margin: 15 }}
+            style={{ width: 35, height: 35 }}
             source={require("../assets/Home.png")}
           />
         </TouchableOpacity>
@@ -174,7 +209,7 @@ function CompanyPostJob({ navigation }) {
           onPress={() => navigation.navigate("CompanyPostJob")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 30, height: 30 }}
             source={require("../assets/PostJob.png")}
           />
         </TouchableOpacity>
@@ -184,7 +219,7 @@ function CompanyPostJob({ navigation }) {
           onPress={() => navigation.navigate("CompanyMessages")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 35, height: 35 }}
             source={require("../assets/Msg.png")}
           />
         </TouchableOpacity>
@@ -194,8 +229,14 @@ function CompanyPostJob({ navigation }) {
           onPress={() => navigation.navigate("CompanyProfileScreen")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Profile.png")}
+            style={{
+              width: 45,
+              height: 45,
+              borderRadius: 100,
+              borderWidth: 2,
+              borderColor: "black",
+            }}
+            source={{ uri: profilePic }}
           />
         </TouchableOpacity>
       </View>
@@ -237,9 +278,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 999,
     width: "100%",
+    borderTopColor: "black",
+    borderTopWidth: 2,
   },
   navButtons: {
-    margin: 20,
+    marginVertical: 20,
+    marginHorizontal: 30,
   },
   inputs: {
     borderWidth: 1,

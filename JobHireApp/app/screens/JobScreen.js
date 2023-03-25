@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 //Database imports
 import { useState, useEffect } from "react/cjs/react.development";
 import {
@@ -29,30 +30,29 @@ import { db } from "../database/config";
 function JobScreen({ route, navigation }) {
   const { item } = route.params;
 
-  const [profilePic, setProfilePic] = useState(".");
-
-  function loadImage() {
-    getDocs(
-      query(collection(db, "Company"), where("username", "==", item.company))
-    ).then((docSnap) => {
-      let info = [];
-      docSnap.forEach((doc) => {
-        const { image } = doc.data();
-
-        info.push({
-          ...doc.data(),
-          id: doc.id,
-
-          image,
-        });
-      });
-      setProfilePic(info);
-      getData();
-    });
-  }
-
   //Used store username read from async storage
   const [username, setUsername] = useState("");
+
+  const [profilePic, setProfilePic] = useState("");
+
+  function getImageFromStorage() {
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Company/" + item.company))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+      })
+      .catch(() => {
+        console.log(username);
+        console.log("IMAGE NOT FOUND");
+      });
+  }
+  
 
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
@@ -72,8 +72,8 @@ function JobScreen({ route, navigation }) {
   useEffect(() => {
     console.log(item.company);
     getData();
+    getImageFromStorage();
   }, []);
-  useEffect(() => loadImage(), [username]);
 
   async function writeUserToJobAdvertDB(item) {
     const advertDocumentRef = doc(db, "Adverts", item.id);
@@ -88,10 +88,7 @@ function JobScreen({ route, navigation }) {
       <StatusBar barStyle="dark-content"></StatusBar>
       <View style={styles.nav}>
         <TouchableOpacity style={styles.backButton}>
-          <Text
-            style={styles.backText}
-            onPress={() => navigation.navigate("UserHomeScreen")}
-          >
+          <Text style={styles.backText} onPress={() => navigation.goBack()}>
             Back
           </Text>
         </TouchableOpacity>
@@ -100,27 +97,36 @@ function JobScreen({ route, navigation }) {
 
         <Text style={styles.blank}></Text>
       </View>
-
-      <View style={styles.outerContainerTop}>
-        <View style={styles.innerContainerTop}>
-          <View style={styles.imgContainer}>
-            <FlatList
-              data={profilePic}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item }) => (
-                <View style={styles.innerContainer}>
-                  <Image style={styles.userImg} source={{ uri: item.image }} />
-                </View>
-              )}
-            />
-          </View>
-          <Text style={styles.companyName}>{item.company}</Text>
-          <Text style={styles.companyLocation}>Location</Text>
-        </View>
-      </View>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.outerContainerTop}>
+          <View style={styles.innerContainerTop}>
+            <View style={styles.imgContainer}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("UserViewCompanyProfile", {
+                    item: item.company,
+                  })
+                }
+              >
+                <Image
+                  style={styles.companyImage}
+                  source={{ uri: profilePic }}
+                />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("UserViewCompanyProfile", {
+                  item: item.company,
+                })
+              }
+            >
+              <Text style={styles.companyName}>{item.company}</Text>
+            </TouchableOpacity>
+            <Text style={styles.companyLocation}>Location</Text>
+          </View>
+        </View>
+
         <View style={styles.innerContainerBottom}>
           <Text style={styles.heading}>Job title</Text>
           <Text style={styles.info}> {item.id}</Text>
@@ -202,8 +208,6 @@ const styles = StyleSheet.create({
   },
   innerContainerTop: {
     flexDirection: "column",
-    backgroundColor: "white",
-    alignSelf: "center",
   },
   outerContainerTop: {
     backgroundColor: "white",
@@ -211,26 +215,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
 
-  imgContainer: {
-    height: 150,
-    marginTop: 40,
-    borderWidth: 2,
-  },
-  userImg: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    marginBottom: 90,
-
+  companyImage: {
+    borderRadius: 50,
+    height: 140,
     width: 150,
-    height: 150,
-  },
-  companyImageContainer: {
-    borderRadius: 100,
-
-    marginTop: 20,
-    borderColor: "black",
+    marginVertical: 20,
+    borderWidth: 2,
+    borderRadius: 50,
+    alignSelf: "center",
+    justifyContent: "center",
   },
 
   companyName: {

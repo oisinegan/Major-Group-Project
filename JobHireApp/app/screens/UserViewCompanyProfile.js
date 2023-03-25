@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Alert,
 } from "react-native";
 import {
   collection,
@@ -15,7 +16,10 @@ import {
   getDocs,
   query,
   where,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
+
 import { db } from "../database/config";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,12 +27,16 @@ import { useState, useEffect } from "react/cjs/react.development";
 
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-function CompanyProfileScreen({ navigation }) {
+function UserViewCompanyProfile({ route, navigation }) {
+  const { item } = route.params;
   const [scroll, setScroll] = useState(true);
   const [username, setUsername] = useState("");
+  const [jobseekerUserName, setJobseekerUserName] = useState("");
   const [companyInfo, setCompanyInfo] = useState([]);
   const [companyAbout, setCompanyAbout] = useState([]);
   const [companyContact, setCompanyContact] = useState([]);
+  const [numberJobs, setNumberJobs] = useState([]);
+  const [AdvertsCompany, setAdvertsCompany] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
   const [profilePic, setProfilePic] = useState(".");
 
@@ -53,6 +61,7 @@ function CompanyProfileScreen({ navigation }) {
     setActiveTab(1);
 
     setCompanyContact([]);
+    setAdvertsCompany([]);
 
     getDocs(
       query(collection(db, "Company"), where("username", "==", username))
@@ -81,6 +90,7 @@ function CompanyProfileScreen({ navigation }) {
     setActiveTab(2);
 
     setCompanyAbout([]);
+    setAdvertsCompany([]);
     getDocs(
       query(collection(db, "Company"), where("username", "==", username))
     ).then((docSnap) => {
@@ -101,6 +111,45 @@ function CompanyProfileScreen({ navigation }) {
     });
   }
 
+  function getCompanyJobs() {
+    setActiveTab(3);
+    console.log("Username1=" + username);
+
+    setCompanyAbout([]);
+    setCompanyContact([]);
+    //Read  data from job adverts database where username(Gotten from login) equals company in adverts
+    getDocs(
+      query(collection(db, "Adverts"), where("company", "==", username))
+    ).then((docSnap) => {
+      let advert = [];
+      let numJobs = 0;
+
+      docSnap.forEach((doc) => {
+        const { title, info, wage, type } = doc.data();
+        advert.push({
+          ...doc.data(),
+          id: doc.id,
+          title,
+          info,
+          wage,
+          type,
+        });
+        numJobs += 1;
+      });
+      setNumberJobs(numJobs);
+      setAdvertsCompany(advert);
+    });
+    console.log("Username2=" + username);
+  }
+
+  async function writeUserToJobAdvertDB(item) {
+    const advertDocumentRef = doc(db, "Adverts", item.id);
+
+    await updateDoc(advertDocumentRef, {
+      Applicants: arrayUnion(jobseekerUserName),
+    });
+  }
+
   useEffect(() => getCompanyAbout(), [username]);
   useEffect(() => getImageFromStorage(), [username]);
 
@@ -110,36 +159,31 @@ function CompanyProfileScreen({ navigation }) {
       var usernameFromAsyncStorage = value.toString();
       if (value !== null) {
         // value previously stored
-        setUsername(usernameFromAsyncStorage);
+        setJobseekerUserName(usernameFromAsyncStorage);
       }
     } catch (e) {
       // error reading value
     }
+    setUsername(item);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.topNav}>
-        <Text style={styles.company_username}>Welcome, {username}.</Text>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() =>
-            navigation.navigate("CompanyEditProfile", { item: username })
-          }
-        >
-          <Text style={styles.editText}>Edit</Text>
+      <View style={styles.nav}>
+        <TouchableOpacity style={styles.backButton}>
+          <Text style={styles.backText} onPress={() => navigation.goBack()}>
+            Back
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.nameComp}>
+          <Text style={styles.nameCompText}>{username}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.backButton}>
+          <Text style={styles.backText}></Text>
         </TouchableOpacity>
       </View>
       <View style={styles.imgContainer}>
         <Image style={styles.userImg} source={{ uri: profilePic }} />
-      </View>
-      <View style={styles.buttonsTopNav}>
-        <TouchableOpacity
-          style={styles.profileButttons}
-          onPress={() => navigation.navigate("HomeNotLoggedIn")}
-        >
-          <Text style={styles.buttonTextTop}>Log out</Text>
-        </TouchableOpacity>
       </View>
 
       <Image
@@ -159,6 +203,13 @@ function CompanyProfileScreen({ navigation }) {
           onPress={() => getCompanyContact()}
         >
           <Text style={styles.tabText}>Contact</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 3 && styles.activeButton]}
+          onPress={() => getCompanyJobs()}
+        >
+          <Text style={styles.tabText}>View Jobs</Text>
         </TouchableOpacity>
       </View>
 
@@ -205,51 +256,73 @@ function CompanyProfileScreen({ navigation }) {
             </View>
           )}
         />
+
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={AdvertsCompany}
+          renderItem={({ item }) => (
+            <View style={styles.innerContainerJobs}>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.companyName}>{item.company}</Text>
+              <Text style={styles.info}>{item.info}</Text>
+              <Text style={styles.wage}>${item.wage}</Text>
+              <Text style={styles.type}>Type: {item.type}</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={styles.buttonApply}
+                  onPress={() => {
+                    Alert.alert("Application Successful!", "GOOD LUCK!", [
+                      {
+                        text: "Thank you!",
+                        onPress: () => writeUserToJobAdvertDB(item),
+                      },
+                    ]);
+                  }}
+                >
+                  <Text style={styles.buttonText}>Apply</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() =>
+                    navigation.navigate("JobScreen", { item: item })
+                  }
+                >
+                  <Text style={styles.buttonText}>More info</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        />
       </View>
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyHome")}
+          onPress={() => navigation.navigate("UserHomeScreen")}
         >
           <Image
-            style={{ width: 35, height: 35 }}
+            style={{ width: 30, height: 30, margin: 15 }}
             source={require("../assets/Home.png")}
           />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyPostJob")}
+          onPress={() => navigation.navigate("UserMessage")}
         >
           <Image
-            style={{ width: 30, height: 30 }}
-            source={require("../assets/PostJob.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyMessages")}
-        >
-          <Image
-            style={{ width: 35, height: 35 }}
+            style={{ width: 25, height: 25, margin: 15 }}
             source={require("../assets/Msg.png")}
           />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyProfileScreen")}
+          onPress={() => navigation.navigate("UserProfile")}
         >
           <Image
-            style={{
-              width: 45,
-              height: 45,
-              borderRadius: 100,
-              borderWidth: 2,
-              borderColor: "black",
-            }}
-            source={{ uri: profilePic }}
+            style={{ width: 25, height: 25, margin: 15 }}
+            source={require("../assets/Profile.png")}
           />
         </TouchableOpacity>
       </View>
@@ -270,14 +343,39 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 2,
-    width: 500,
+    width: "100%",
     backgroundColor: "ghostwhite",
     marginBottom: 80,
   },
-
+  nav: {
+    backgroundColor: "ghostwhite",
+    width: "100%",
+    flexDirection: "row",
+    padding: 0,
+  },
+  backButton: {
+    alignSelf: "left",
+    padding: 10,
+    flex: 0.17,
+  },
+  backText: {
+    color: "navy",
+    textAlign: "center",
+    fontSize: 20,
+  },
+  nameComp: {
+    paddingHorizontal: 10,
+    flex: 0.83,
+  },
+  nameCompText: {
+    color: "navy",
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: 35,
+  },
   navBar: {
     flexDirection: "row",
-    flex: 1,
+    flex: 4,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
@@ -285,16 +383,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 999,
     width: "100%",
-    borderTopColor: "black",
-    borderTopWidth: 2,
   },
   navButtons: {
-    marginVertical: 20,
-    marginHorizontal: 30,
+    margin: 20,
   },
   imgContainer: {
     height: 155,
-    marginTop: 20,
+    marginVertical: 15,
     borderWidth: 2,
     borderRadius: 100,
   },
@@ -424,14 +519,88 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
   },
+  innerContainerJobs: {
+    backgroundColor: "#ECE7E0",
+    borderColor: "#E1DEE9",
+    marginTop: 15,
+    padding: 2,
+    borderWidth: 3,
+    borderRadius: 30,
+    marginHorizontal: 15,
+  },
 
+  companyName: {
+    color: "midnightblue",
+    fontSize: 20,
+    paddingLeft: 12.5,
+    paddingBottom: 5,
+    fontStyle: "bold",
+    fontWeight: "500",
+  },
+  textContainer: {
+    padding: 20,
+  },
+  text: {
+    color: "black",
+    fontSize: 20,
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  button: {
+    backgroundColor: "midnightblue",
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    borderRadius: 50,
+    marginLeft: 10,
+  },
+  buttonApply: {
+    backgroundColor: "midnightblue",
+    paddingHorizontal: 25,
+    paddingVertical: 15,
+    borderRadius: 50,
+    marginLeft: 10,
+  },
   buttonText: {
     color: "white",
-    fontSize: 15,
-    marginTop: 10,
-    textAlign: "center",
     fontWeight: "bold",
+    fontSize: 16,
+    justifyContent: "center",
+    alignSelf: "center",
+  },
+
+  title: {
+    color: "midnightblue",
+    fontWeight: "bold",
+    fontSize: 25,
+    padding: 12,
+  },
+  info: {
+    fontSize: 19,
+    paddingTop: 7.5,
+    paddingBottom: 7.5,
+    paddingLeft: 15,
+    fontWeight: "400",
+  },
+  wage: {
+    textAlign: "left",
+    paddingRight: 5,
+    paddingLeft: 15,
+    paddingTop: 5,
+    fontSize: 18,
+    fontWeight: "bold",
+    paddingBottom: 2,
+  },
+  type: {
+    textAlign: "left",
+    paddingRight: 5,
+    paddingBottom: 5,
+    paddingLeft: 15,
+    paddingTop: 7.5,
+    fontSize: 19,
   },
 });
 
-export default CompanyProfileScreen;
+export default UserViewCompanyProfile;

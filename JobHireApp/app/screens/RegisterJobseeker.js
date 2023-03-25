@@ -22,7 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 
 // Get device width
@@ -62,11 +62,20 @@ function RegisterJobseeker({ navigation }) {
       quality: 1,
     });
 
-    console.log(result.uri);
-    console.log(result);
-
     if (!result.canceled) {
+      //Assigning response to image user picked
+      const response = await fetch(result.uri);
+      //convert image to blob to be stored in firebase
+      const blob = await response.blob();
+      //Gets firebase storage info
+      const storage = getStorage();
+      //Upload image to firebase
+      const storageRef = ref(storage, "Jobseeker/" + username);
+      uploadBytes(storageRef, blob).then((snapshot) => {
+        console.log("Uploaded a blob!");
+      });
       setImage(result.uri);
+      console.log();
     }
   }
 
@@ -84,7 +93,6 @@ function RegisterJobseeker({ navigation }) {
       number: number,
       city: city,
       country: country,
-      image: image,
 
       qualificationName: qualificationName,
       qualificationLevel: qualificationLevel,
@@ -138,24 +146,26 @@ function RegisterJobseeker({ navigation }) {
         <Text style={styles.titleMini}>General Information</Text>
         <TextInput
           value={firstName}
-          maxLength = {30}
-          onChangeText={(firstName) => setFirstName(firstName)}
+          maxLength={30}
+          onChangeText={(firstName) =>
+            setFirstName(firstName.replace(/\s+/g, ""))
+          }
           placeholder="First Name"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
         <TextInput
           value={lastName}
-          maxLength = {30}
-          onChangeText={(lastName) => setLastname(lastName)}
+          maxLength={30}
+          onChangeText={(lastName) => setLastname(lastName.replace(/\s+/g, ""))}
           placeholder="Last Name"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
         <TextInput
           value={username}
-          maxLength = {30}
-          onChangeText={(username) => setUsername(username)}
+          maxLength={30}
+          onChangeText={(username) => setUsername(username.replace(/\s+/g, ""))}
           placeholder="Username"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
@@ -163,8 +173,8 @@ function RegisterJobseeker({ navigation }) {
 
         <TextInput
           value={email}
-          maxLength = {30}
-          onChangeText={(email) => setEmail(email)}
+          maxLength={30}
+          onChangeText={(email) => setEmail(email.replace(/\s+/g, ""))}
           placeholder="Email"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
@@ -172,8 +182,8 @@ function RegisterJobseeker({ navigation }) {
 
         <TextInput
           value={pass}
-          maxLength = {30}
-          onChangeText={(pass) => setPass(pass)}
+          maxLength={30}
+          onChangeText={(pass) => setPass(pass.replace(/\s+/g, ""))}
           secureTextEntry={true}
           style={styles.input}
           placeholder="Password"
@@ -181,15 +191,15 @@ function RegisterJobseeker({ navigation }) {
         />
         <TextInput
           value={number}
-          maxLength = {30}
-          onChangeText={(number) => setNumber(number)}
+          maxLength={30}
+          onChangeText={(number) => setNumber(number.replace(/\s+/g, ""))}
           placeholder="Number"
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
         <TextInput
           value={city}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(city) => setCity(city)}
           placeholder="City"
           placeholderTextColor={"#4f5250"}
@@ -197,7 +207,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={country}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(country) => setCountry(country)}
           placeholder="Country"
           placeholderTextColor={"#4f5250"}
@@ -212,7 +222,7 @@ function RegisterJobseeker({ navigation }) {
           <Image
             source={{ uri: image }}
             style={{
-              //alignSelf: "center",
+              alignSelf: "center",
               marginVertical: 20,
               width: 200,
               height: 200,
@@ -225,7 +235,7 @@ function RegisterJobseeker({ navigation }) {
         <Text style={styles.titleMini}>Qualification</Text>
         <TextInput
           value={qualificationName}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(qualificationName) =>
             setQualificationName(qualificationName)
           }
@@ -235,7 +245,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={qualificationLevel}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(qualificationLevel) =>
             setQualificationLevel(qualificationLevel)
           }
@@ -245,7 +255,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={collegeName}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(collegeName) => setCollegeName(collegeName)}
           placeholder="University/School Name"
           placeholderTextColor={"#4f5250"}
@@ -253,7 +263,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={yearStart}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(yearStart) => setYearStart(yearStart)}
           placeholder="Start Year"
           placeholderTextColor={"#4f5250"}
@@ -261,7 +271,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={yearEnd}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(yearEnd) => setYearEnd(yearEnd)}
           placeholder="Start End"
           placeholderTextColor={"#4f5250"}
@@ -271,7 +281,7 @@ function RegisterJobseeker({ navigation }) {
         <Text style={styles.titleMini}>Experience</Text>
         <TextInput
           value={jobTitle}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(jobTitle) => setJobTitle(jobTitle)}
           placeholder="Job Title"
           placeholderTextColor={"#4f5250"}
@@ -279,7 +289,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={yearsExperience}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(yearsExperience) =>
             SetYearsExperience(yearsExperience)
           }
@@ -290,7 +300,7 @@ function RegisterJobseeker({ navigation }) {
         <Text style={styles.titleMini}>Knowledge and Skills</Text>
         <TextInput
           value={skills}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(skills) => setSkills(skills)}
           placeholder="Skills"
           placeholderTextColor={"#4f5250"}
@@ -298,7 +308,7 @@ function RegisterJobseeker({ navigation }) {
         ></TextInput>
         <TextInput
           value={Knowledge}
-          maxLength = {30}
+          maxLength={30}
           onChangeText={(Knowledge) => setKnowledge(Knowledge)}
           placeholder="Knowledge"
           placeholderTextColor={"#4f5250"}
@@ -352,18 +362,18 @@ const styles = StyleSheet.create({
   backButton: {
     color: "midnightblue",
     textAlign: "left",
-    //fontSize: 20,
+    fontSize: 20,
     lineHeight: 40,
     paddingLeft: 7.5,
   },
   title: {
     marginBottom: 35,
-    //fontSize: 40,
+    fontSize: 40,
     color: "midnightblue",
     marginLeft: 10,
   },
   titleMini: {
-    //fontSize: 25,
+    fontSize: 25,
     color: "midnightblue",
     marginLeft: 20,
     marginBottom: 15,
@@ -394,7 +404,7 @@ const styles = StyleSheet.create({
 
   footer: {
     paddingBottom: 100,
-    //alignSelf: "center",
+    alignSelf: "center",
   },
 });
 

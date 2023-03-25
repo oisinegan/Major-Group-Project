@@ -21,23 +21,53 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../database/config";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function UserViewJobs({ navigation }) {
   const [username, setUsername] = useState("");
   const [userJobs, setUserJobs] = useState([]);
+  const [numberJobs, setNumberJobs] = useState([]);
+  const [profilePic, setProfilePic] = useState("");
+
+  function getImageFromStorage() {
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Jobseeker/" + username))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+      })
+      .catch(() => {
+        console.log("IMAGE NOT FOUND");
+      });
+  }
 
   //Read all data from logged in company database.
-  /* getDocs(
-    query(collection(db, "Adverts"), where("Applicants", "==", username))
-  ).then((docSnap) => {
-    let jobs = [];
-    docSnap.forEach((doc) => {
-      jobs.push({ ...doc.data(), id: doc.id, title });
+  function getJobs() {
+    getDocs(
+      query(
+        collection(db, "Adverts"),
+        where("Applicants", "array-contains", username)
+      )
+    ).then((docSnap) => {
+      let numJobs = 0;
+      let jobs = [];
+      docSnap.forEach((doc) => {
+        jobs.push({ ...doc.data(), id: doc.id });
+        numJobs += 1;
+      });
+      setUserJobs(jobs);
+      console.log(username);
+      console.log(jobs);
+      setNumberJobs(numJobs);
+      getData();
+      getImageFromStorage();
     });
-    setUserJobs(jobs);
-    getData();
-  }); */
-
+  }
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("Username");
@@ -51,21 +81,49 @@ function UserViewJobs({ navigation }) {
     }
   };
 
+  const flatListHeader = () => {
+    return (
+      <View style={styles.headerFooterStyle}>
+        <Text style={styles.company_username}>Your job applications..</Text>
+        <Text style={styles.mainTitle}>Total jobs: {numberJobs} </Text>
+      </View>
+    );
+  };
+
+  useEffect(() => getJobs(), [username]);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.company_username}>
-        Job applications for {username}
-      </Text>
+    <SafeAreaView style={styles.container}>
+      <TouchableOpacity style={styles.backButton}>
+        <Text
+          style={styles.backText}
+          onPress={() => navigation.navigate("UserProfile")}
+        >
+          Back
+        </Text>
+      </TouchableOpacity>
 
       <View style={styles.mainContainer}>
-        <FlatList
-          data={userJobs}
-          renderItem={({ item }) => (
-            <View style={styles.innerContainer}>
-              <Text>{item.title}</Text>
-            </View>
-          )}
-        />
+        <View style={styles.flatlistContainer}>
+          <FlatList
+            ListHeaderComponent={flatListHeader}
+            showsVerticalScrollIndicator={false}
+            data={userJobs}
+            renderItem={({ item }) => (
+              <View style={styles.innerContainer}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.companyName}>{item.company}</Text>
+                <Text style={styles.info}>{item.info}</Text>
+                <Text style={styles.wage}>${item.wage}</Text>
+                <View style={styles.bottomInnerContainer}>
+                  <Text style={styles.type}>Type: {item.type}</Text>
+
+                  <Text style={styles.buttonText}>Applied</Text>
+                </View>
+              </View>
+            )}
+          />
+        </View>
       </View>
 
       <View style={styles.navBar}>
@@ -74,7 +132,7 @@ function UserViewJobs({ navigation }) {
           onPress={() => navigation.navigate("UserHomeScreen")}
         >
           <Image
-            style={{ width: 30, height: 30, margin: 15 }}
+            style={{ width: 45, height: 45 }}
             source={require("../assets/Home.png")}
           />
         </TouchableOpacity>
@@ -84,18 +142,8 @@ function UserViewJobs({ navigation }) {
           onPress={() => navigation.navigate("UserMessage")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
+            style={{ width: 45, height: 40 }}
             source={require("../assets/Msg.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navButtons}
-          onPress={() => navigation.navigate("UserNotification")}
-        >
-          <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Noti.png")}
           />
         </TouchableOpacity>
 
@@ -104,115 +152,139 @@ function UserViewJobs({ navigation }) {
           onPress={() => navigation.navigate("UserProfile")}
         >
           <Image
-            style={{ width: 25, height: 25, margin: 15 }}
-            source={require("../assets/Profile.png")}
+            style={{
+              width: 55,
+              height: 55,
+
+              borderColor: "black",
+              borderWidth: 2,
+              borderRadius: 50,
+            }}
+            source={{ uri: profilePic }}
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F1F1F1",
+    backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "center",
   },
   mainContainer: {
-    flex: 2,
-    width: 350,
-    margin: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    borderRadius: 40,
-    borderWidth: 2,
-    borderColor: "navy",
+    backgroundColor: "#ghostwhite",
+    paddingBottom: 120,
   },
+  backButton: {
+    alignSelf: "left",
+    paddingLeft: 20,
+    paddingTop: 5,
+    paddingBottom: 5,
+  },
+  backText: {
+    color: "navy",
+    textAlign: "center",
+    fontSize: 20,
+  },
+  mainTitle: {
+    color: "grey",
+    fontSize: 15,
+    paddingLeft: "5%",
+    fontWeight: "400",
+  },
+  company_username: {
+    color: "midnightblue",
+    fontWeight: "bold",
+    fontSize: 30,
+    letterSpacing: 1,
+    marginTop: 10,
+    paddingLeft: "4%",
+  },
+  innerContainer: {
+    backgroundColor: "#ECE7E0",
+    // borderColor: "#E1DEE9",
+
+    marginTop: 25,
+    padding: 2,
+    borderWidth: 3,
+    borderRadius: 15,
+  },
+  flatlistContainer: {
+    paddingHorizontal: "4%",
+  },
+
+  companyName: {
+    color: "darkblue",
+    fontSize: 20,
+    paddingLeft: 12.5,
+    paddingBottom: 5,
+    fontStyle: "bold",
+    fontWeight: "500",
+  },
+  title: {
+    color: "midnightblue",
+    fontWeight: "bold",
+    fontSize: 25,
+    padding: 12,
+  },
+  info: {
+    fontSize: 19,
+    paddingTop: 7.5,
+    paddingBottom: 7.5,
+    paddingLeft: 15,
+    fontWeight: "400",
+  },
+  wage: {
+    textAlign: "left",
+    paddingRight: 5,
+    paddingLeft: 15,
+    paddingTop: 5,
+    fontSize: 18,
+    fontWeight: "bold",
+    paddingBottom: 2,
+  },
+  type: {
+    textAlign: "left",
+    paddingRight: 5,
+    paddingBottom: 5,
+    paddingLeft: 15,
+    paddingTop: 7.5,
+    fontSize: 19,
+    flex: 0.7,
+  },
+  bottomInnerContainer: {
+    flex: 1,
+    flexDirection: "row",
+  },
+
+  buttonText: {
+    color: "midnightblue",
+    fontWeight: "bold",
+    fontSize: 20,
+    alignSelf: "center",
+    flex: 0.3,
+    paddingLeft: 40,
+  },
+
   navBar: {
     flexDirection: "row",
-    flex: 4,
+    flex: 1,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
     bottom: 0,
     zIndex: 999,
+    alignSelf: "center",
+    width: "100%",
+    borderTopWidth: 2,
+    borderTopColor: "black",
   },
   navButtons: {
-    margin: 20,
-  },
-  userImg: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    marginBottom: 10,
-  },
-  company_username: {
-    textAlign: "center",
-    color: "navy",
-    fontSize: 25,
-    fontWeight: "bold",
-    letterSpacing: 0,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    marginTop: 40,
-  },
-  buttonTopNav: {
-    borderRadius: 10,
-    marginLeft: 5,
-    backgroundColor: "navy",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 30,
-    marginLeft: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-  },
-  buttons: {
-    flexDirection: "row",
-  },
-  buttonTopNavText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 14,
-    textAlign: "center",
-  },
-  company_info: {
-    color: "black",
-    textAlign: "center",
-    marginBottom: 10,
-    margin: 5,
-    fontWeight: "bold",
-    fontSize: 15,
-  },
-  info_titles: {
-    fontSize: 20,
-    opacity: 0.5,
-    marginTop: 15,
-    marginLeft: 8,
-    textAlign: "center",
-  },
-  logOutButton: {
-    borderRadius: 10,
-    marginLeft: 5,
-    backgroundColor: "navy",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 30,
-    marginLeft: 10,
-    width: 100,
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
+    marginVertical: 20,
+    marginHorizontal: 40,
   },
 });
 
