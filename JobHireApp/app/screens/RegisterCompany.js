@@ -47,6 +47,18 @@ function RegisterCompany({ navigation }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [imageBlob, setImageBlob] = useState(null);
 
+  //Error messages
+  const [usernameErr, setUsernameErr] = useState(" ");
+  const [passErr, setPassErr] = useState(" ");
+  const [emailErr, setEmailErr] = useState(" ");
+  const [numberErr, setNumberErr] = useState(" ");
+  const [addressErr, setAddressErr] = useState(" ");
+  const [infoErr, setInfoErr] = useState("");
+  const [foundedErr, setFoundedErr] = useState("");
+  const [industryErr, setIndustryErr] = useState("");
+  const [companySizeErr, setCompanySizeErr] = useState("");
+  const [imageErr, setImageErr] = useState("");
+
   async function pickImage() {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -74,31 +86,169 @@ function RegisterCompany({ navigation }) {
     }
   }
 
-  async function companyCreate() {
-    setDoc(doc(db, "Company", username), {
-      username: username,
-      pass: pass,
-      email: email,
-      number: number,
-      address: address,
+  //Specific tests - methods return true/false
+  function upperCaseTest(string) {
+    //If string contains at least one  Upper case letter
+    return /[A-Z]/.test(string);
+  }
+  function numberTest(string) {
+    //If string contains at least one number
+    return /[1-9]/.test(string);
+  }
+  function validEmail(string) {
+    var res1 = /[@]/.test(string);
+    var res2 = /[.]/.test(string);
 
-      info: info,
-      founded: founded,
-      industry: industry,
-      companySize: companySize,
-    })
-      .then(() => {
-        //Successfully written to database
-        Alert.alert("Success", "You have successfully signed up!", [
-          { text: "OK", onPress: () => navigation.navigate("HomeNotLoggedIn") },
-        ]);
+    if (res1 && res2) {
+      return true;
+    }
+    return false;
+  }
+
+  async function companyCreate() {
+    var isFormCorrect = false;
+    var noInputs = 10;
+    var noCorrectInputs = 0;
+
+    var errorMsg = "";
+
+    //Username
+    if (username == "") {
+      setUsernameErr("Username field is empty");
+    } else if (username.length < 4) {
+      setUsernameErr("Username must be longer than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setUsernameErr("");
+    }
+
+    //Password
+    if (pass == "") {
+      setPassErr("Password field is empty!");
+    } else if (pass.length < 6) {
+      setPassErr("password must be longer than 6 characters!");
+      console.log("test1");
+    } else if (upperCaseTest(pass) == false) {
+      console.log("test2");
+      setPassErr("Password must contain a capital!");
+    } else if (numberTest(pass) == false) {
+      setPassErr("Password must contain a number!");
+    } else {
+      noCorrectInputs++;
+      setPassErr("");
+    }
+
+    //Email
+    if (email == "") {
+      setEmailErr("Email field is empty!");
+    } else if (validEmail(email) == false) {
+      setEmailErr("Invalid email!");
+    } else {
+      noCorrectInputs++;
+      setEmailErr("");
+    }
+
+    //Number
+    if (number == "") {
+      setNumberErr("Number field is empty!");
+    } else if (number.length < 7) {
+      setNumberErr("Number must be longer than 7 digits!");
+    } else {
+      noCorrectInputs++;
+      setNumberErr("");
+    }
+
+    //Profile picutre
+    if (image == null) {
+      setImageErr("Please choose a profile picture!");
+    } else {
+      noCorrectInputs++;
+      setImageErr("");
+    }
+
+    //Address
+    if (address == "") {
+      setAddressErr("Address field is empty!");
+    } else if (address.length < 10) {
+      setAddressErr("Address must be longer than 10 characters!");
+    } else {
+      noCorrectInputs++;
+      setAddressErr("");
+    }
+
+    //Info
+    if (info == "") {
+      setInfoErr("Summary field is empty!");
+    } else if (info.length < 10) {
+      setInfoErr("Summary must be longer than 10 characters!");
+    } else {
+      noCorrectInputs++;
+      setInfoErr("");
+    }
+
+    //Founded
+    if (founded == "") {
+      setFoundedErr("Founded field is empty!");
+    } else if (founded.length < 4) {
+      setFoundedErr("Founded must be longer than 3 digits!");
+    } else {
+      noCorrectInputs++;
+      setFoundedErr("");
+    }
+
+    //Industry
+    if (industry == "") {
+      setIndustryErr("Industry field is empty!");
+    } else if (industry.length < 5) {
+      setIndustryErr("Industry must be longer than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setIndustryErr("");
+    }
+
+    //Company
+    if (companySize == "") {
+      setCompanySizeErr("Company size field is empty!");
+    } else if (industry.length < 4) {
+      setCompanySizeErr("Company size must be longer than 4 characters!");
+    } else {
+      noCorrectInputs++;
+      setCompanySizeErr("");
+    }
+
+    if (noInputs == noCorrectInputs) {
+      setDoc(doc(db, "Company", username), {
+        username: username,
+        pass: pass,
+        email: email,
+        number: number,
+        address: address,
+
+        info: info,
+        founded: founded,
+        industry: industry,
+        companySize: companySize,
       })
-      .catch((error) => {
-        //failed
-        Alert.alert("ERROR", "Data not submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]);
-      });
+        .then(() => {
+          //Successfully written to database
+          Alert.alert("Success", "You have successfully signed up!", [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate("HomeNotLoggedIn"),
+            },
+          ]);
+        })
+        .catch((error) => {
+          //failed
+          Alert.alert("ERROR", "Data not submitted", [
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ]);
+        });
+    } else {
+      Alert.alert("Sign up unsucessful!", "Please try again!", [
+        { text: "OK", onPress: () => console.log("error msg - OK Pressed") },
+      ]);
+    }
   } ////end companyCreate
 
   /******* METHOD TO STORE VARIABLE IN ASYNC STORAGE *******/
@@ -134,6 +284,7 @@ function RegisterCompany({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{usernameErr}</Text>
         <TextInput
           value={pass}
           maxLength={30}
@@ -143,6 +294,7 @@ function RegisterCompany({ navigation }) {
           placeholder="Password"
           placeholderTextColor={"#4f5250"}
         />
+        <Text style={styles.errorMsg}>{passErr}</Text>
         <TextInput
           value={email}
           maxLength={30}
@@ -151,6 +303,7 @@ function RegisterCompany({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{emailErr}</Text>
         <TextInput
           value={number}
           maxLength={30}
@@ -159,6 +312,7 @@ function RegisterCompany({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{numberErr}</Text>
         <TextInput
           value={address}
           maxLength={30}
@@ -167,7 +321,7 @@ function RegisterCompany({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
-
+        <Text style={styles.errorMsg}>{addressErr}</Text>
         <Text style={styles.titleMini}>Profile Picture</Text>
         <Button
           title="Pick a profile picture from camera roll"
@@ -187,7 +341,7 @@ function RegisterCompany({ navigation }) {
             }}
           />
         )}
-
+        <Text style={styles.errorMsg}>{imageErr}</Text>
         <Text style={styles.titleMini}>Company Information</Text>
         <TextInput
           value={info}
@@ -197,6 +351,7 @@ function RegisterCompany({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{infoErr}</Text>
         <TextInput
           value={founded}
           maxLength={30}
@@ -205,6 +360,7 @@ function RegisterCompany({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{foundedErr}</Text>
         <TextInput
           value={industry}
           maxLength={30}
@@ -213,6 +369,7 @@ function RegisterCompany({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{industryErr}</Text>
         <TextInput
           value={companySize}
           maxLength={30}
@@ -221,6 +378,7 @@ function RegisterCompany({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{companySizeErr}</Text>
 
         <View style={styles.buttonsContainer}>
           <TouchableOpacity style={styles.button}>
@@ -286,13 +444,18 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 15,
   },
+  errorMsg: {
+    color: "red",
+    paddingLeft: 40,
+    marginBottom: 10,
+  },
 
   input: {
     borderWidth: 1,
     borderColor: "midnightblue",
     padding: 15,
     width: "82.5%",
-    marginBottom: 20,
+
     borderRadius: 50,
     marginLeft: 30,
   },

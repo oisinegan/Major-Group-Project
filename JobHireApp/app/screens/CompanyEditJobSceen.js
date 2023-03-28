@@ -16,7 +16,7 @@ import {
 import * as React from "react";
 import { db } from "../database/config";
 import { useState, useEffect } from "react/cjs/react.development";
-import { doc, setDoc, deleteDoc } from "firebase/firestore";
+import { doc, setDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 function CompanyEditJobScreen({ route, navigation }) {
@@ -64,23 +64,28 @@ function CompanyEditJobScreen({ route, navigation }) {
   }, []);
 
   function create() {
+    console.log(item);
+    console.log(item.company);
+    console.log(title);
     getData();
-    setDoc(doc(db, "Adverts", title), {
-      title: title,
-      info: info,
-      wage: wage,
-      type: type,
-      location: location,
-      fullDescription: fullDescription,
-      schedule: schedule,
-      experience: experience,
-      qualification: qualification,
-      knowledge: knowledge,
+    setDoc(doc(db, "Adverts", title.trim()), {
+      title: title.trim(),
+      info: info.trim(),
+      wage: wage.trim(),
+      type: type.trim(),
+      company: item.company.trim(),
+      Applicants: item.Applicants,
+      location: location.trim(),
+      fullDescription: fullDescription.trim(),
+      schedule: schedule.trim(),
+      experience: experience.trim(),
+      qualification: qualification.trim(),
+      knowledge: knowledge.trim(),
     })
       .then(() => {
         //Successfully written to database
         Alert.alert("Sucess", "Data Submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
+          { text: "OK", onPress: () => navigation.navigate("CompanyHome") },
         ]);
       })
       .catch((error) => {

@@ -53,7 +53,7 @@ function UserMessageScreen({ route, navigation }) {
     getData();
     console.log(username);
     console.log(channel.id);
-    setUrl("https://192.168.0.7:3000?name=" + username + "!" + channel.id);
+    setUrl("https://192.168.1.4:3000?name=" + username + "!" + channel.id);
   }
 
   useEffect(() => createUrl(), [username]);

@@ -16,7 +16,7 @@ import {
 import * as React from "react";
 import { db } from "../database/config";
 import { useState, useEffect } from "react/cjs/react.development";
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -28,7 +28,8 @@ import {
   deleteDoc,
   where,
 } from "firebase/firestore";
-import { add } from "react-native-reanimated";
+
+import * as ImagePicker from "expo-image-picker";
 
 function CompanyEditProfile({ route, navigation }) {
   //this one is causing an error
@@ -44,6 +45,43 @@ function CompanyEditProfile({ route, navigation }) {
   const [industry, setIndustry] = useState("");
   const [info, setInfo] = useState("");
   const [number, setNumber] = useState("");
+  const [imageURL, setImageURL] = useState("");
+
+  const [curProfilePic, setCurProfilePic] = useState("");
+  const [newProfilePic, setNewProfilePic] = useState("");
+
+  async function pickImage() {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setNewProfilePic(result.uri);
+    }
+  }
+
+  function getImageFromStorage() {
+    getData();
+    console.log("called");
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Company/" + username))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setCurProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+      })
+      .catch(() => {
+        console.log("IMAGE NOT FOUND");
+      });
+  }
 
   const getData = async () => {
     try {
@@ -70,6 +108,7 @@ function CompanyEditProfile({ route, navigation }) {
           address,
           number,
           founded,
+          imageURL,
           username,
           pass,
           industry,
@@ -81,6 +120,7 @@ function CompanyEditProfile({ route, navigation }) {
         setNumber(number);
         setPass(pass);
         setUsername(username);
+        setImageURL(imageURL);
         setCompanySize(companySize);
         setAddress(address);
         setFounded(founded);
@@ -93,18 +133,51 @@ function CompanyEditProfile({ route, navigation }) {
     readUserInfo();
   }, []);
 
+  useEffect(() => getImageFromStorage());
+
+  function deleteUserWarning() {
+    Alert.alert(
+      "Are you sure?",
+      "You won't be able to get your account back!",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+        },
+        { text: "Yes delete!", onPress: () => deleteUser() },
+      ]
+    );
+  }
   function deleteUser() {
     deleteDoc(doc(db, "Company", item));
     navigation.navigate("HomeNotLoggedIn");
   }
 
-  function create() {
-    getData();
+  async function create() {
+    //Assing response to image user picked
+    var response;
+    if (newProfilePic === "") {
+      response = await fetch(curProfilePic);
+    } else {
+      response = await fetch(newProfilePic);
+    }
+
+    //convert image to blob to be stored in firebase
+    const blob = await response.blob();
+    //Gets firebase storage info
+    const storage = getStorage();
+    //Upload image to firebase
+    const storageRef = ref(storage, "Company/" + username);
+    uploadBytes(storageRef, blob).then((snapshot) => {
+      console.log("Uploaded a blob!");
+    });
+
     setDoc(doc(db, "Company", item), {
       email: email,
       address: address,
       number: number,
       info: info,
+      imageURL: imageURL,
       industry: industry,
       founded: founded,
       companySize: companySize,
@@ -114,7 +187,10 @@ function CompanyEditProfile({ route, navigation }) {
       .then(() => {
         //Successfully written to database
         Alert.alert("Success", "Data Submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("CompanyProfileScreen"),
+          },
         ]);
       })
       .catch((error) => {
@@ -140,11 +216,76 @@ function CompanyEditProfile({ route, navigation }) {
 
         <Text style={styles.titleNav}>Edit profile</Text>
 
-        <TouchableOpacity style={styles.buttonDelete} onPress={deleteUser}>
+        <TouchableOpacity
+          style={styles.buttonDelete}
+          onPress={deleteUserWarning}
+        >
           <Text style={styles.buttonDeleteText}>Delete</Text>
         </TouchableOpacity>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={styles.titleMini}>Info</Text>
+
+        <Text style={styles.labels}>Address</Text>
+        <TextInput
+          value={address}
+          onChangeText={(address) => setAddress(address)}
+          placeholder="address"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>Email</Text>
+        <TextInput
+          value={email}
+          onChangeText={(email) => setEmail(email.replace(/\s+/g, ""))}
+          placeholder="Email"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>Number</Text>
+        <TextInput
+          value={number}
+          onChangeText={(number) => setNumber(number.replace(/\s+/g, ""))}
+          placeholder="Number"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.labels}>Password</Text>
+        <TextInput
+          value={pass}
+          onChangeText={(pass) => setPass(pass.replace(/\s+/g, ""))}
+          placeholder="address"
+          style={styles.inputBox}
+        ></TextInput>
+
+        <Text style={styles.titleMini}>Profile Picture</Text>
+        <Text style={styles.labels}>Current Profile Picture</Text>
+        <Image
+          source={{ uri: curProfilePic }}
+          style={{
+            alignSelf: "center",
+            marginVertical: 20,
+            width: 200,
+            height: 200,
+            borderColor: "black",
+            borderWidth: 3,
+            marginBottom: 10,
+          }}
+        />
+        <Button title="Change profile picture" onPress={pickImage} />
+        <Text style={styles.labels}>New Profile Picture</Text>
+        {newProfilePic && (
+          <Image
+            source={{ uri: newProfilePic }}
+            style={{
+              alignSelf: "center",
+              marginVertical: 20,
+              width: 200,
+              height: 200,
+              borderColor: "black",
+              borderWidth: 3,
+              marginBottom: 10,
+            }}
+          />
+        )}
+
         <Text style={styles.titleMini}>About</Text>
 
         <Text style={styles.labels}>About company</Text>
@@ -173,30 +314,6 @@ function CompanyEditProfile({ route, navigation }) {
           value={founded}
           onChangeText={(founded) => setFounded(founded)}
           placeholder="founded"
-          style={styles.inputBox}
-        ></TextInput>
-
-        <Text style={styles.titleMini}>Education</Text>
-
-        <Text style={styles.labels}>Address</Text>
-        <TextInput
-          value={address}
-          onChangeText={(address) => setAddress(address)}
-          placeholder="address"
-          style={styles.inputBox}
-        ></TextInput>
-        <Text style={styles.labels}>Email</Text>
-        <TextInput
-          value={email}
-          onChangeText={(email) => setEmail(email.replace(/\s+/g, ""))}
-          placeholder="Email"
-          style={styles.inputBox}
-        ></TextInput>
-        <Text style={styles.labels}>Number</Text>
-        <TextInput
-          value={number}
-          onChangeText={(number) => setNumber(number.replace(/\s+/g, ""))}
-          placeholder="Number"
           style={styles.inputBox}
         ></TextInput>
 

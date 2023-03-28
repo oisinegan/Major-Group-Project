@@ -16,7 +16,7 @@ import {
 import * as React from "react";
 import { db } from "../database/config";
 import { useState, useEffect } from "react/cjs/react.development";
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -28,6 +28,7 @@ import {
   deleteDoc,
   where,
 } from "firebase/firestore";
+import * as ImagePicker from "expo-image-picker";
 
 function UserEditProfile({ route, navigation }) {
   //this one is causing an error
@@ -41,6 +42,7 @@ function UserEditProfile({ route, navigation }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [number, setNumber] = useState("");
+  const [imageURL, setImageURL] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [skills, setSkills] = useState("");
   const [knowledge, setKnowledge] = useState("");
@@ -50,6 +52,42 @@ function UserEditProfile({ route, navigation }) {
   const [collegeName, setCollegeName] = useState("");
   const [yearStart, setYearStart] = useState("");
   const [yearEnd, setYearEnd] = useState("");
+
+  const [curProfilePic, setCurProfilePic] = useState("");
+  const [newProfilePic, setNewProfilePic] = useState("");
+
+  async function pickImage() {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setNewProfilePic(result.uri);
+    }
+  }
+
+  function getImageFromStorage() {
+    getData();
+    console.log("called");
+    //Gets firebase storage info
+    const storage = getStorage();
+    getDownloadURL(ref(storage, "Jobseeker/" + username))
+      .then((url) => {
+        console.log("test");
+        console.log(url);
+        setCurProfilePic(url);
+      })
+      .then(() => {
+        console.log("IMAGE SUCCESSFULLY LOADED");
+      })
+      .catch(() => {
+        console.log("IMAGE NOT FOUND");
+      });
+  }
 
   const getData = async () => {
     try {
@@ -77,6 +115,7 @@ function UserEditProfile({ route, navigation }) {
           lastName,
           number,
           jobTitle,
+          imageURL,
           skills,
           Knowledge,
           qualificationLevel,
@@ -97,6 +136,7 @@ function UserEditProfile({ route, navigation }) {
         setJobTitle(jobTitle);
         setSkills(skills);
         setCity(city);
+        setImageURL(imageURL);
         setKnowledge(Knowledge);
         setQualificationLevel(qualificationLevel);
         setQualificationName(qualificationName);
@@ -112,6 +152,7 @@ function UserEditProfile({ route, navigation }) {
   useEffect(() => {
     readUserInfo();
   }, []);
+  useEffect(() => getImageFromStorage());
 
   function deleteUserWarning() {
     Alert.alert(
@@ -131,8 +172,25 @@ function UserEditProfile({ route, navigation }) {
     navigation.navigate("HomeNotLoggedIn");
   }
 
-  function create() {
-    getData();
+  async function create() {
+    //Assing response to image user picked
+    var response;
+    if (newProfilePic === "") {
+      response = await fetch(curProfilePic);
+    } else {
+      response = await fetch(newProfilePic);
+    }
+
+    //convert image to blob to be stored in firebase
+    const blob = await response.blob();
+    //Gets firebase storage info
+    const storage = getStorage();
+    //Upload image to firebase
+    const storageRef = ref(storage, "Jobseeker/" + username);
+    uploadBytes(storageRef, blob).then((snapshot) => {
+      console.log("Uploaded a blob!");
+    });
+
     setDoc(doc(db, "Jobseekers", item), {
       email: email,
       city: city,
@@ -141,6 +199,7 @@ function UserEditProfile({ route, navigation }) {
       number: number,
       jobTitle: jobTitle,
       skills: skills,
+      imageURL: imageURL,
       Knowledge: knowledge,
       qualificationLevel: qualificationLevel,
       qualificationName: qualificationName,
@@ -154,7 +213,7 @@ function UserEditProfile({ route, navigation }) {
       .then(() => {
         //Successfully written to database
         Alert.alert("Success", "Data Submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
+          { text: "OK", onPress: () => navigation.navigate("UserProfile") },
         ]);
       })
       .catch((error) => {
@@ -212,6 +271,15 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Email"
           style={styles.inputBox}
         ></TextInput>
+
+        <Text style={styles.labels}>Password</Text>
+        <TextInput
+          value={pass}
+          onChangeText={(pass) => setPass(pass.replace(/\s+/g, ""))}
+          placeholder="password"
+          style={styles.inputBox}
+        ></TextInput>
+
         <Text style={styles.labels}>Number</Text>
         <TextInput
           value={number}
@@ -230,6 +298,37 @@ function UserEditProfile({ route, navigation }) {
           placeholder="City"
           style={styles.inputBox}
         ></TextInput>
+
+        <Text style={styles.titleMini}>Profile Picture</Text>
+        <Text style={styles.labels}>Current Profile Picture</Text>
+        <Image
+          source={{ uri: curProfilePic }}
+          style={{
+            alignSelf: "center",
+            marginVertical: 20,
+            width: 200,
+            height: 200,
+            borderColor: "black",
+            borderWidth: 3,
+            marginBottom: 10,
+          }}
+        />
+        <Button title="Change profile picture" onPress={pickImage} />
+        <Text style={styles.labels}>New Profile Picture</Text>
+        {newProfilePic && (
+          <Image
+            source={{ uri: newProfilePic }}
+            style={{
+              alignSelf: "center",
+              marginVertical: 20,
+              width: 200,
+              height: 200,
+              borderColor: "black",
+              borderWidth: 3,
+              marginBottom: 10,
+            }}
+          />
+        )}
 
         <Text style={styles.titleMini}>Skills and experience</Text>
         <Text style={styles.labels}>Skills</Text>

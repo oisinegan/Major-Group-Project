@@ -70,14 +70,19 @@ function CompanyHomeScreen({ navigation }) {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    readCompanyAdverts();
+    searchJobs();
+
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
   }, []);
 
+  useEffect(searchJobs, []);
+
+  useEffect(() => addImageURLtoFireStore());
+
   //Read logged in Company job posts
-  function readCompanyAdverts() {
+  async function readCompanyAdverts() {
     getData();
     console.log("Username1=" + username);
 
@@ -104,7 +109,7 @@ function CompanyHomeScreen({ navigation }) {
       setNumberJobs(numJobs);
       setAdvertsCompany(advert);
     });
-    console.log("Username2=" + username);
+    //("Username2=" + username);
   }
 
   //ADD image url to user firestore
@@ -149,12 +154,10 @@ function CompanyHomeScreen({ navigation }) {
       });
   }
 
-  useEffect(readCompanyAdverts, [username]);
-
-  useEffect(() => addImageURLtoFireStore());
-
   //Search job titles, if none found search company names
   function searchJobs() {
+    console.log(username);
+    addImageURLtoFireStore();
     if (searchParam.toString() === "") {
       readCompanyAdverts();
       console.log("CALL 1");
