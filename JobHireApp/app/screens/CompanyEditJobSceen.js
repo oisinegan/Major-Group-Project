@@ -35,6 +35,19 @@ function CompanyEditJobScreen({ route, navigation }) {
   const [qualification, setQualification] = useState("");
   const [knowledge, setKnowledge] = useState("");
 
+  //errors
+  const [titleErr, setTitleErr] = useState(" ");
+  const [infoErr, setInfoErr] = useState(" ");
+  const [wageErr, setWageErr] = useState(" ");
+  const [typeErr, setTypeErr] = useState(" ");
+  const [companyErr, setCompanyErr] = useState(" ");
+  const [locationErr, setLocationErr] = useState(" ");
+  const [descriptionErr, setDescriptionErr] = useState("");
+  const [scheduleErr, setScheduleErr] = useState("");
+  const [experienceErr, setExperienceErr] = useState("");
+  const [qualificationErr, setQualificationErr] = useState("");
+  const [knowledgeErr, setKnowledgeErr] = useState("");
+
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("Username");
@@ -64,37 +77,142 @@ function CompanyEditJobScreen({ route, navigation }) {
   }, []);
 
   function create() {
-    console.log(item);
-    console.log(item.company);
-    console.log(title);
-    getData();
-    setDoc(doc(db, "Adverts", title.trim()), {
-      title: title.trim(),
-      info: info.trim(),
-      wage: wage.trim(),
-      type: type.trim(),
-      company: item.company.trim(),
-      Applicants: item.Applicants,
-      location: location.trim(),
-      fullDescription: fullDescription.trim(),
-      schedule: schedule.trim(),
-      experience: experience.trim(),
-      qualification: qualification.trim(),
-      knowledge: knowledge.trim(),
-    })
-      .then(() => {
-        //Successfully written to database
-        Alert.alert("Sucess", "Data Submitted", [
-          { text: "OK", onPress: () => navigation.navigate("CompanyHome") },
-        ]);
+    var isFormCorrect = false;
+    var noInputs = 10;
+    var noCorrectInputs = 0;
+
+    var errorMsg = "";
+
+    //Username
+    if (title == "") {
+      setTitleErr("Title field is empty");
+    } else if (title.length < 4) {
+      setTitleErr("Title cannot be less than 4 characters!");
+    } else {
+      noCorrectInputs++;
+      setTitleErr("");
+    }
+
+    //Username
+    if (info == "") {
+      setInfoErr("Information field is empty");
+    } else if (info.length < 10) {
+      setInfoErr("Provide more information!");
+    } else {
+      noCorrectInputs++;
+      setInfoErr("");
+    }
+
+    //Password
+    if (wage == "") {
+      setWageErr("Wage field is empty!");
+    } else if (wage.length < 2) {
+      setWageErr("Wage must be longer than 2 character!");
+    } else {
+      noCorrectInputs++;
+      setWageErr("");
+    }
+
+    //Email
+    if (type == "") {
+      setTypeErr("Type field is empty!");
+    }
+    {
+      noCorrectInputs++;
+      setTypeErr("");
+    }
+
+    //Profile picutre
+    if (location == "") {
+      setLocationErr("Location field is empty!");
+    } else {
+      noCorrectInputs++;
+      setLocationErr("");
+    }
+
+    //Address
+    if (fullDescription == "") {
+      setDescriptionErr("Description field is empty!");
+    } else if (fullDescription.length < 15) {
+      setDescriptionErr("Description must be longer than 15 characters!");
+    } else {
+      noCorrectInputs++;
+      setDescriptionErr("");
+    }
+
+    //Info
+    if (schedule == "") {
+      setScheduleErr("Schedule field is empty!");
+    } else if (schedule.length < 3) {
+      setScheduleErr("Schedule must be longer than 3 characters!");
+    } else {
+      noCorrectInputs++;
+      setScheduleErr("");
+    }
+
+    //Founded
+    if (experience == "") {
+      setExperienceErr("Experience field is empty!");
+    } else if (experience.length < 3) {
+      setExperienceErr("Experience must be longer than 3 characters!");
+    } else {
+      noCorrectInputs++;
+      setExperienceErr("");
+    }
+
+    //Industry
+    if (qualification == "") {
+      setQualificationErr("Qualification field is empty!");
+    } else if (qualification.length < 3) {
+      setQualificationErr("Industry must be longer than 3 characters!");
+    } else {
+      noCorrectInputs++;
+      setQualificationErr("");
+    }
+
+    //Company
+    if (knowledge == "") {
+      setKnowledgeErr("Knowledge field is empty!");
+    } else if (knowledge.length < 5) {
+      setKnowledgeErr("Knowledge must be longer than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setKnowledgeErr("");
+    }
+
+    if (noInputs == noCorrectInputs) {
+      setDoc(doc(db, "Adverts", title), {
+        title: title.trim(),
+        info: info.trim(),
+        wage: wage.trim(),
+        type: type.trim(),
+        company: username.trim(),
+        location: location.trim(),
+        fullDescription: fullDescription.trim(),
+        schedule: schedule.trim(),
+        experience: experience.trim(),
+        qualification: qualification.trim(),
+        knowledge: knowledge.trim(),
+        Applicants: applicants,
       })
-      .catch((error) => {
-        //failed
-        Alert.alert("ERROR", "Data not submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]);
-      });
-  }
+        .then(() => {
+          //Successfully written to database
+          Alert.alert("Sucess", "Data Submitted", [
+            { text: "OK", onPress: () => navigation.navigate("CompanyHome") },
+          ]);
+        })
+        .catch((error) => {
+          //failed
+          Alert.alert("ERROR", "Data not submitted", [
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ]);
+        });
+    } else {
+      Alert.alert("Job post unsucessful!", "Please try again!", [
+        { text: "OK", onPress: () => console.log("error msg - OK Pressed") },
+      ]);
+    }
+  } ////end companyCreate
 
   function deleteUserWarning() {
     Alert.alert("Are you sure?", "You won't be able to get your advert back!", [
@@ -139,6 +257,7 @@ function CompanyEditJobScreen({ route, navigation }) {
           placeholder="Job/Project title"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{titleErr}</Text>
         <Text style={styles.labels}>Location </Text>
         <TextInput
           value={location}
@@ -146,6 +265,7 @@ function CompanyEditJobScreen({ route, navigation }) {
           placeholder="location"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{locationErr}</Text>
         <Text style={styles.labels}>Small description </Text>
         <TextInput
           multiline
@@ -155,6 +275,7 @@ function CompanyEditJobScreen({ route, navigation }) {
           placeholder="3 lines about the job summary"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{infoErr}</Text>
         <Text style={styles.labels}>Wage </Text>
         <TextInput
           value={wage}
@@ -162,6 +283,7 @@ function CompanyEditJobScreen({ route, navigation }) {
           placeholder="Wage"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{wageErr}</Text>
         <Text style={styles.labels}>Job type </Text>
         <TextInput
           value={type}
@@ -169,6 +291,7 @@ function CompanyEditJobScreen({ route, navigation }) {
           placeholder="Type of work (Job/Project etc..)"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{typeErr}</Text>
         <Text style={styles.labels}>Full description </Text>
         <TextInput
           multiline
@@ -182,7 +305,7 @@ function CompanyEditJobScreen({ route, navigation }) {
           placeholder="Full Job description"
           style={styles.inputBox}
         ></TextInput>
-
+        <Text style={styles.errorMsg}>{descriptionErr}</Text>
         <Text style={styles.labels}>Schedule </Text>
         <TextInput
           value={schedule}
@@ -190,6 +313,7 @@ function CompanyEditJobScreen({ route, navigation }) {
           placeholder="Work schedule"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{scheduleErr}</Text>
         <Text style={styles.labels}>Minimum experience </Text>
         <TextInput
           multiline
@@ -200,6 +324,7 @@ function CompanyEditJobScreen({ route, navigation }) {
           placeholder="Minimum experience required"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{experienceErr}</Text>
         <Text style={styles.labels}>Required qualifications </Text>
         <TextInput
           multiline
@@ -210,6 +335,7 @@ function CompanyEditJobScreen({ route, navigation }) {
           placeholder="Required qualifications"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{qualificationErr}</Text>
         <Text style={styles.labels}>knowledge and skills </Text>
         <TextInput
           multiline
@@ -220,6 +346,7 @@ function CompanyEditJobScreen({ route, navigation }) {
           placeholder="Required knowledge"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{knowledgeErr}</Text>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText} onPress={create}>
@@ -247,6 +374,11 @@ const styles = StyleSheet.create({
     alignSelf: "left",
     padding: 10,
     flex: 0.17,
+  },
+  errorMsg: {
+    color: "red",
+    paddingLeft: 40,
+    marginBottom: 10,
   },
   backText: {
     color: "navy",

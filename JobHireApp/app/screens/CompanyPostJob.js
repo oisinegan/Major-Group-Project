@@ -90,7 +90,7 @@ function CompanyPostJob({ navigation }) {
 
   async function jobCreate() {
     var isFormCorrect = false;
-    var noInputs = 11;
+    var noInputs = 10;
     var noCorrectInputs = 0;
 
     var errorMsg = "";
@@ -194,17 +194,17 @@ function CompanyPostJob({ navigation }) {
 
     if (noInputs == noCorrectInputs) {
       setDoc(doc(db, "Adverts", title), {
-        title: title.trim(),
-        info: info.trim(),
-        wage: wage.trim(),
-        type: type.trim(),
-        company: username.trim(),
-        location: location.trim(),
-        fullDescription: fullDescription.trim(),
-        schedule: schedule.trim(),
-        experience: experience.trim(),
-        qualification: qualification.trim(),
-        knowledge: knowledge.trim(),
+        title: title,
+        info: info,
+        wage: wage,
+        type: type,
+        company: username,
+        location: location,
+        fullDescription: fullDescription,
+        schedule: schedule,
+        experience: experience,
+        qualification: qualification,
+        knowledge: knowledge,
         Applicants: applicants,
       })
         .then(() => {
@@ -235,40 +235,34 @@ function CompanyPostJob({ navigation }) {
         <Text style={styles.title}>Job form</Text>
         <View style={styles.infoContent}>
           <Text style={styles.headings}>General Information</Text>
-
-          <Text style={styles.errorMsg}>{titleErr}</Text>
           <TextInput
             value={title}
             onChangeText={(title) => setTitle(title)}
             placeholder="Job/Project title"
             style={styles.inputs}
           ></TextInput>
-
-          <Text style={styles.errorMsg}>{infoErr}</Text>
+          <Text style={styles.errorMsg}>{titleErr}</Text>
           <TextInput
             value={info}
             onChangeText={(info) => setInfo(info)}
             placeholder="3 lines about the job summary"
             style={styles.inputs}
           ></TextInput>
-
-          <Text style={styles.errorMsg}>{wageErr}</Text>
+          <Text style={styles.errorMsg}>{infoErr}</Text>
           <TextInput
             value={wage}
             onChangeText={(wage) => setWage(wage)}
             placeholder="Wage"
             style={styles.inputs}
           ></TextInput>
-
-          <Text style={styles.errorMsg}>{typeErr}</Text>
+          <Text style={styles.errorMsg}>{wageErr}</Text>
           <TextInput
             value={type}
             onChangeText={(type) => setType(type)}
             placeholder="Type of work (Job/Project etc..)"
             style={styles.inputs}
           ></TextInput>
-
-          <Text style={styles.errorMsg}>{descriptionErr}</Text>
+          <Text style={styles.errorMsg}>{typeErr}</Text>
           <TextInput
             value={fullDescription}
             onChangeText={(fullDescription) =>
@@ -277,16 +271,14 @@ function CompanyPostJob({ navigation }) {
             placeholder="Full Job description"
             style={styles.inputs}
           ></TextInput>
-
-          <Text style={styles.errorMsg}>{locationErr}</Text>
+          <Text style={styles.errorMsg}>{descriptionErr}</Text>
           <TextInput
             value={location}
             onChangeText={(location) => setLocation(location)}
             placeholder="Location"
             style={styles.inputs}
           ></TextInput>
-
-          <Text style={styles.errorMsg}>{scheduleErr}</Text>
+          <Text style={styles.errorMsg}>{locationErr}</Text>
           <Text style={styles.headings}>Work Requirements</Text>
           <TextInput
             value={schedule}
@@ -294,30 +286,29 @@ function CompanyPostJob({ navigation }) {
             placeholder="Work schedule"
             style={styles.inputs}
           ></TextInput>
-
-          <Text style={styles.errorMsg}>{experienceErr}</Text>
+          <Text style={styles.errorMsg}>{scheduleErr}</Text>
           <TextInput
             value={experience}
             onChangeText={(experience) => setExperience(experience)}
             placeholder="Minimum experience required"
             style={styles.inputs}
           ></TextInput>
-
-          <Text style={styles.errorMsg}>{qualificationErr}</Text>
+          <Text style={styles.errorMsg}>{experienceErr}</Text>
           <TextInput
             value={qualification}
             onChangeText={(qualification) => setQualification(qualification)}
             placeholder="Required qualifications"
             style={styles.inputs}
           ></TextInput>
+          <Text style={styles.errorMsg}>{qualificationErr}</Text>
 
-          <Text style={styles.errorMsg}>{knowledgeErr}</Text>
           <TextInput
             value={knowledge}
             onChangeText={(knowledge) => setKnowledge(knowledge)}
             placeholder="Required knowledge"
             style={styles.inputs}
           ></TextInput>
+          <Text style={styles.errorMsg}>{knowledgeErr}</Text>
 
           <TouchableOpacity onPress={jobCreate} style={styles.button}>
             <Text style={styles.buttonText}>SUBMIT</Text>
