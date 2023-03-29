@@ -17,7 +17,7 @@ import { useState, useEffect } from "react/cjs/react.development";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../database/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ceil } from "react-native-reanimated";
+import { ceil, exp } from "react-native-reanimated";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function CompanyPostJob({ navigation }) {
@@ -34,6 +34,19 @@ function CompanyPostJob({ navigation }) {
   const [qualification, setQualification] = useState("");
   const [knowledge, setKnowledge] = useState("");
   const [applicants, setApplicants] = useState(["blank"]);
+
+  //errors
+  const [titleErr, setTitleErr] = useState(" ");
+  const [infoErr, setInfoErr] = useState(" ");
+  const [wageErr, setWageErr] = useState(" ");
+  const [typeErr, setTypeErr] = useState(" ");
+  const [companyErr, setCompanyErr] = useState(" ");
+  const [locationErr, setLocationErr] = useState(" ");
+  const [descriptionErr, setDescriptionErr] = useState("");
+  const [scheduleErr, setScheduleErr] = useState("");
+  const [experienceErr, setExperienceErr] = useState("");
+  const [qualificationErr, setQualificationErr] = useState("");
+  const [knowledgeErr, setKnowledgeErr] = useState("");
 
   //Used store username read from async storage
   const [username, setUsername] = useState("");
@@ -75,36 +88,143 @@ function CompanyPostJob({ navigation }) {
     }
   };
 
-  function create() {
-    getData();
-    getImageFromStorage();
-    setDoc(doc(db, "Adverts", title), {
-      title: title.trim(),
-      info: info.trim(),
-      wage: wage.trim(),
-      type: type.trim(),
-      company: username.trim(),
-      location: location.trim(),
-      fullDescription: fullDescription.trim(),
-      schedule: schedule.trim(),
-      experience: experience.trim(),
-      qualification: qualification.trim(),
-      knowledge: knowledge.trim(),
-      Applicants: applicants,
-    })
-      .then(() => {
-        //Successfully written to database
-        Alert.alert("Sucess", "Data Submitted", [
-          { text: "OK", onPress: () => navigation.navigate("CompanyHome") },
-        ]);
+  async function jobCreate() {
+    var isFormCorrect = false;
+    var noInputs = 11;
+    var noCorrectInputs = 0;
+
+    var errorMsg = "";
+
+    //Username
+    if (title == "") {
+      setTitleErr("Title field is empty");
+    } else if (title.length < 4) {
+      setTitleErr("Title cannot be less than 4 characters!");
+    } else {
+      noCorrectInputs++;
+      setTitleErr("");
+    }
+
+    //Username
+    if (info == "") {
+      setInfoErr("Information field is empty");
+    } else if (info.length < 10) {
+      setInfoErr("Provide more information!");
+    } else {
+      noCorrectInputs++;
+      setInfoErr("");
+    }
+
+    //Password
+    if (wage == "") {
+      setWageErr("Wage field is empty!");
+    } else if (wage.length < 2) {
+      setWageErr("Wage must be longer than 2 character!");
+    } else {
+      noCorrectInputs++;
+      setWageErr("");
+    }
+
+    //Email
+    if (type == "") {
+      setTypeErr("Type field is empty!");
+    }
+    {
+      noCorrectInputs++;
+      setTypeErr("");
+    }
+
+    //Profile picutre
+    if (location == "") {
+      setLocationErr("Location field is empty!");
+    } else {
+      noCorrectInputs++;
+      setLocationErr("");
+    }
+
+    //Address
+    if (fullDescription == "") {
+      setDescriptionErr("Description field is empty!");
+    } else if (fullDescription.length < 15) {
+      setDescriptionErr("Description must be longer than 15 characters!");
+    } else {
+      noCorrectInputs++;
+      setDescriptionErr("");
+    }
+
+    //Info
+    if (schedule == "") {
+      setScheduleErr("Schedule field is empty!");
+    } else if (schedule.length < 3) {
+      setScheduleErr("Schedule must be longer than 3 characters!");
+    } else {
+      noCorrectInputs++;
+      setScheduleErr("");
+    }
+
+    //Founded
+    if (experience == "") {
+      setExperienceErr("Experience field is empty!");
+    } else if (experience.length < 3) {
+      setExperienceErr("Experience must be longer than 3 characters!");
+    } else {
+      noCorrectInputs++;
+      setExperienceErr("");
+    }
+
+    //Industry
+    if (qualification == "") {
+      setQualificationErr("Qualification field is empty!");
+    } else if (qualification.length < 3) {
+      setQualificationErr("Industry must be longer than 3 characters!");
+    } else {
+      noCorrectInputs++;
+      setQualificationErr("");
+    }
+
+    //Company
+    if (knowledge == "") {
+      setKnowledgeErr("Knowledge field is empty!");
+    } else if (knowledge.length < 5) {
+      setKnowledgeErr("Knowledge must be longer than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setKnowledgeErr("");
+    }
+
+    if (noInputs == noCorrectInputs) {
+      setDoc(doc(db, "Adverts", title), {
+        title: title.trim(),
+        info: info.trim(),
+        wage: wage.trim(),
+        type: type.trim(),
+        company: username.trim(),
+        location: location.trim(),
+        fullDescription: fullDescription.trim(),
+        schedule: schedule.trim(),
+        experience: experience.trim(),
+        qualification: qualification.trim(),
+        knowledge: knowledge.trim(),
+        Applicants: applicants,
       })
-      .catch((error) => {
-        //failed
-        Alert.alert("ERROR", "Data not submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]);
-      });
-  }
+        .then(() => {
+          //Successfully written to database
+          Alert.alert("Sucess", "Data Submitted", [
+            { text: "OK", onPress: () => navigation.navigate("CompanyHome") },
+          ]);
+        })
+        .catch((error) => {
+          //failed
+          Alert.alert("ERROR", "Data not submitted", [
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ]);
+        });
+    } else {
+      Alert.alert("Job post unsucessful!", "Please try again!", [
+        { text: "OK", onPress: () => console.log("error msg - OK Pressed") },
+      ]);
+    }
+  } ////end companyCreate
 
   useEffect(() => getImageFromStorage());
   ///////////////////////////////////////////////////////////////////////////////////
@@ -115,6 +235,8 @@ function CompanyPostJob({ navigation }) {
         <Text style={styles.title}>Job form</Text>
         <View style={styles.infoContent}>
           <Text style={styles.headings}>General Information</Text>
+
+          <Text style={styles.errorMsg}>{titleErr}</Text>
           <TextInput
             value={title}
             onChangeText={(title) => setTitle(title)}
@@ -122,6 +244,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
+          <Text style={styles.errorMsg}>{infoErr}</Text>
           <TextInput
             value={info}
             onChangeText={(info) => setInfo(info)}
@@ -129,6 +252,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
+          <Text style={styles.errorMsg}>{wageErr}</Text>
           <TextInput
             value={wage}
             onChangeText={(wage) => setWage(wage)}
@@ -136,6 +260,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
+          <Text style={styles.errorMsg}>{typeErr}</Text>
           <TextInput
             value={type}
             onChangeText={(type) => setType(type)}
@@ -143,6 +268,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
+          <Text style={styles.errorMsg}>{descriptionErr}</Text>
           <TextInput
             value={fullDescription}
             onChangeText={(fullDescription) =>
@@ -152,6 +278,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
+          <Text style={styles.errorMsg}>{locationErr}</Text>
           <TextInput
             value={location}
             onChangeText={(location) => setLocation(location)}
@@ -159,6 +286,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
+          <Text style={styles.errorMsg}>{scheduleErr}</Text>
           <Text style={styles.headings}>Work Requirements</Text>
           <TextInput
             value={schedule}
@@ -167,6 +295,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
+          <Text style={styles.errorMsg}>{experienceErr}</Text>
           <TextInput
             value={experience}
             onChangeText={(experience) => setExperience(experience)}
@@ -174,6 +303,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
+          <Text style={styles.errorMsg}>{qualificationErr}</Text>
           <TextInput
             value={qualification}
             onChangeText={(qualification) => setQualification(qualification)}
@@ -181,6 +311,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
+          <Text style={styles.errorMsg}>{knowledgeErr}</Text>
           <TextInput
             value={knowledge}
             onChangeText={(knowledge) => setKnowledge(knowledge)}
@@ -188,7 +319,7 @@ function CompanyPostJob({ navigation }) {
             style={styles.inputs}
           ></TextInput>
 
-          <TouchableOpacity onPress={create} style={styles.button}>
+          <TouchableOpacity onPress={jobCreate} style={styles.button}>
             <Text style={styles.buttonText}>SUBMIT</Text>
           </TouchableOpacity>
         </View>
@@ -267,6 +398,11 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     marginLeft: 30,
     color: "navy",
+  },
+  errorMsg: {
+    color: "red",
+    paddingLeft: 40,
+    marginBottom: 10,
   },
   navBar: {
     flexDirection: "row",

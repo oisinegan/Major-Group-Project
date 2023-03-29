@@ -53,6 +53,24 @@ function UserEditProfile({ route, navigation }) {
   const [yearStart, setYearStart] = useState("");
   const [yearEnd, setYearEnd] = useState("");
 
+  const [usernameErr, setUsernameErr] = useState("");
+  const [passErr, setPassErr] = useState("");
+  const [cityErr, setCityErr] = useState("");
+  const [emailErr, setEmailErr] = useState("");
+  const [firstNameErr, setFirstNameErr] = useState("");
+  const [lastNameErr, setLastNameErr] = useState("");
+  const [numberErr, setNumberErr] = useState("");
+  const [imageURLErr, setImageURLErr] = useState("");
+  const [jobTitleErr, setJobTitleErr] = useState("");
+  const [skillsErr, setSkillsErr] = useState("");
+  const [knowledgeErr, setKnowledgeErr] = useState("");
+  const [qualificationLevelErr, setQualificationLevelErr] = useState("");
+  const [qualificationNameErr, setQualificationNameErr] = useState("");
+  const [yearsExperienceErr, setYearsExperienceErr] = useState("");
+  const [collegeNameErr, setCollegeNameErr] = useState("");
+  const [yearStartErr, setYearStartErr] = useState("");
+  const [yearEndErr, setYearEndErr] = useState("");
+
   const [curProfilePic, setCurProfilePic] = useState("");
   const [newProfilePic, setNewProfilePic] = useState("");
 
@@ -69,6 +87,198 @@ function UserEditProfile({ route, navigation }) {
       setNewProfilePic(result.uri);
     }
   }
+
+  async function editProfile() {
+    var isFormCorrect = false;
+    var noInputs = 17;
+    var noCorrectInputs = 0;
+
+    var errorMsg = "";
+
+    if (username == "") {
+      setUsernameErr("Username field is empty");
+    } else if (username.length < 5) {
+      setUsernameErr("Username cannot be less than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setUsernameErr("");
+    }
+
+    if (pass == "") {
+      setPassErr("Password field is empty!");
+    } else if (pass.length < 6) {
+      setPassErr("password must be longer than 6 characters!");
+    } else if (upperCaseTest(pass) == false) {
+      setPassErr("Password must contain a capital!");
+    } else if (numberTest(pass) == false) {
+      setPassErr("Password must contain a number!");
+    } else {
+      noCorrectInputs++;
+      setPassErr("");
+    }
+
+    if (email == "") {
+      setEmailErr("Email field is empty!");
+    } else if (validEmail(email) == false) {
+      setEmailErr("Invalid email!");
+    } else {
+      noCorrectInputs++;
+      setEmailErr("");
+    }
+
+    if (firstName == "") {
+      setFirstNameErr("First name field is empty");
+    } else if (firstName.length < 2) {
+      setFirstNameErr("First name cannot be less than 2 characters!");
+    } else {
+      noCorrectInputs++;
+      setFirstNameErr("");
+    }
+
+    if (lastName == "") {
+      setLastNameErr("Last name field is empty");
+    } else if (firstName.length < 2) {
+      setLastNameErr("Last name cannot be less than 2 characters!");
+    } else {
+      noCorrectInputs++;
+      setLastNameErr("");
+    }
+
+    if (number == "") {
+      setNumberErr("Number field is empty");
+    } else if (number.length > 11) {
+      setNumberErr("Number cannot be more than 11 characters!");
+    } else {
+      noCorrectInputs++;
+      setNumberErr("");
+    }
+
+    if (city == "") {
+      setCityErr("City field is empty");
+    } else if (city.length < 3) {
+      setCityeErr("City cannot be less than 3 characters!");
+    } else {
+      noCorrectInputs++;
+      setCityErr("");
+    }
+
+    if (jobTitle == "") {
+      setJobTitleErr("Job title field is empty!");
+    } else if (jobTitle.length < 5) {
+      setJobTitleErr("Job title cannot be less than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setJobTitleErr("");
+    }
+
+    if (skills == "") {
+      setSkillsErr("Skills field is empty!");
+    } else if (skills.length < 5) {
+      setSkillsErr("Skills cannot be less than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setSkillsErr("");
+    }
+
+    if (knowledge == "") {
+      setKnowledgeErr("Knowledge field is empty!");
+    } else if (knowledge.length < 5) {
+      setKnowledgeErr("Knowledge cannot be less than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setKnowledgeErr("");
+    }
+
+    if (qualificationLevel == "") {
+      setQualificationLevelErr("Qualification level field is empty!");
+    } else {
+      noCorrectInputs++;
+      setQualificationLevelErr("");
+    }
+
+    if (qualificationName == "") {
+      setQualificationNameErr("Qualification name field is empty!");
+    } else if (qualificationName.length < 3) {
+      setQualificationNameErr(
+        "Qualification name cannot be less than 3 characters!"
+      );
+    } else {
+      noCorrectInputs++;
+      setQualificationNameErr("");
+    }
+
+    if (yearsExperience == "") {
+      setYearsExperienceErr("Experience field is empty!");
+    } else {
+      noCorrectInputs++;
+      setYearsExperienceErr("");
+    }
+
+    if (collegeName == "") {
+      setCollegeNameErr("College name field is empty!");
+    } else if (collegeName.length < 3) {
+      setCollegeNameErr("College name cannot be less than 3 characters!");
+    } else {
+      noCorrectInputs++;
+      setCollegeNameErr("");
+    }
+
+    if (yearStart == "") {
+      setYearStartErr("Year started field is empty!");
+    } else if (yearStart.length > 4) {
+      setYearStartErr("Year cannot be more than 4 characters!");
+    } else {
+      noCorrectInputs++;
+      setYearStartErr("");
+    }
+
+    if (yearEnd == "") {
+      setYearEndErr("Year ended field is empty!");
+    } else if (yearEnd.length > 4) {
+      setYearEndErr("Year cannot be more than 4 characters!");
+    } else {
+      noCorrectInputs++;
+      setYearEndErr("");
+    }
+
+    if (noInputs == noCorrectInputs) {
+      setDoc(doc(db, "Jobseekers", item), {
+        email: email,
+        city: city,
+        firstName: firstName,
+        lastName: lastName,
+        number: number,
+        jobTitle: jobTitle,
+        skills: skills,
+        imageURL: imageURL,
+        Knowledge: knowledge,
+        qualificationLevel: qualificationLevel,
+        qualificationName: qualificationName,
+        yearsExperience: yearsExperience,
+        collegeName: collegeName,
+        yearStart: yearStart,
+        yearEnd: yearEnd,
+        username: username,
+        pass: pass,
+      })
+        .then(() => {
+          //Successfully written to database
+          Alert.alert("Success", "Data Submitted", [
+            { text: "OK", onPress: () => navigation.navigate("UserProfile") },
+          ]);
+        })
+        .catch((error) => {
+          //failed
+          Alert.alert("ERROR", "Data not submitted", [
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ]);
+        });
+    } else {
+      Alert.alert("Job post unsucessful!", "Please try again!", [
+        { text: "OK", onPress: () => console.log("error msg - OK Pressed") },
+      ]);
+    }
+  } ////end
 
   function getImageFromStorage() {
     getData();
@@ -171,7 +381,7 @@ function UserEditProfile({ route, navigation }) {
     deleteDoc(doc(db, "Jobseekers", item));
     navigation.navigate("HomeNotLoggedIn");
   }
-
+  //need to add this to verification method, unsure how.
   async function create() {
     //Assing response to image user picked
     var response;
@@ -191,39 +401,198 @@ function UserEditProfile({ route, navigation }) {
       console.log("Uploaded a blob!");
     });
 
-    setDoc(doc(db, "Jobseekers", item), {
-      email: email,
-      city: city,
-      firstName: firstName,
-      lastName: lastName,
-      number: number,
-      jobTitle: jobTitle,
-      skills: skills,
-      imageURL: imageURL,
-      Knowledge: knowledge,
-      qualificationLevel: qualificationLevel,
-      qualificationName: qualificationName,
-      yearsExperience: yearsExperience,
-      collegeName: collegeName,
-      yearStart: yearStart,
-      yearEnd: yearEnd,
-      username: username,
-      pass: pass,
-    })
-      .then(() => {
-        //Successfully written to database
-        Alert.alert("Success", "Data Submitted", [
-          { text: "OK", onPress: () => navigation.navigate("UserProfile") },
-        ]);
-      })
-      .catch((error) => {
-        //failed
-        Alert.alert("ERROR", "Data not submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]);
-      });
-  }
+    function editProfile() {
+      var isFormCorrect = false;
+      var noInputs = 17;
+      var noCorrectInputs = 0;
 
+      var errorMsg = "";
+
+      if (username == "") {
+        setUsernameErr("Username field is empty");
+      } else if (username.length < 5) {
+        setUsernameErr("Username cannot be less than 5 characters!");
+      } else {
+        noCorrectInputs++;
+        setUsernameErr("");
+      }
+
+      if (pass == "") {
+        setPassErr("Password field is empty!");
+      } else if (pass.length < 6) {
+        setPassErr("password must be longer than 6 characters!");
+      } else if (upperCaseTest(pass) == false) {
+        setPassErr("Password must contain a capital!");
+      } else if (numberTest(pass) == false) {
+        setPassErr("Password must contain a number!");
+      } else {
+        noCorrectInputs++;
+        setPassErr("");
+      }
+
+      if (email == "") {
+        setEmailErr("Email field is empty!");
+      } else if (validEmail(email) == false) {
+        setEmailErr("Invalid email!");
+      } else {
+        noCorrectInputs++;
+        setEmailErr("");
+      }
+
+      if (firstName == "") {
+        setFirstNameErr("First name field is empty");
+      } else if (firstName.length < 2) {
+        setFirstNameErr("First name cannot be less than 2 characters!");
+      } else {
+        noCorrectInputs++;
+        setFirstNameErr("");
+      }
+
+      if (lastName == "") {
+        setLastNameErr("Last name field is empty");
+      } else if (firstName.length < 2) {
+        setLastNameErr("Last name cannot be less than 2 characters!");
+      } else {
+        noCorrectInputs++;
+        setLastNameErr("");
+      }
+
+      if (number == "") {
+        setNumberErr("Number field is empty");
+      } else if (number.length > 11) {
+        setNumberErr("Number cannot be more than 11 characters!");
+      } else {
+        noCorrectInputs++;
+        setNumberErr("");
+      }
+
+      if (city == "") {
+        setCityErr("City field is empty");
+      } else if (city.length < 3) {
+        setCityeErr("City cannot be less than 3 characters!");
+      } else {
+        noCorrectInputs++;
+        setCityErr("");
+      }
+
+      if (jobTitle == "") {
+        setJobTitleErr("Job title field is empty!");
+      } else if (jobTitle.length < 5) {
+        setJobTitleErr("Job title cannot be less than 5 characters!");
+      } else {
+        noCorrectInputs++;
+        setJobTitleErr("");
+      }
+
+      if (skills == "") {
+        setSkillsErr("Skills field is empty!");
+      } else if (skills.length < 5) {
+        setSkillsErr("Skills cannot be less than 5 characters!");
+      } else {
+        noCorrectInputs++;
+        setSkillsErr("");
+      }
+
+      if (knowledge == "") {
+        setKnowledgeErr("Knowledge field is empty!");
+      } else if (knowledge.length < 5) {
+        setKnowledgeErr("Knowledge cannot be less than 5 characters!");
+      } else {
+        noCorrectInputs++;
+        setKnowledgeErr("");
+      }
+
+      if (qualificationLevel == "") {
+        setQualificationLevelErr("Qualification level field is empty!");
+      } else {
+        noCorrectInputs++;
+        setQualificationLevelErr("");
+      }
+
+      if (qualificationName == "") {
+        setQualificationNameErr("Qualification name field is empty!");
+      } else if (qualificationName.length < 3) {
+        setQualificationNameErr(
+          "Qualification name cannot be less than 3 characters!"
+        );
+      } else {
+        noCorrectInputs++;
+        setQualificationNameErr("");
+      }
+
+      if (yearsExperience == "") {
+        setYearsExperienceErr("Experience field is empty!");
+      } else {
+        noCorrectInputs++;
+        setYearsExperienceErr("");
+      }
+
+      if (collegeName == "") {
+        setCollegeNameErr("College name field is empty!");
+      } else if (collegeName.length < 3) {
+        setCollegeNameErr("College name cannot be less than 3 characters!");
+      } else {
+        noCorrectInputs++;
+        setCollegeNameErr("");
+      }
+
+      if (yearStart == "") {
+        setYearStartErr("Year started field is empty!");
+      } else if (yearStart.length > 4) {
+        setYearStartErr("Year cannot be more than 4 characters!");
+      } else {
+        noCorrectInputs++;
+        setYearStartErr("");
+      }
+
+      if (yearEnd == "") {
+        setYearEndErr("Year ended field is empty!");
+      } else if (yearEnd.length > 4) {
+        setYearEndErr("Year cannot be more than 4 characters!");
+      } else {
+        noCorrectInputs++;
+        setYearEndErr("");
+      }
+
+      if (noInputs == noCorrectInputs) {
+        setDoc(doc(db, "Jobseekers", item), {
+          email: email,
+          city: city,
+          firstName: firstName,
+          lastName: lastName,
+          number: number,
+          jobTitle: jobTitle,
+          skills: skills,
+          imageURL: imageURL,
+          Knowledge: knowledge,
+          qualificationLevel: qualificationLevel,
+          qualificationName: qualificationName,
+          yearsExperience: yearsExperience,
+          collegeName: collegeName,
+          yearStart: yearStart,
+          yearEnd: yearEnd,
+          username: username,
+          pass: pass,
+        })
+          .then(() => {
+            //Successfully written to database
+            Alert.alert("Success", "Data Submitted", [
+              { text: "OK", onPress: () => navigation.navigate("UserProfile") },
+            ]);
+          })
+          .catch((error) => {
+            //failed
+            Alert.alert("ERROR", "Data not submitted", [
+              { text: "OK", onPress: () => console.log("OK Pressed") },
+            ]);
+          });
+      } else {
+        Alert.alert("Job post unsucessful!", "Please try again!", [
+          { text: "OK", onPress: () => console.log("error msg - OK Pressed") },
+        ]);
+      }
+    } ////end companyCreate
+  }
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content"></StatusBar>
@@ -249,12 +618,14 @@ function UserEditProfile({ route, navigation }) {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.titleMini}>General Information</Text>
         <Text style={styles.labels}>First Name</Text>
+
         <TextInput
           value={firstName}
           onChangeText={(title) => setFirstName(firstName.replace(/\s+/g, ""))}
           placeholder="First name"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{firstNameErr}</Text>
 
         <Text style={styles.labels}>Last Name</Text>
         <TextInput
@@ -263,6 +634,7 @@ function UserEditProfile({ route, navigation }) {
           onChangeText={(title) => setLastName(lastName.replace(/\s+/g, ""))}
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{lastNameErr}</Text>
 
         <Text style={styles.labels}>Email</Text>
         <TextInput
@@ -271,6 +643,7 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Email"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{emailErr}</Text>
 
         <Text style={styles.labels}>Password</Text>
         <TextInput
@@ -279,6 +652,7 @@ function UserEditProfile({ route, navigation }) {
           placeholder="password"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{passErr}</Text>
 
         <Text style={styles.labels}>Number</Text>
         <TextInput
@@ -287,6 +661,8 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Number"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{numberErr}</Text>
+
         <Text style={styles.labels}>City</Text>
         <TextInput
           multiline
@@ -298,6 +674,7 @@ function UserEditProfile({ route, navigation }) {
           placeholder="City"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{cityErr}</Text>
 
         <Text style={styles.titleMini}>Profile Picture</Text>
         <Text style={styles.labels}>Current Profile Picture</Text>
@@ -331,6 +708,7 @@ function UserEditProfile({ route, navigation }) {
         )}
 
         <Text style={styles.titleMini}>Skills and experience</Text>
+
         <Text style={styles.labels}>Skills</Text>
         <TextInput
           value={skills}
@@ -338,6 +716,8 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Skills"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{skillsErr}</Text>
+
         <Text style={styles.labels}>Knowledge</Text>
         <TextInput
           multiline
@@ -348,6 +728,8 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Knowledge"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{knowledgeErr}</Text>
+
         <Text style={styles.labels}>Years Experience</Text>
         <TextInput
           multiline
@@ -360,7 +742,10 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Years of experience"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{yearsExperienceErr}</Text>
+
         <Text style={styles.titleMini}>Education</Text>
+
         <Text style={styles.labels}>Qualification Name</Text>
         <TextInput
           multiline
@@ -373,6 +758,8 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Name of qualification"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{qualificationNameErr}</Text>
+
         <Text style={styles.labels}>Qualification Level</Text>
         <TextInput
           multiline
@@ -385,6 +772,7 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Qualification level"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{qualificationLevelErr}</Text>
 
         <Text style={styles.labels}>College</Text>
         <TextInput
@@ -396,6 +784,7 @@ function UserEditProfile({ route, navigation }) {
           placeholder="College name"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{collegeNameErr}</Text>
 
         <Text style={styles.labels}>Year start</Text>
         <TextInput
@@ -407,6 +796,7 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Year started"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{yearStartErr}</Text>
 
         <Text style={styles.labels}>Year end</Text>
         <TextInput
@@ -418,9 +808,10 @@ function UserEditProfile({ route, navigation }) {
           placeholder="Year ended"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{yearEndErr}</Text>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={create}>
+          <TouchableOpacity style={styles.button} onPress={editProfile}>
             <Text style={styles.buttonText} onPress={console.log("pressed")}>
               Update
             </Text>
@@ -441,6 +832,11 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     paddingBottom: 20,
+  },
+  errorMsg: {
+    color: "red",
+    paddingLeft: 40,
+    marginBottom: 10,
   },
   backButton: {
     alignSelf: "left",
