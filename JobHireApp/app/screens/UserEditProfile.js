@@ -87,22 +87,46 @@ function UserEditProfile({ route, navigation }) {
       setNewProfilePic(result.uri);
     }
   }
+  //Specific tests - methods return true/false
+  function upperCaseTest(string) {
+    //If string contains at least one  Upper case letter
+    return /[A-Z]/.test(string);
+  }
+  function numberTest(string) {
+    //If string contains at least one number
+    return /[1-9]/.test(string);
+  }
+  function validEmail(string) {
+    var res1 = /[@]/.test(string);
+    var res2 = /[.]/.test(string);
+
+    if (res1 && res2) {
+      return true;
+    }
+    return false;
+  }
 
   async function editProfile() {
-    var isFormCorrect = false;
-    var noInputs = 16;
-    var noCorrectInputs = 0;
-
-    var errorMsg = "";
-
-    if (username == "") {
-      setUsernameErr("Username field is empty");
-    } else if (username.length < 5) {
-      setUsernameErr("Username cannot be less than 5 characters!");
+    //Assing response to image user picked
+    var response;
+    if (newProfilePic === "") {
+      response = await fetch(curProfilePic);
     } else {
-      noCorrectInputs++;
-      setUsernameErr("");
+      response = await fetch(newProfilePic);
     }
+
+    //convert image to blob to be stored in firebase
+    const blob = await response.blob();
+    //Gets firebase storage info
+    const storage = getStorage();
+    //Upload image to firebase
+    const storageRef = ref(storage, "Jobseeker/" + username);
+    uploadBytes(storageRef, blob).then((snapshot) => {
+      console.log("Uploaded a blob!");
+    });
+
+    var noInputs = 15;
+    var noCorrectInputs = 0;
 
     if (pass == "") {
       setPassErr("Password field is empty!");
@@ -137,7 +161,7 @@ function UserEditProfile({ route, navigation }) {
 
     if (lastName == "") {
       setLastNameErr("Last name field is empty");
-    } else if (firstName.length < 2) {
+    } else if (lastName.length < 2) {
       setLastNameErr("Last name cannot be less than 2 characters!");
     } else {
       noCorrectInputs++;
@@ -156,7 +180,7 @@ function UserEditProfile({ route, navigation }) {
     if (city == "") {
       setCityErr("City field is empty");
     } else if (city.length < 3) {
-      setCityeErr("City cannot be less than 3 characters!");
+      setCityErr("City cannot be less than 3 characters!");
     } else {
       noCorrectInputs++;
       setCityErr("");
@@ -225,7 +249,7 @@ function UserEditProfile({ route, navigation }) {
 
     if (yearStart == "") {
       setYearStartErr("Year started field is empty!");
-    } else if (yearStart.length > 4) {
+    } else if (yearStart.trim().length > 4) {
       setYearStartErr("Year cannot be more than 4 characters!");
     } else {
       noCorrectInputs++;
@@ -234,36 +258,38 @@ function UserEditProfile({ route, navigation }) {
 
     if (yearEnd == "") {
       setYearEndErr("Year ended field is empty!");
-    } else if (yearEnd.length > 4) {
+    } else if (yearEnd.trim().length > 4) {
       setYearEndErr("Year cannot be more than 4 characters!");
     } else {
       noCorrectInputs++;
       setYearEndErr("");
     }
 
+    console.log(noInputs);
+    console.log(noCorrectInputs);
     if (noInputs == noCorrectInputs) {
       setDoc(doc(db, "Jobseekers", item), {
-        email: email,
-        city: city,
-        firstName: firstName,
-        lastName: lastName,
-        number: number,
-        jobTitle: jobTitle,
-        skills: skills,
-        imageURL: imageURL,
-        Knowledge: knowledge,
-        qualificationLevel: qualificationLevel,
-        qualificationName: qualificationName,
-        yearsExperience: yearsExperience,
-        collegeName: collegeName,
-        yearStart: yearStart,
-        yearEnd: yearEnd,
-        username: username,
-        pass: pass,
+        email: email.trim(),
+        city: city.trim(),
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        number: number.trim(),
+        jobTitle: jobTitle.trim(),
+        skills: skills.trim(),
+        imageURL: imageURL.trim(),
+        Knowledge: knowledge.trim(),
+        qualificationLevel: qualificationLevel.trim(),
+        qualificationName: qualificationName.trim(),
+        yearsExperience: yearsExperience.trim(),
+        collegeName: collegeName.trim(),
+        yearStart: yearStart.trim(),
+        yearEnd: yearEnd.trim(),
+        username: username.trim(),
+        pass: pass.trim(),
       })
         .then(() => {
           //Successfully written to database
-          Alert.alert("Success", "Data Submitted", [
+          Alert.alert("Success", "Your profile has been updated!", [
             { text: "OK", onPress: () => navigation.navigate("UserProfile") },
           ]);
         })
@@ -274,7 +300,7 @@ function UserEditProfile({ route, navigation }) {
           ]);
         });
     } else {
-      Alert.alert("Job post unsucessful!", "Please try again!", [
+      Alert.alert("Update profile unsucessful!", "Please try again!", [
         { text: "OK", onPress: () => console.log("error msg - OK Pressed") },
       ]);
     }
@@ -381,26 +407,7 @@ function UserEditProfile({ route, navigation }) {
     deleteDoc(doc(db, "Jobseekers", item));
     navigation.navigate("HomeNotLoggedIn");
   }
-  //need to add this to verification method, unsure how.
-  async function create() {
-    //Assing response to image user picked
-    var response;
-    if (newProfilePic === "") {
-      response = await fetch(curProfilePic);
-    } else {
-      response = await fetch(newProfilePic);
-    }
 
-    //convert image to blob to be stored in firebase
-    const blob = await response.blob();
-    //Gets firebase storage info
-    const storage = getStorage();
-    //Upload image to firebase
-    const storageRef = ref(storage, "Jobseeker/" + username);
-    uploadBytes(storageRef, blob).then((snapshot) => {
-      console.log("Uploaded a blob!");
-    });
-  }
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content"></StatusBar>
@@ -423,13 +430,18 @@ function UserEditProfile({ route, navigation }) {
           <Text style={styles.buttonDeleteText}>Delete</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets={true}
+      >
         <Text style={styles.titleMini}>General Information</Text>
         <Text style={styles.labels}>First Name</Text>
 
         <TextInput
           value={firstName}
-          onChangeText={(title) => setFirstName(firstName.replace(/\s+/g, ""))}
+          onChangeText={(firstName) =>
+            setFirstName(firstName.replace(/\s+/g, ""))
+          }
           placeholder="First name"
           style={styles.inputBox}
         ></TextInput>
@@ -439,7 +451,7 @@ function UserEditProfile({ route, navigation }) {
         <TextInput
           value={lastName}
           placeholder="Last name"
-          onChangeText={(title) => setLastName(lastName.replace(/\s+/g, ""))}
+          onChangeText={(lastName) => setLastName(lastName.replace(/\s+/g, ""))}
           style={styles.inputBox}
         ></TextInput>
         <Text style={styles.errorMsg}>{lastNameErr}</Text>
@@ -537,6 +549,18 @@ function UserEditProfile({ route, navigation }) {
           style={styles.inputBox}
         ></TextInput>
         <Text style={styles.errorMsg}>{knowledgeErr}</Text>
+
+        <Text style={styles.labels}>Job title</Text>
+        <TextInput
+          multiline
+          maxLength={1000}
+          numberOfLines={5}
+          value={jobTitle}
+          onChangeText={(jobTitle) => setJobTitle(jobTitle)}
+          placeholder="Job title"
+          style={styles.inputBox}
+        ></TextInput>
+        <Text style={styles.errorMsg}>{jobTitleErr}</Text>
 
         <Text style={styles.labels}>Years Experience</Text>
         <TextInput
@@ -644,7 +668,6 @@ const styles = StyleSheet.create({
   errorMsg: {
     color: "red",
     paddingLeft: 40,
-    marginBottom: 10,
   },
   backButton: {
     alignSelf: "left",

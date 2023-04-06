@@ -34,15 +34,17 @@ function RegisterScreen({ navigation }) {
   return (
     <View style={styles.imageContainer}>
       <ImageBackground
-        source={require("../assets/RegisterImage.webp")}
+        source={require("../assets/CompanyRegister.webp")}
         style={{ width: "100%", height: "100%" }}
       >
         <View style={styles.innerContainer}>
           <Text style={styles.title}>Sign up!</Text>
 
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("RegisterJobseeker")}
+          >
             <Text
-              onPress={() => navigation.navigate("RegisterJobseeker")}
               style={{
                 color: "white",
                 textAlign: "center",
@@ -56,9 +58,11 @@ function RegisterScreen({ navigation }) {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("RegisterCompany")}
+          >
             <Text
-              onPress={() => navigation.navigate("RegisterCompany")}
               style={{
                 color: "white",
                 textAlign: "center",

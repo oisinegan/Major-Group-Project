@@ -20,7 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ceil, exp } from "react-native-reanimated";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-function CompanyPostJob({ navigation }) {
+function CompanyPostJob({ route, navigation }) {
   const [title, setTitle] = useState("");
   const [info, setInfo] = useState("");
   const [wage, setWage] = useState("");
@@ -95,7 +95,7 @@ function CompanyPostJob({ navigation }) {
 
     var errorMsg = "";
 
-    //Username
+    //Title
     if (title == "") {
       setTitleErr("Title field is empty");
     } else if (title.length < 4) {
@@ -105,17 +105,19 @@ function CompanyPostJob({ navigation }) {
       setTitleErr("");
     }
 
-    //Username
+    //Info
     if (info == "") {
       setInfoErr("Information field is empty");
     } else if (info.length < 10) {
       setInfoErr("Provide more information!");
+    } else if (info.length > 120) {
+      setInfoErr("Too much information! (Max 120 char)");
     } else {
       noCorrectInputs++;
       setInfoErr("");
     }
 
-    //Password
+    //Wage
     if (wage == "") {
       setWageErr("Wage field is empty!");
     } else if (wage.length < 2) {
@@ -125,16 +127,15 @@ function CompanyPostJob({ navigation }) {
       setWageErr("");
     }
 
-    //Email
+    //Type
     if (type == "") {
-      setTypeErr("Type field is empty!");
-    }
-    {
+      setTypeErr("Job type field is empty!");
+    } else {
       noCorrectInputs++;
       setTypeErr("");
     }
 
-    //Profile picutre
+    //Location
     if (location == "") {
       setLocationErr("Location field is empty!");
     } else {
@@ -142,7 +143,7 @@ function CompanyPostJob({ navigation }) {
       setLocationErr("");
     }
 
-    //Address
+    //Full description
     if (fullDescription == "") {
       setDescriptionErr("Description field is empty!");
     } else if (fullDescription.length < 15) {
@@ -152,7 +153,7 @@ function CompanyPostJob({ navigation }) {
       setDescriptionErr("");
     }
 
-    //Info
+    //Schedule
     if (schedule == "") {
       setScheduleErr("Schedule field is empty!");
     } else if (schedule.length < 3) {
@@ -162,7 +163,7 @@ function CompanyPostJob({ navigation }) {
       setScheduleErr("");
     }
 
-    //Founded
+    //experience
     if (experience == "") {
       setExperienceErr("Experience field is empty!");
     } else if (experience.length < 3) {
@@ -172,17 +173,17 @@ function CompanyPostJob({ navigation }) {
       setExperienceErr("");
     }
 
-    //Industry
+    //qual
     if (qualification == "") {
       setQualificationErr("Qualification field is empty!");
     } else if (qualification.length < 3) {
-      setQualificationErr("Industry must be longer than 3 characters!");
+      setQualificationErr("Qualification must be longer than 3 characters!");
     } else {
       noCorrectInputs++;
       setQualificationErr("");
     }
 
-    //Company
+    //Knowledge
     if (knowledge == "") {
       setKnowledgeErr("Knowledge field is empty!");
     } else if (knowledge.length < 5) {
@@ -231,7 +232,7 @@ function CompanyPostJob({ navigation }) {
   const [isSelected, setSelection] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView automaticallyAdjustKeyboardInsets={true}>
         <Text style={styles.title}>Job form</Text>
         <View style={styles.infoContent}>
           <Text style={styles.headings}>General Information</Text>
@@ -318,7 +319,9 @@ function CompanyPostJob({ navigation }) {
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyHome")}
+          onPress={() =>
+            navigation.navigate("CompanyHome", { cUsername: username })
+          }
         >
           <Image
             style={{ width: 35, height: 35 }}
@@ -328,7 +331,9 @@ function CompanyPostJob({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyPostJob")}
+          onPress={() =>
+            navigation.navigate("CompanyPostJob", { cUsername: username })
+          }
         >
           <Image
             style={{ width: 30, height: 30 }}
@@ -338,7 +343,9 @@ function CompanyPostJob({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyMessages")}
+          onPress={() =>
+            navigation.navigate("CompanyMessages", { cUsername: username })
+          }
         >
           <Image
             style={{ width: 35, height: 35 }}
@@ -348,7 +355,9 @@ function CompanyPostJob({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyProfileScreen")}
+          onPress={() =>
+            navigation.navigate("CompanyProfileScreen", { cUsername: username })
+          }
         >
           <Image
             style={{
@@ -376,7 +385,8 @@ const styles = StyleSheet.create({
   },
   title: {
     margin: 5,
-    fontSize: 20,
+    fontSize: 30,
+    fontWeight: "600",
     textDecorationLine: "underline",
     marginTop: 20,
     marginBottom: 20,
@@ -394,6 +404,7 @@ const styles = StyleSheet.create({
     color: "red",
     paddingLeft: 40,
     marginBottom: 10,
+    marginBottom: 20,
   },
   navBar: {
     flexDirection: "row",
@@ -417,7 +428,6 @@ const styles = StyleSheet.create({
     borderColor: "navy",
     padding: 15,
     width: "82.5%",
-    marginBottom: 20,
     borderRadius: 50,
     marginLeft: 30,
     opacity: 1,

@@ -14,7 +14,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import * as React from "react";
-
+import { VIDEO_CHAT_URL } from "../VideoChatUrl/config";
 import {
   Chat,
   OverlayProvider,
@@ -54,7 +54,7 @@ function CompanyMessageScreen({ route, navigation }) {
     getData();
     console.log(username);
     console.log(channel.id);
-    setUrl("https://192.168.1.4:30000?name=" + username + "!" + channel.id);
+    setUrl(VIDEO_CHAT_URL + "?name=" + username + "!" + channel.id);
   }
 
   useEffect(() => createUrl(), [username]);

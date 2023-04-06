@@ -25,6 +25,7 @@ import {
 import { useState, useEffect } from "react/cjs/react.development";
 import { A } from "@expo/html-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { VIDEO_CHAT_URL } from "../VideoChatUrl/config";
 
 function UserMessageScreen({ route, navigation }) {
   const { channel } = route.params;
@@ -53,7 +54,7 @@ function UserMessageScreen({ route, navigation }) {
     getData();
     console.log(username);
     console.log(channel.id);
-    setUrl("https://192.168.1.4:3000?name=" + username + "!" + channel.id);
+    setUrl(VIDEO_CHAT_URL + "?name=" + username + "!" + channel.id);
   }
 
   useEffect(() => createUrl(), [username]);

@@ -70,10 +70,7 @@ function CompanyJobMoreInfo({ route, navigation }) {
       <StatusBar barStyle="dark-content"></StatusBar>
       <View style={styles.nav}>
         <TouchableOpacity style={styles.backButton}>
-          <Text
-            style={styles.backText}
-            onPress={() => navigation.navigate("CompanyHome")}
-          >
+          <Text style={styles.backText} onPress={() =>  navigation.navigate("CompanyHome", { cUsername: username })}>
             Back
           </Text>
         </TouchableOpacity>

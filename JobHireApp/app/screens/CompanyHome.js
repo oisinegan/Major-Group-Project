@@ -33,12 +33,26 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../database/config";
+import { useReducer } from "react";
+import {
+  Chat,
+  OverlayProvider,
+  ChannelList,
+  Channel,
+  MessageList,
+  MessageInput,
+  StreamChat,
+} from "stream-chat";
 
-/******** FIX: Company post 1 click = writes all info to database but company field = "",
- * On 2nd click it then reads in company field from async storage from sets company field in db.
- * (Obvisously should be done on first click) *********/
+// client-side you initialize the Chat client with your API key
+const client = StreamChat.getInstance("hwbnu4agqppp", {
+  timeout: 6000,
+});
 
-function CompanyHomeScreen({ navigation }) {
+import {} from "react-native";
+function CompanyHomeScreen({ route, navigation }) {
+  const { cUsername } = route.params;
+
   const [AdvertsCompany, setAdvertsCompany] = useState([]);
   const [Applicants, setApplicants] = useState([]);
   const [numberJobs, setNumberJobs] = useState([]);
@@ -70,6 +84,7 @@ function CompanyHomeScreen({ navigation }) {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+
     searchJobs();
 
     setTimeout(() => {
@@ -77,18 +92,15 @@ function CompanyHomeScreen({ navigation }) {
     }, 1000);
   }, []);
 
-  useEffect(searchJobs, []);
-
+  useEffect(() => searchJobs(), [username]);
   useEffect(() => addImageURLtoFireStore());
 
   //Read logged in Company job posts
   async function readCompanyAdverts() {
-    getData();
-    console.log("Username1=" + username);
-
+    console.log("3");
     //Read  data from job adverts database where username(Gotten from login) equals company in adverts
     getDocs(
-      query(collection(db, "Adverts"), where("company", "==", username))
+      query(collection(db, "Adverts"), where("company", "==", cUsername))
     ).then((docSnap) => {
       let advert = [];
       let numJobs = 0;
@@ -106,27 +118,41 @@ function CompanyHomeScreen({ navigation }) {
         });
         numJobs += 1;
       });
+      console.log(4);
       setNumberJobs(numJobs);
       setAdvertsCompany(advert);
     });
     //("Username2=" + username);
   }
+  async function updateStreamChatImage() {
+    const user = client.user;
+
+    console.log(user);
+
+    const update = {
+      id: user.id,
+      set: {
+        image: profilePic,
+      },
+    };
+
+    await client.partialUpdateUser(update);
+  }
 
   //ADD image url to user firestore
   function addImageURLtoFireStore() {
+    getData();
     var isUrlReady = false;
     //Gets firebase storage info
     const storage = getStorage();
     getDownloadURL(ref(storage, "Company/" + username))
       .then((url) => {
-        console.log("test");
-        console.log(url);
         setProfilePic(url);
       })
       .then(() => {
-        console.log("IMAGE SUCCESSFULLY LOADED");
         isUrlReady = true;
         writeURLtoFireStore();
+        updateStreamChatImage();
       })
       .catch((e) => {
         console.log("IMAGE NOT FOUND");
@@ -135,9 +161,6 @@ function CompanyHomeScreen({ navigation }) {
   }
 
   function writeURLtoFireStore() {
-    console.log("called");
-    console.log(username);
-    console.log(profilePic);
     setDoc(
       doc(db, "Company", username),
       {
@@ -145,9 +168,7 @@ function CompanyHomeScreen({ navigation }) {
       },
       { merge: true }
     )
-      .then(() => {
-        console.log("IMAGE ADDED TO USER COMPANY STORAGE!");
-      })
+      .then(() => {})
       .catch((error) => {
         //failed
         console.log("ERROR adding image url to firestore!");
@@ -156,12 +177,13 @@ function CompanyHomeScreen({ navigation }) {
 
   //Search job titles, if none found search company names
   function searchJobs() {
+    console.log("1");
     console.log(username);
-    addImageURLtoFireStore();
     if (searchParam.toString() === "") {
       readCompanyAdverts();
-      console.log("CALL 1");
+      console.log("2");
     } else {
+      console.log("-2");
       setAdvertsCompany([]);
       //Read  data from job adverts database where title = search parameter
       getDocs(
@@ -177,7 +199,7 @@ function CompanyHomeScreen({ navigation }) {
           advert.push({ ...doc.data(), id: doc.id, title, info, wage, type });
           numJobs += 1;
         });
-        console.log("CALL 2");
+
         setNumberJobs(numJobs);
 
         setAdvertsCompany(advert);
@@ -190,7 +212,7 @@ function CompanyHomeScreen({ navigation }) {
       <View style={styles.headerFooterStyle}>
         <Text style={styles.userNameStyle}>Hello {username}</Text>
         <Text style={styles.mainTitle}>Total results: {numberJobs} </Text>
-        <Text style={styles.mainTitle}>Pull down to refresh page! </Text>
+        {/* <Text style={styles.mainTitle}>Pull down to refresh page! </Text> */}
       </View>
     );
   };
@@ -211,28 +233,6 @@ function CompanyHomeScreen({ navigation }) {
           <Text style={styles.buttonTopNavText}>Search</Text>
         </TouchableOpacity>
       </View>
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>No Applicants yet!</Text>
-            <Pressable
-              style={[styles.button, styles.buttonOpenCustom]}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <Text style={styles.textStyle}>Hide Modal</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
 
       <View style={styles.mainContainer}>
         <View style={styles.flatlistContainer}>
@@ -256,6 +256,7 @@ function CompanyHomeScreen({ navigation }) {
                     onPress={() =>
                       navigation.navigate("CompanyViewApplicants", {
                         item: item,
+                        cUsername: cUsername,
                       })
                     }
                   >
@@ -279,7 +280,9 @@ function CompanyHomeScreen({ navigation }) {
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyHome")}
+          onPress={() =>
+            navigation.navigate("CompanyHome", { cUsername: username })
+          }
         >
           <Image
             style={{ width: 35, height: 35 }}
@@ -289,7 +292,9 @@ function CompanyHomeScreen({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyPostJob")}
+          onPress={() =>
+            navigation.navigate("CompanyPostJob", { cUsername: username })
+          }
         >
           <Image
             style={{ width: 30, height: 30 }}
@@ -299,7 +304,9 @@ function CompanyHomeScreen({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyMessages")}
+          onPress={() =>
+            navigation.navigate("CompanyMessages", { cUsername: username })
+          }
         >
           <Image
             style={{ width: 35, height: 35 }}
@@ -309,7 +316,9 @@ function CompanyHomeScreen({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyProfileScreen")}
+          onPress={() =>
+            navigation.navigate("CompanyProfileScreen", { cUsername: username })
+          }
         >
           <Image
             style={{

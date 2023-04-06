@@ -20,14 +20,11 @@ import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 //Database imports
-import { useState } from "react/cjs/react.development";
-import { doc, setDoc } from "firebase/firestore";
+import { useState, useEffect } from "react/cjs/react.development";
+import { doc, setDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../database/config";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 import * as ImagePicker from "expo-image-picker";
-
-// Get device width
-const deviceWidth = Dimensions.get("window").width;
 
 function RegisterCompany({ navigation }) {
   //Info
@@ -44,8 +41,6 @@ function RegisterCompany({ navigation }) {
 
   //Image
   const [image, setImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [imageBlob, setImageBlob] = useState(null);
 
   //Error messages
   const [usernameErr, setUsernameErr] = useState(" ");
@@ -58,6 +53,9 @@ function RegisterCompany({ navigation }) {
   const [industryErr, setIndustryErr] = useState("");
   const [companySizeErr, setCompanySizeErr] = useState("");
   const [imageErr, setImageErr] = useState("");
+
+  //Taken Company usernames
+  const [compNames, setCompNames] = useState("");
 
   async function pickImage() {
     // No permissions request is necessary for launching the image library
@@ -81,8 +79,33 @@ function RegisterCompany({ navigation }) {
         console.log("Uploaded a blob!");
       });
       setImage(result.uri);
-      setImageBlob(blob);
+
       console.log();
+    }
+  }
+
+  function readAllCompanyNames() {
+    getDocs(collection(db, "Company")).then((docSnap) => {
+      let names = [];
+      docSnap.forEach((doc) => {
+        const { username } = doc.data();
+        names.push(username);
+      });
+      console.log(names);
+      setCompNames(names);
+    });
+  }
+  useEffect(readAllCompanyNames, []);
+
+  function checkIfUsernameExists(usr) {
+    if (
+      compNames.toString().toUpperCase().includes(usr.toString().toUpperCase())
+    ) {
+      console.log("exists");
+      return true;
+    } else {
+      console.log("Doesn't exist");
+      return false;
     }
   }
 
@@ -106,17 +129,16 @@ function RegisterCompany({ navigation }) {
   }
 
   async function companyCreate() {
-    var isFormCorrect = false;
     var noInputs = 10;
     var noCorrectInputs = 0;
-
-    var errorMsg = "";
 
     //Username
     if (username == "") {
       setUsernameErr("Username field is empty");
     } else if (username.length < 4) {
       setUsernameErr("Username must be longer than 5 characters!");
+    } else if (checkIfUsernameExists(username)) {
+      setUsernameErr("Username already exists! Please choose another!");
     } else {
       noCorrectInputs++;
       setUsernameErr("");
@@ -217,17 +239,17 @@ function RegisterCompany({ navigation }) {
     }
 
     if (noInputs == noCorrectInputs) {
-      setDoc(doc(db, "Company", username), {
-        username: username,
-        pass: pass,
-        email: email,
-        number: number,
-        address: address,
+      setDoc(doc(db, "Company", username.trim()), {
+        username: username.trim(),
+        pass: pass.trim(),
+        email: email.trim(),
+        number: number.trim(),
+        address: address.trim(),
 
-        info: info,
-        founded: founded,
-        industry: industry,
-        companySize: companySize,
+        info: info.trim(),
+        founded: founded.trim(),
+        industry: industry.trim(),
+        companySize: companySize.trim(),
       })
         .then(() => {
           //Successfully written to database
@@ -273,8 +295,12 @@ function RegisterCompany({ navigation }) {
         </Text>
       </TouchableOpacity>
 
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        automaticallyAdjustKeyboardInsets={true}
+      >
         <Text style={styles.title}>Create an Account</Text>
+
         <Text style={styles.titleMini}>General Information</Text>
         <TextInput
           value={username}
@@ -294,6 +320,7 @@ function RegisterCompany({ navigation }) {
           placeholder="Password"
           placeholderTextColor={"#4f5250"}
         />
+
         <Text style={styles.errorMsg}>{passErr}</Text>
         <TextInput
           value={email}
@@ -322,6 +349,7 @@ function RegisterCompany({ navigation }) {
           style={styles.input}
         ></TextInput>
         <Text style={styles.errorMsg}>{addressErr}</Text>
+
         <Text style={styles.titleMini}>Profile Picture</Text>
         <Button
           title="Pick a profile picture from camera roll"
@@ -343,6 +371,7 @@ function RegisterCompany({ navigation }) {
         )}
         <Text style={styles.errorMsg}>{imageErr}</Text>
         <Text style={styles.titleMini}>Company Information</Text>
+
         <TextInput
           value={info}
           maxLength={30}
@@ -381,7 +410,7 @@ function RegisterCompany({ navigation }) {
         <Text style={styles.errorMsg}>{companySizeErr}</Text>
 
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={companyCreate}>
             <Text
               onPress={companyCreate}
               style={{

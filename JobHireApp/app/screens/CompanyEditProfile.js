@@ -50,6 +50,17 @@ function CompanyEditProfile({ route, navigation }) {
   const [curProfilePic, setCurProfilePic] = useState("");
   const [newProfilePic, setNewProfilePic] = useState("");
 
+  //Error messages
+
+  const [passErr, setPassErr] = useState(" ");
+  const [emailErr, setEmailErr] = useState(" ");
+  const [numberErr, setNumberErr] = useState(" ");
+  const [addressErr, setAddressErr] = useState(" ");
+  const [infoErr, setInfoErr] = useState("");
+  const [foundedErr, setFoundedErr] = useState("");
+  const [industryErr, setIndustryErr] = useState("");
+  const [companySizeErr, setCompanySizeErr] = useState("");
+
   async function pickImage() {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -153,6 +164,25 @@ function CompanyEditProfile({ route, navigation }) {
     navigation.navigate("HomeNotLoggedIn");
   }
 
+  //Specific tests - methods return true/false
+  function upperCaseTest(string) {
+    //If string contains at least one  Upper case letter
+    return /[A-Z]/.test(string);
+  }
+  function numberTest(string) {
+    //If string contains at least one number
+    return /[1-9]/.test(string);
+  }
+  function validEmail(string) {
+    var res1 = /[@]/.test(string);
+    var res2 = /[.]/.test(string);
+
+    if (res1 && res2) {
+      return true;
+    }
+    return false;
+  }
+
   async function create() {
     //Assing response to image user picked
     var response;
@@ -172,33 +202,128 @@ function CompanyEditProfile({ route, navigation }) {
       console.log("Uploaded a blob!");
     });
 
-    setDoc(doc(db, "Company", item), {
-      email: email,
-      address: address,
-      number: number,
-      info: info,
-      imageURL: imageURL,
-      industry: industry,
-      founded: founded,
-      companySize: companySize,
-      username: username,
-      pass: pass,
-    })
-      .then(() => {
-        //Successfully written to database
-        Alert.alert("Success", "Data Submitted", [
-          {
-            text: "OK",
-            onPress: () => navigation.navigate("CompanyProfileScreen"),
-          },
-        ]);
+    var noInputs = 8;
+    var noCorrectInputs = 0;
+
+    //Password
+    if (pass == "") {
+      setPassErr("Password field is empty!");
+    } else if (pass.length < 6) {
+      setPassErr("password must be longer than 6 characters!");
+      console.log("test1");
+    } else if (upperCaseTest(pass) == false) {
+      console.log("test2");
+      setPassErr("Password must contain a capital!");
+    } else if (numberTest(pass) == false) {
+      setPassErr("Password must contain a number!");
+    } else {
+      noCorrectInputs++;
+      setPassErr("");
+    }
+
+    //Email
+    if (email == "") {
+      setEmailErr("Email field is empty!");
+    } else if (validEmail(email) == false) {
+      setEmailErr("Invalid email!");
+    } else {
+      noCorrectInputs++;
+      setEmailErr("");
+    }
+
+    //Number
+    if (number == "") {
+      setNumberErr("Number field is empty!");
+    } else if (number.length < 7) {
+      setNumberErr("Number must be longer than 7 digits!");
+    } else {
+      noCorrectInputs++;
+      setNumberErr("");
+    }
+
+    //Address
+    if (address == "") {
+      setAddressErr("Address field is empty!");
+    } else if (address.length < 10) {
+      setAddressErr("Address must be longer than 10 characters!");
+    } else {
+      noCorrectInputs++;
+      setAddressErr("");
+    }
+
+    //Info
+    if (info == "") {
+      setInfoErr("Summary field is empty!");
+    } else if (info.length < 10) {
+      setInfoErr("Summary must be longer than 10 characters!");
+    } else {
+      noCorrectInputs++;
+      setInfoErr("");
+    }
+
+    //Founded
+    if (founded == "") {
+      setFoundedErr("Founded field is empty!");
+    } else if (founded.length < 4) {
+      setFoundedErr("Founded must be longer than 3 digits!");
+    } else {
+      noCorrectInputs++;
+      setFoundedErr("");
+    }
+
+    //Industry
+    if (industry == "") {
+      setIndustryErr("Industry field is empty!");
+    } else if (industry.length < 5) {
+      setIndustryErr("Industry must be longer than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setIndustryErr("");
+    }
+
+    //Company
+    if (companySize == "") {
+      setCompanySizeErr("Company size field is empty!");
+    } else if (industry.length < 4) {
+      setCompanySizeErr("Company size must be longer than 4 characters!");
+    } else {
+      noCorrectInputs++;
+      setCompanySizeErr("");
+    }
+
+    if (noInputs == noCorrectInputs) {
+      setDoc(doc(db, "Company", item), {
+        email: email,
+        address: address,
+        number: number,
+        info: info,
+        imageURL: imageURL,
+        industry: industry,
+        founded: founded,
+        companySize: companySize,
+        username: username,
+        pass: pass,
       })
-      .catch((error) => {
-        //failed
-        Alert.alert("ERROR", "Data not submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]);
-      });
+        .then(() => {
+          //Successfully written to database
+          Alert.alert("Success", "Profile updated!", [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate("CompanyProfileScreen"),
+            },
+          ]);
+        })
+        .catch((error) => {
+          //failed
+          Alert.alert("ERROR", "Data not submitted", [
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ]);
+        });
+    } else {
+      Alert.alert("Profile not updated!", "Please try again!", [
+        { text: "OK", onPress: () => console.log("error msg - OK Pressed") },
+      ]);
+    }
   }
 
   return (
@@ -223,8 +348,11 @@ function CompanyEditProfile({ route, navigation }) {
           <Text style={styles.buttonDeleteText}>Delete</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.titleMini}>Info</Text>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets={true}
+      >
+        <Text style={styles.titleMini}>Information</Text>
 
         <Text style={styles.labels}>Address</Text>
         <TextInput
@@ -233,6 +361,7 @@ function CompanyEditProfile({ route, navigation }) {
           placeholder="address"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{addressErr}</Text>
         <Text style={styles.labels}>Email</Text>
         <TextInput
           value={email}
@@ -240,6 +369,7 @@ function CompanyEditProfile({ route, navigation }) {
           placeholder="Email"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{emailErr}</Text>
         <Text style={styles.labels}>Number</Text>
         <TextInput
           value={number}
@@ -247,6 +377,7 @@ function CompanyEditProfile({ route, navigation }) {
           placeholder="Number"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{numberErr}</Text>
         <Text style={styles.labels}>Password</Text>
         <TextInput
           value={pass}
@@ -254,7 +385,7 @@ function CompanyEditProfile({ route, navigation }) {
           placeholder="address"
           style={styles.inputBox}
         ></TextInput>
-
+        <Text style={styles.errorMsg}>{passErr}</Text>
         <Text style={styles.titleMini}>Profile Picture</Text>
         <Text style={styles.labels}>Current Profile Picture</Text>
         <Image
@@ -295,6 +426,7 @@ function CompanyEditProfile({ route, navigation }) {
           placeholder="info"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{infoErr}</Text>
         <Text style={styles.labels}>Industry</Text>
         <TextInput
           value={industry}
@@ -302,6 +434,7 @@ function CompanyEditProfile({ route, navigation }) {
           placeholder="industry"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{industryErr}</Text>
         <Text style={styles.labels}>Company size</Text>
         <TextInput
           value={companySize}
@@ -309,6 +442,7 @@ function CompanyEditProfile({ route, navigation }) {
           placeholder="Company Size"
           style={styles.inputBox}
         ></TextInput>
+        <Text style={styles.errorMsg}>{companySizeErr}</Text>
         <Text style={styles.labels}>Founded</Text>
         <TextInput
           value={founded}
@@ -316,7 +450,7 @@ function CompanyEditProfile({ route, navigation }) {
           placeholder="founded"
           style={styles.inputBox}
         ></TextInput>
-
+        <Text style={styles.errorMsg}>{foundedErr}</Text>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={create}>
             <Text style={styles.buttonText} onPress={console.log("pressed")}>
@@ -379,7 +513,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "600",
     marginLeft: 20,
-    marginTop: 20,
+    marginTop: 10,
     color: "navy",
     marginBottom: 10,
   },
@@ -388,11 +522,16 @@ const styles = StyleSheet.create({
     borderColor: "navy",
     padding: 20,
     width: "80%",
-    marginBottom: 10,
+
     marginLeft: "10%",
     marginRight: "10%",
     borderRadius: 10,
     fontSize: 17.5,
+  },
+  errorMsg: {
+    color: "red",
+    paddingLeft: 40,
+    marginBottom: 10,
   },
 
   buttonContainer: {

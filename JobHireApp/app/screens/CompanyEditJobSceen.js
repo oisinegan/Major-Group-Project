@@ -77,33 +77,22 @@ function CompanyEditJobScreen({ route, navigation }) {
   }, []);
 
   function create() {
-    var isFormCorrect = false;
-    var noInputs = 10;
+    var noInputs = 9;
     var noCorrectInputs = 0;
 
-    var errorMsg = "";
-
-    //Username
-    if (title == "") {
-      setTitleErr("Title field is empty");
-    } else if (title.length < 4) {
-      setTitleErr("Title cannot be less than 4 characters!");
-    } else {
-      noCorrectInputs++;
-      setTitleErr("");
-    }
-
-    //Username
+    //info
     if (info == "") {
       setInfoErr("Information field is empty");
     } else if (info.length < 10) {
       setInfoErr("Provide more information!");
+    } else if (info.length > 120) {
+      setInfoErr("Too much information! (Max 120 char)");
     } else {
       noCorrectInputs++;
       setInfoErr("");
     }
 
-    //Password
+    //wage
     if (wage == "") {
       setWageErr("Wage field is empty!");
     } else if (wage.length < 2) {
@@ -113,16 +102,15 @@ function CompanyEditJobScreen({ route, navigation }) {
       setWageErr("");
     }
 
-    //Email
+    //job type
     if (type == "") {
       setTypeErr("Type field is empty!");
-    }
-    {
+    } else {
       noCorrectInputs++;
       setTypeErr("");
     }
 
-    //Profile picutre
+    //location
     if (location == "") {
       setLocationErr("Location field is empty!");
     } else {
@@ -130,7 +118,7 @@ function CompanyEditJobScreen({ route, navigation }) {
       setLocationErr("");
     }
 
-    //Address
+    //Full description
     if (fullDescription == "") {
       setDescriptionErr("Description field is empty!");
     } else if (fullDescription.length < 15) {
@@ -140,7 +128,7 @@ function CompanyEditJobScreen({ route, navigation }) {
       setDescriptionErr("");
     }
 
-    //Info
+    //schedule
     if (schedule == "") {
       setScheduleErr("Schedule field is empty!");
     } else if (schedule.length < 3) {
@@ -150,7 +138,7 @@ function CompanyEditJobScreen({ route, navigation }) {
       setScheduleErr("");
     }
 
-    //Founded
+    //experience
     if (experience == "") {
       setExperienceErr("Experience field is empty!");
     } else if (experience.length < 3) {
@@ -160,7 +148,7 @@ function CompanyEditJobScreen({ route, navigation }) {
       setExperienceErr("");
     }
 
-    //Industry
+    //qual
     if (qualification == "") {
       setQualificationErr("Qualification field is empty!");
     } else if (qualification.length < 3) {
@@ -170,7 +158,7 @@ function CompanyEditJobScreen({ route, navigation }) {
       setQualificationErr("");
     }
 
-    //Company
+    //knowledge
     if (knowledge == "") {
       setKnowledgeErr("Knowledge field is empty!");
     } else if (knowledge.length < 5) {
@@ -179,26 +167,30 @@ function CompanyEditJobScreen({ route, navigation }) {
       noCorrectInputs++;
       setKnowledgeErr("");
     }
-
+    console.log(noInputs);
     if (noInputs == noCorrectInputs) {
       setDoc(doc(db, "Adverts", title), {
         title: title.trim(),
         info: info.trim(),
         wage: wage.trim(),
         type: type.trim(),
-        company: username.trim(),
+        company: item.company.trim(),
         location: location.trim(),
         fullDescription: fullDescription.trim(),
         schedule: schedule.trim(),
         experience: experience.trim(),
         qualification: qualification.trim(),
         knowledge: knowledge.trim(),
-        Applicants: applicants,
+        Applicants: item.Applicants,
       })
         .then(() => {
           //Successfully written to database
           Alert.alert("Sucess", "Data Submitted", [
-            { text: "OK", onPress: () => navigation.navigate("CompanyHome") },
+            {
+              text: "OK",
+              onPress: () =>
+                navigation.navigate("CompanyHome", { cUsername: item.company }),
+            },
           ]);
         })
         .catch((error) => {
@@ -225,7 +217,7 @@ function CompanyEditJobScreen({ route, navigation }) {
   }
   function deletePost() {
     deleteDoc(doc(db, "Adverts", title));
-    navigation.navigate("CompanyHome");
+    navigation.navigate("CompanyHome", { cUsername: item.company });
   }
 
   return (
@@ -235,7 +227,9 @@ function CompanyEditJobScreen({ route, navigation }) {
         <TouchableOpacity style={styles.backButton}>
           <Text
             style={styles.backText}
-            onPress={() => navigation.navigate("CompanyHome")}
+            onPress={() =>
+              navigation.navigate("CompanyHome", { cUsername: item.company })
+            }
           >
             Back
           </Text>
@@ -249,15 +243,11 @@ function CompanyEditJobScreen({ route, navigation }) {
           </Text>
         </TouchableOpacity>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.labels}>Title </Text>
-        <TextInput
-          value={title}
-          onChangeText={(title) => setTitle(title)}
-          placeholder="Job/Project title"
-          style={styles.inputBox}
-        ></TextInput>
-        <Text style={styles.errorMsg}>{titleErr}</Text>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets={true}
+      >
+        <Text style={styles.labels}>Title: {title} </Text>
         <Text style={styles.labels}>Location </Text>
         <TextInput
           value={location}

@@ -19,14 +19,11 @@ import {
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //Database imports
-import { useState } from "react/cjs/react.development";
-import { doc, setDoc } from "firebase/firestore";
+import { useState, useEffect } from "react/cjs/react.development";
+import { doc, setDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../database/config";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as ImagePicker from "expo-image-picker";
-
-// Get device width
-const deviceWidth = Dimensions.get("window").width;
 
 function RegisterJobseeker({ navigation }) {
   //Info
@@ -53,6 +50,36 @@ function RegisterJobseeker({ navigation }) {
 
   //Image
   const [image, setImage] = useState(null);
+
+  //Error messages
+  //Info
+  const [firstNameErr, setFirstNameErr] = useState("");
+  const [lastNameErr, setLastnameErr] = useState("");
+  const [usernameErr, setUsernameErr] = useState("");
+  const [emailErr, setEmailErr] = useState("");
+  const [passErr, setPassErr] = useState("");
+  const [numberErr, setNumberErr] = useState("");
+  const [cityErr, setCityErr] = useState("");
+  const [countryErr, setCountryErr] = useState("");
+  //Qualifications
+  const [qualificationNameErr, setQualificationNameErr] = useState("");
+  const [qualificationLevelErr, setQualificationLevelErr] = useState("");
+  const [collegeNameErr, setCollegeNameErr] = useState("");
+  const [yearStartErr, setYearStartErr] = useState("");
+  const [yearEndErr, setYearEndErr] = useState("");
+  //Experience
+  const [jobTitleErr, setJobTitleErr] = useState("");
+  const [yearsExperienceErr, setYearsExperienceErr] = useState("");
+  //Skills
+  const [skillsErr, setSkillsErr] = useState("");
+  const [KnowledgeErr, setKnowledgeErr] = useState("");
+
+  //Image
+  const [imageErr, setImageErr] = useState(null);
+
+  //Taken Jobseeker usernames
+  const [jobseekerNames, setJobseekerNames] = useState("");
+
   async function pickImage() {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -79,45 +106,286 @@ function RegisterJobseeker({ navigation }) {
     }
   }
 
-  function jobseekersCreate() {
-    //Submit data
-    //db= databse link (database/config),
-    //"jobseekers" = table name on firebase
-    // username = id person being written to database,
-    setDoc(doc(db, "Jobseekers", username), {
-      firstName: firstName,
-      lastName: lastName,
-      username: username,
-      email: email,
-      pass: pass,
-      number: number,
-      city: city,
-      country: country,
-
-      qualificationName: qualificationName,
-      qualificationLevel: qualificationLevel,
-      collegeName: collegeName,
-      yearStart: yearStart,
-      yearEnd: yearEnd,
-
-      jobTitle: jobTitle,
-      yearsExperience: yearsExperience,
-
-      skills: skills,
-      Knowledge: Knowledge,
-    })
-      .then(() => {
-        //Successfully written to database
-        Alert.alert("Success", "You have successfully signed up!", [
-          { text: "OK", onPress: () => navigation.navigate("HomeNotLoggedIn") },
-        ]);
-      })
-      .catch((error) => {
-        //failed
-        Alert.alert("ERROR", "Data not submitted", [
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ]);
+  function readAllJobseekerNames() {
+    getDocs(collection(db, "Jobseekers")).then((docSnap) => {
+      let names = [];
+      docSnap.forEach((doc) => {
+        const { username } = doc.data();
+        names.push(username);
       });
+      console.log(names);
+      setJobseekerNames(names);
+    });
+  }
+  useEffect(readAllJobseekerNames, []);
+
+  function checkIfUsernameExists(usr) {
+    if (
+      jobseekerNames
+        .toString()
+        .toUpperCase()
+        .includes(usr.toString().toUpperCase())
+    ) {
+      console.log("exists");
+      return true;
+    } else {
+      console.log("Doesn't exist");
+      return false;
+    }
+  }
+
+  //Specific tests - methods return true/false
+  function upperCaseTest(string) {
+    //If string contains at least one  Upper case letter
+    return /[A-Z]/.test(string);
+  }
+  function numberTest(string) {
+    //If string contains at least one number
+    return /[1-9]/.test(string);
+  }
+  function validEmail(string) {
+    var res1 = /[@]/.test(string);
+    var res2 = /[.]/.test(string);
+
+    if (res1 && res2) {
+      return true;
+    }
+    return false;
+  }
+
+  function jobseekersCreate() {
+    var noInputs = 18;
+    var noCorrectInputs = 0;
+
+    //first name
+    if (firstName == "") {
+      setFirstNameErr("First name field is empty!");
+    } else if (firstName.length < 2) {
+      setFirstNameErr("First name must be longer than 2 characters!");
+    } else {
+      noCorrectInputs++;
+      setFirstNameErr("");
+    }
+
+    //last name
+    if (lastName == "") {
+      setLastnameErr("Last name field is empty!");
+    } else if (lastName.length < 2) {
+      setLastnameErr("Last name must be longer than 2 characters!");
+    } else {
+      noCorrectInputs++;
+      setLastnameErr("");
+    }
+
+    //Username
+    if (username == "") {
+      setUsernameErr("Username field is empty");
+    } else if (username.length < 4) {
+      setUsernameErr("Username must be longer than 5 characters!");
+    } else if (checkIfUsernameExists(username)) {
+      setUsernameErr("Username already exists! Please choose another!");
+    } else {
+      noCorrectInputs++;
+      setUsernameErr("");
+    }
+
+    //Email
+    if (email == "") {
+      setEmailErr("Email field is empty!");
+    } else if (validEmail(email) == false) {
+      setEmailErr("Invalid email!");
+    } else {
+      noCorrectInputs++;
+      setEmailErr("");
+    }
+
+    //Password
+    if (pass == "") {
+      setPassErr("Password field is empty!");
+    } else if (pass.length < 6) {
+      setPassErr("password must be longer than 6 characters!");
+      console.log("test1");
+    } else if (upperCaseTest(pass) == false) {
+      console.log("test2");
+      setPassErr("Password must contain a capital!");
+    } else if (numberTest(pass) == false) {
+      setPassErr("Password must contain a number!");
+    } else {
+      noCorrectInputs++;
+      setPassErr("");
+    }
+
+    //Number
+    if (number == "") {
+      setNumberErr("Number field is empty!");
+    } else if (number.length < 7) {
+      setNumberErr("Number must be longer than 7 digits!");
+    } else {
+      noCorrectInputs++;
+      setNumberErr("");
+    }
+
+    //City
+    if (city == "") {
+      setCityErr("City field is empty");
+    } else if (city.length < 2) {
+      setCityErr("City must be longer than 2 characters!");
+    } else {
+      noCorrectInputs++;
+      setCityErr("");
+    }
+
+    //Country
+    if (country == "") {
+      setCountryErr("Country field is empty");
+    } else if (country.length < 3) {
+      setCountryErr("Country must be longer than 3 characters!");
+    } else {
+      noCorrectInputs++;
+      setCountryErr("");
+    }
+
+    //Profile picutre
+    if (image == null) {
+      setImageErr("Please choose a profile picture!");
+    } else {
+      noCorrectInputs++;
+      setImageErr("");
+    }
+
+    //Qual name
+    if (qualificationName == "") {
+      setQualificationNameErr("Qualification name field is empty!");
+    } else if (qualificationName.length < 3) {
+      setQualificationNameErr(
+        "Qualification name cannot be less than 3 characters!"
+      );
+    } else {
+      noCorrectInputs++;
+      setQualificationNameErr("");
+    }
+
+    //Qual level
+    if (qualificationLevel == "") {
+      setQualificationLevelErr("Qualification level field is empty!");
+    } else {
+      noCorrectInputs++;
+      setQualificationLevelErr("");
+    }
+
+    //College name
+    if (collegeName == "") {
+      setCollegeNameErr("College name field is empty!");
+    } else if (collegeName.length < 3) {
+      setCollegeNameErr("College name cannot be less than 3 characters!");
+    } else {
+      noCorrectInputs++;
+      setCollegeNameErr("");
+    }
+
+    //Year start
+    if (yearStart == "") {
+      setYearStartErr("Year started field is empty!");
+    } else if (yearStart.trim().length > 4) {
+      setYearStartErr("Year cannot be more than 4 characters!");
+    } else {
+      noCorrectInputs++;
+      setYearStartErr("");
+    }
+
+    //Year end
+    if (yearEnd == "") {
+      setYearEndErr("Year ended field is empty!");
+    } else if (yearEnd.trim().length > 4) {
+      setYearEndErr("Year cannot be more than 4 characters!");
+    } else {
+      noCorrectInputs++;
+      setYearEndErr("");
+    }
+
+    //Job title
+    if (jobTitle == "") {
+      setJobTitleErr("Job title field is empty!");
+    } else if (jobTitle.length < 5) {
+      setJobTitleErr("Job title cannot be less than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setJobTitleErr("");
+    }
+
+    //Yrs experience
+    if (yearsExperience == "") {
+      setYearsExperienceErr("Experience field is empty!");
+    } else {
+      noCorrectInputs++;
+      setYearsExperienceErr("");
+    }
+
+    //Skills
+    if (skills == "") {
+      setSkillsErr("Skills field is empty!");
+    } else if (skills.length < 5) {
+      setSkillsErr("Skills cannot be less than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setSkillsErr("");
+    }
+
+    //Knowledge
+    if (Knowledge == "") {
+      setKnowledgeErr("Knowledge field is empty!");
+    } else if (Knowledge.length < 5) {
+      setKnowledgeErr("Knowledge cannot be less than 5 characters!");
+    } else {
+      noCorrectInputs++;
+      setKnowledgeErr("");
+    }
+
+    console.log(noInputs);
+    console.log(noCorrectInputs);
+    if (noInputs == noCorrectInputs) {
+      setDoc(doc(db, "Jobseekers", username), {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        username: username.trim(),
+        email: email.trim(),
+        pass: pass.trim(),
+        number: number.trim(),
+        city: city.trim(),
+        country: country.trim(),
+
+        qualificationName: qualificationName.trim(),
+        qualificationLevel: qualificationLevel.trim(),
+        collegeName: collegeName.trim(),
+        yearStart: yearStart.trim(),
+        yearEnd: yearEnd.trim(),
+
+        jobTitle: jobTitle.trim(),
+        yearsExperience: yearsExperience.trim(),
+
+        skills: skills.trim(),
+        Knowledge: Knowledge.trim(),
+      })
+        .then(() => {
+          //Successfully written to database
+          Alert.alert("Success", "You have successfully signed up!", [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate("HomeNotLoggedIn"),
+            },
+          ]);
+        })
+        .catch((error) => {
+          //failed
+          Alert.alert("ERROR", "Data not submitted", [
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ]);
+        });
+    } else {
+      Alert.alert("Create account unsucessful!", "Please try again!", [
+        { text: "OK", onPress: () => console.log("error msg - OK Pressed") },
+      ]);
+    }
   } ////end jobseekersCreate
 
   /******* METHOD TO STORE VARIABLE IN ASYNC STORAGE *******/
@@ -141,7 +409,10 @@ function RegisterJobseeker({ navigation }) {
           back
         </Text>
       </TouchableOpacity>
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        automaticallyAdjustKeyboardInsets={true}
+      >
         <Text style={styles.title}>Create an Account</Text>
         <Text style={styles.titleMini}>General Information</Text>
         <TextInput
@@ -154,6 +425,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{firstNameErr}</Text>
         <TextInput
           value={lastName}
           maxLength={30}
@@ -162,6 +434,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{lastNameErr}</Text>
         <TextInput
           value={username}
           maxLength={30}
@@ -170,7 +443,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
-
+        <Text style={styles.errorMsg}>{usernameErr}</Text>
         <TextInput
           value={email}
           maxLength={30}
@@ -179,7 +452,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
-
+        <Text style={styles.errorMsg}>{emailErr}</Text>
         <TextInput
           value={pass}
           maxLength={30}
@@ -189,6 +462,7 @@ function RegisterJobseeker({ navigation }) {
           placeholder="Password"
           placeholderTextColor={"#4f5250"}
         />
+        <Text style={styles.errorMsg}>{passErr}</Text>
         <TextInput
           value={number}
           maxLength={30}
@@ -197,6 +471,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{numberErr}</Text>
         <TextInput
           value={city}
           maxLength={30}
@@ -205,6 +480,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{cityErr}</Text>
         <TextInput
           value={country}
           maxLength={30}
@@ -213,6 +489,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{countryErr}</Text>
         <Text style={styles.titleMini}>Profile Picture</Text>
         <Button
           title="Pick a profile picture from camera roll"
@@ -231,6 +508,7 @@ function RegisterJobseeker({ navigation }) {
             }}
           />
         )}
+        <Text style={styles.errorMsg}>{imageErr}</Text>
 
         <Text style={styles.titleMini}>Qualification</Text>
         <TextInput
@@ -243,6 +521,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{qualificationNameErr}</Text>
         <TextInput
           value={qualificationLevel}
           maxLength={30}
@@ -253,6 +532,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{qualificationLevelErr}</Text>
         <TextInput
           value={collegeName}
           maxLength={30}
@@ -261,6 +541,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{collegeNameErr}</Text>
         <TextInput
           value={yearStart}
           maxLength={30}
@@ -269,6 +550,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{yearStartErr}</Text>
         <TextInput
           value={yearEnd}
           maxLength={30}
@@ -277,6 +559,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{yearEndErr}</Text>
 
         <Text style={styles.titleMini}>Experience</Text>
         <TextInput
@@ -287,6 +570,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{jobTitleErr}</Text>
         <TextInput
           value={yearsExperience}
           maxLength={30}
@@ -297,6 +581,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{yearsExperienceErr}</Text>
         <Text style={styles.titleMini}>Knowledge and Skills</Text>
         <TextInput
           value={skills}
@@ -306,6 +591,7 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{skillsErr}</Text>
         <TextInput
           value={Knowledge}
           maxLength={30}
@@ -314,16 +600,16 @@ function RegisterJobseeker({ navigation }) {
           placeholderTextColor={"#4f5250"}
           style={styles.input}
         ></TextInput>
+        <Text style={styles.errorMsg}>{KnowledgeErr}</Text>
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={jobseekersCreate}>
             <Text
-              onPress={jobseekersCreate}
               style={{
                 color: "white",
                 textAlign: "center",
                 justifyContent: "center",
                 fontWeight: "bold",
-                //fontSize: 20,
+                fontSize: 20,
                 lineHeight: 40,
               }}
             >
@@ -378,13 +664,17 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 15,
   },
-
+  errorMsg: {
+    color: "red",
+    paddingLeft: 40,
+    marginBottom: 15,
+  },
   input: {
     borderWidth: 1,
     borderColor: "midnightblue",
     padding: 15,
     width: "82.5%",
-    marginBottom: 20,
+
     borderRadius: 50,
     marginLeft: 30,
   },

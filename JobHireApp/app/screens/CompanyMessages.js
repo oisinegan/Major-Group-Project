@@ -101,7 +101,9 @@ function CompanyMessages({ navigation }) {
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyHome")}
+          onPress={() =>
+            navigation.navigate("CompanyHome", { cUsername: username })
+          }
         >
           <Image
             style={{ width: 35, height: 35 }}

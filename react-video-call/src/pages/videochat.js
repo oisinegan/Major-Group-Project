@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ReactSession } from "react-client-session";
 import AgoraUIKit from "agora-react-uikit";
+import { VIDEO_CHAT_URL } from "../VideoChatUrl/config";
 
 export function VideoChat() {
   const [name, setName] = useState("");
@@ -14,7 +15,7 @@ export function VideoChat() {
     setChannelName(value1);
     console.log("CHANNEL" + channel);
     console.log("NAME" + name);
-    setUrl("https://192.168.1.4:3000?name=" + name + "!" + channel);
+    setUrl(VIDEO_CHAT_URL + "?name=" + name + "!" + channel);
   }
   useEffect(getNameFromSession);
 
@@ -34,7 +35,7 @@ export function VideoChat() {
         backgroundColour: "red",
         display: "flex",
         width: "100%",
-        height: "100vh",
+        height: "90vh",
       }}
     >
       <AgoraUIKit rtcProps={rtcProps} callbacks={callbacks} />

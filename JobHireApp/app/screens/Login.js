@@ -36,14 +36,13 @@ import {
 const deviceWidth = Dimensions.get("window").width;
 
 // client-side you initialize the Chat client with your API key
-const client = StreamChat.getInstance("pvj8fdby4epj", {
+const client = StreamChat.getInstance("hwbnu4agqppp", {
   timeout: 6000,
 });
 
 function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
-  const [seachParam, setSearchParam] = useState("");
 
   //After Log in button is pressed it searches Job seeker database first,
   //IF no match found then it search company database for match
@@ -71,6 +70,8 @@ function LoginScreen({ navigation }) {
         var userName = user[0].username.toString();
         //Send string(username) to async storage
         storeDataToAsyncStorage(userName);
+        console.log("DONE");
+        console.log(userName);
 
         //Navigate to user home screen
         navigation.navigate("UserHomeScreen");
@@ -109,7 +110,7 @@ function LoginScreen({ navigation }) {
         storeDataToAsyncStorage(compName);
 
         //Navigate to company home screen
-        navigation.navigate("CompanyHome");
+        navigation.navigate("CompanyHome", { cUsername: username });
       }
     });
   }
@@ -123,7 +124,7 @@ function LoginScreen({ navigation }) {
         {
           id: username.toString(),
           name: username.toString(),
-          image: "https://getstream.io/random_svg/?name=John",
+          // image: "",
         },
         client.devToken(username.toString())
       );
@@ -177,14 +178,17 @@ function LoginScreen({ navigation }) {
             />
           </KeyboardAvoidingView>
 
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={searchJobseekerDatabase}
+          >
             <Text
               onPress={searchJobseekerDatabase}
               style={{
                 color: "white",
                 textAlign: "center",
                 justifyContent: "center",
-                //fontSize: 20,
+                fontSize: 20,
                 lineHeight: 40,
               }}
             >
@@ -216,16 +220,13 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
   },
-  imageContainer: {
-    height: deviceWidth * 3,
-    width: deviceWidth * 1.3,
-  },
 
   innerContainer: {
-    marginTop: 200,
-    margin: 50,
-    marginRight: 170,
-    backgroundColor: "rgba(239, 231, 225, 0.9)",
+    marginTop: "60%",
+    // margin: 50,
+    // marginRight: 170,
+    marginHorizontal: 30,
+    backgroundColor: "rgba(239, 231, 225, 0.8)",
     alignItems: "center",
     justifyContent: "center",
     paddingBottom: 30,
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
     color: "midnightblue",
   },
   textInput: {
-    marginBottom: 50,
+    marginBottom: 30,
   },
   input: {},
   button: {

@@ -31,8 +31,24 @@ import {
   query,
   arrayUnion,
   where,
+  or,
 } from "firebase/firestore";
 import { db } from "../database/config";
+//Stream chat api imports
+import {
+  Chat,
+  OverlayProvider,
+  ChannelList,
+  Channel,
+  MessageList,
+  MessageInput,
+  StreamChat,
+} from "stream-chat";
+
+// client-side you initialize the Chat client with your API key
+const client = StreamChat.getInstance("hwbnu4agqppp", {
+  timeout: 6000,
+});
 
 function UserHomeScreen({ navigation }) {
   const [AdvertsUser, setAdvertsUser] = useState([]);
@@ -55,6 +71,21 @@ function UserHomeScreen({ navigation }) {
 
   useEffect(searchJobs, []);
   useEffect(() => addImageURLtoFireStore());
+
+  async function updateStreamChatImage() {
+    const user = client.user;
+
+    console.log(user);
+
+    const update = {
+      id: user.id,
+      set: {
+        image: profilePic,
+      },
+    };
+
+    await client.partialUpdateUser(update);
+  }
 
   //addImageURLtoFireStore
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
@@ -87,6 +118,7 @@ function UserHomeScreen({ navigation }) {
         console.log("IMAGE SUCCESSFULLY LOADED");
         isUrlReady = true;
         writeURLtoFireStore();
+        updateStreamChatImage();
       })
       .catch((e) => {
         console.log("IMAGE NOT FOUND");
@@ -141,7 +173,13 @@ function UserHomeScreen({ navigation }) {
       setAdvertsUser([]);
       //Read  data from job adverts database where title = search parameter
       getDocs(
-        query(collection(db, "Adverts"), where("title", "==", searchParam))
+        query(
+          collection(db, "Adverts"),
+          or(
+            where("title", "==", searchParam.trim()),
+            where("company", "==", searchParam.trim())
+          )
+        )
       ).then((docSnap) => {
         let advert = [];
         let numJobs = 0;

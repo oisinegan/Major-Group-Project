@@ -42,17 +42,21 @@ import { StreamChat } from "stream-chat";
 import { chatApiKey } from "./app/config/chatConfig";
 import { OverlayProvider, Chat } from "stream-chat-expo";
 
+import { LogBox } from "react-native";
+
 const Stack = createNativeStackNavigator();
+LogBox.ignoreLogs([
+  "Could not find image file:///private/var/containers/Bundle/Application/",
+]);
+LogBox.ignoreLogs(["source.uri should not be"]);
+
+LogBox.ignoreLogs([
+  "TypeError: undefined is not an object (evaluating 'user.id')",
+]);
 
 export default function App() {
-  /* const { clientIsReady } = useChatClient();
-  const chatClient = StreamChat.getInstance(chatApiKey);
-
-  if (!clientIsReady) {
-    return <Text>Loading chat ...</Text>;
-  } */
   // client-side you initialize the Chat client with your API key
-  const client = StreamChat.getInstance("83shajg3euaq", {
+  const client = StreamChat.getInstance("hwbnu4agqppp", {
     timeout: 6000,
   });
   return (

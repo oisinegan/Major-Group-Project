@@ -348,9 +348,6 @@ function CompanyViewApplicantProfile({ route, navigation }) {
               <Text style={styles.info_titles}>Qualification Name</Text>
               <Text style={styles.company_info}>{item.qualificationName}</Text>
 
-              <Text style={styles.info_titles}>Years experience</Text>
-              <Text style={styles.company_info}>{item.yearsExperience}</Text>
-
               <Text style={styles.info_titles}>College</Text>
               <Text style={styles.company_info}>{item.collegeName}</Text>
 
@@ -359,6 +356,9 @@ function CompanyViewApplicantProfile({ route, navigation }) {
 
               <Text style={styles.info_titles}>Year finished</Text>
               <Text style={styles.company_info}>{item.yearEnd}</Text>
+
+              <Text style={styles.info_titles}>Years experience</Text>
+              <Text style={styles.company_info}>{item.yearsExperience}</Text>
             </View>
           )}
         />
@@ -367,7 +367,9 @@ function CompanyViewApplicantProfile({ route, navigation }) {
       <View style={styles.navBar}>
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyHome")}
+          onPress={() =>
+            navigation.navigate("CompanyHome", { cUsername: compUsername })
+          }
         >
           <Image
             style={{ width: 35, height: 35 }}
@@ -377,7 +379,9 @@ function CompanyViewApplicantProfile({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyPostJob")}
+          onPress={() =>
+            navigation.navigate("CompanyPostJob", { cUsername: username })
+          }
         >
           <Image
             style={{ width: 30, height: 30 }}
@@ -387,7 +391,9 @@ function CompanyViewApplicantProfile({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyMessages")}
+          onPress={() =>
+            navigation.navigate("CompanyMessages", { cUsername: username })
+          }
         >
           <Image
             style={{ width: 35, height: 35 }}
@@ -397,7 +403,9 @@ function CompanyViewApplicantProfile({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyProfileScreen")}
+          onPress={() =>
+            navigation.navigate("CompanyProfileScreen", { cUsername: username })
+          }
         >
           <Image
             style={{

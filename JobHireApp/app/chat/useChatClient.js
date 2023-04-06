@@ -10,7 +10,7 @@ import {
 } from "../config/chatConfig";
 
 // client-side you initialize the Chat client with your API key
-const client = StreamChat.getInstance("83shajg3euaq", {
+const client = StreamChat.getInstance("hwbnu4agqppp", {
   timeout: 6000,
 });
 
