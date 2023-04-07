@@ -71,7 +71,7 @@ function UserMessageScreen({ route, navigation }) {
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.topNavTitle}>Messages</Text>
+        <Text style={styles.topNavTitle}>{channel.id}</Text>
         <A href={url} style={styles.backButton}>
           <Text style={styles.backText}>Call</Text>
         </A>

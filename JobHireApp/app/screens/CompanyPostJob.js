@@ -211,7 +211,11 @@ function CompanyPostJob({ route, navigation }) {
         .then(() => {
           //Successfully written to database
           Alert.alert("Sucess", "Data Submitted", [
-            { text: "OK", onPress: () => navigation.navigate("CompanyHome") },
+            {
+              text: "OK",
+              onPress: () =>
+                navigation.navigate("CompanyHome", { cUsername: username }),
+            },
           ]);
         })
         .catch((error) => {

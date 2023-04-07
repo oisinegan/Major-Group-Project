@@ -45,13 +45,14 @@ import { OverlayProvider, Chat } from "stream-chat-expo";
 import { LogBox } from "react-native";
 
 const Stack = createNativeStackNavigator();
+LogBox.ignoreLogs(["Possible Unhandled Promise Rejection"]);
 LogBox.ignoreLogs([
   "Could not find image file:///private/var/containers/Bundle/Application/",
 ]);
 LogBox.ignoreLogs(["source.uri should not be"]);
 
 LogBox.ignoreLogs([
-  "TypeError: undefined is not an object (evaluating 'user.id')",
+  "Error: Both secret and user tokens are not set. Either client.connectUser wasn't called or client.disconnect was called",
 ]);
 
 export default function App() {

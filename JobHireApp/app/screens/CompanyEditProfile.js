@@ -382,7 +382,7 @@ function CompanyEditProfile({ route, navigation }) {
         <TextInput
           value={pass}
           onChangeText={(pass) => setPass(pass.replace(/\s+/g, ""))}
-          placeholder="address"
+          placeholder="Password"
           style={styles.inputBox}
         ></TextInput>
         <Text style={styles.errorMsg}>{passErr}</Text>

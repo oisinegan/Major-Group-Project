@@ -70,7 +70,12 @@ function CompanyJobMoreInfo({ route, navigation }) {
       <StatusBar barStyle="dark-content"></StatusBar>
       <View style={styles.nav}>
         <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.backText} onPress={() =>  navigation.navigate("CompanyHome", { cUsername: username })}>
+          <Text
+            style={styles.backText}
+            onPress={() =>
+              navigation.navigate("CompanyHome", { cUsername: username })
+            }
+          >
             Back
           </Text>
         </TouchableOpacity>
@@ -89,7 +94,7 @@ function CompanyJobMoreInfo({ route, navigation }) {
               <Image style={styles.companyImage} source={{ uri: profilePic }} />
             </TouchableOpacity>
             <Text style={styles.companyName}>{item.company}</Text>
-            <Text style={styles.companyLocation}>Location</Text>
+            <Text style={styles.companyLocation}>{item.location}</Text>
           </View>
         </View>
 
