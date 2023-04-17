@@ -52,7 +52,6 @@ function JobScreen({ route, navigation }) {
         console.log("IMAGE NOT FOUND");
       });
   }
-  
 
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
@@ -93,7 +92,7 @@ function JobScreen({ route, navigation }) {
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.titleNav}> {item.id}</Text>
+        <Text style={styles.titleNav}> {item.title}</Text>
 
         <Text style={styles.blank}></Text>
       </View>
@@ -129,7 +128,7 @@ function JobScreen({ route, navigation }) {
 
         <View style={styles.innerContainerBottom}>
           <Text style={styles.heading}>Job title</Text>
-          <Text style={styles.info}> {item.id}</Text>
+          <Text style={styles.info}> {item.title}</Text>
 
           <Text style={styles.heading}>Full Job description</Text>
           <Text style={styles.info}> {item.fullDescription}</Text>

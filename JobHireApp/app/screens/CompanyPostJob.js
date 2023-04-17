@@ -14,13 +14,21 @@ import {
 import * as React from "react";
 //Database imports
 import { useState, useEffect } from "react/cjs/react.development";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 import { db } from "../database/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ceil, exp } from "react-native-reanimated";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function CompanyPostJob({ route, navigation }) {
+  const { cUsername } = route.params;
   const [title, setTitle] = useState("");
   const [info, setInfo] = useState("");
   const [wage, setWage] = useState("");
@@ -51,6 +59,8 @@ function CompanyPostJob({ route, navigation }) {
   //Used store username read from async storage
   const [username, setUsername] = useState("");
 
+  const [compAdverts, setCompAdverts] = useState("");
+
   const [profilePic, setProfilePic] = useState("");
 
   function getImageFromStorage() {
@@ -72,6 +82,36 @@ function CompanyPostJob({ route, navigation }) {
       });
   }
 
+  function readAllCompAdNames() {
+    getDocs(
+      query(collection(db, "Adverts"), where("company", "==", cUsername))
+    ).then((docSnap) => {
+      let ad = [];
+      docSnap.forEach((doc) => {
+        const { storageName } = doc.data();
+        ad.push(storageName);
+      });
+      console.log(ad);
+      setCompAdverts(ad);
+    });
+  }
+  useEffect(readAllCompAdNames, []);
+
+  function checkIfJobExists(job) {
+    console.log("HREE");
+    if (
+      compAdverts
+        .toString()
+        .toUpperCase()
+        .includes(job.toString().toUpperCase())
+    ) {
+      console.log("exists");
+      return true;
+    } else {
+      console.log("Doesn't exist");
+      return false;
+    }
+  }
   /******* METHOD TO READ VARIABLE FROM ASYNC STORAGE *******/
   //Pass username and store it in async storage
   const getData = async () => {
@@ -98,6 +138,8 @@ function CompanyPostJob({ route, navigation }) {
     //Title
     if (title == "") {
       setTitleErr("Title field is empty");
+    } else if (checkIfJobExists(title.trim() + "_" + cUsername)) {
+      setTitleErr("Advert already exists for this job! ");
     } else if (title.length < 4) {
       setTitleErr("Title cannot be less than 4 characters!");
     } else {
@@ -194,11 +236,12 @@ function CompanyPostJob({ route, navigation }) {
     }
 
     if (noInputs == noCorrectInputs) {
-      setDoc(doc(db, "Adverts", title), {
-        title: title,
-        info: info,
-        wage: wage,
-        type: type,
+      setDoc(doc(db, "Adverts", title.trim() + "_" + username.trim()), {
+        title: title.trim(),
+        storageName: title.trim() + "_" + username.trim(),
+        info: info.trim(),
+        wage: wage.trim(),
+        type: type.trim(),
         company: username,
         location: location,
         fullDescription: fullDescription,

@@ -54,8 +54,9 @@ function RegisterCompany({ navigation }) {
   const [companySizeErr, setCompanySizeErr] = useState("");
   const [imageErr, setImageErr] = useState("");
 
-  //Taken Company usernames
+  //Taken  usernames
   const [compNames, setCompNames] = useState("");
+  const [userNames, setUserNames] = useState("");
 
   async function pickImage() {
     // No permissions request is necessary for launching the image library
@@ -97,9 +98,34 @@ function RegisterCompany({ navigation }) {
   }
   useEffect(readAllCompanyNames, []);
 
+  function readAllJobSeekerNames() {
+    getDocs(collection(db, "Jobseekers")).then((docSnap) => {
+      let names = [];
+      docSnap.forEach((doc) => {
+        const { username } = doc.data();
+        names.push(username);
+      });
+      console.log(names);
+      setUserNames(names);
+    });
+  }
+  useEffect(readAllJobSeekerNames, []);
+
   function checkIfUsernameExists(usr) {
     if (
       compNames.toString().toUpperCase().includes(usr.toString().toUpperCase())
+    ) {
+      console.log("exists");
+      return true;
+    } else {
+      console.log("Doesn't exist");
+      return false;
+    }
+  }
+
+  function checkIfUsernameExistsInCompany(usr) {
+    if (
+      userNames.toString().toUpperCase().includes(usr.toString().toUpperCase())
     ) {
       console.log("exists");
       return true;
@@ -138,6 +164,8 @@ function RegisterCompany({ navigation }) {
     } else if (username.length < 4) {
       setUsernameErr("Username must be longer than 5 characters!");
     } else if (checkIfUsernameExists(username)) {
+      setUsernameErr("Username already exists! Please choose another!");
+    } else if (checkIfUsernameExistsInCompany(username)) {
       setUsernameErr("Username already exists! Please choose another!");
     } else {
       noCorrectInputs++;

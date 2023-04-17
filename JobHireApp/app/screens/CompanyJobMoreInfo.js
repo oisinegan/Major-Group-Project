@@ -80,7 +80,7 @@ function CompanyJobMoreInfo({ route, navigation }) {
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.titleNav}> {item.id}</Text>
+        <Text style={styles.titleNav}>{item.title}</Text>
 
         <Text style={styles.blank}></Text>
       </View>
@@ -100,7 +100,7 @@ function CompanyJobMoreInfo({ route, navigation }) {
 
         <View style={styles.innerContainerBottom}>
           <Text style={styles.heading}>Job title</Text>
-          <Text style={styles.info}> {item.id}</Text>
+          <Text style={styles.info}> {item.title}</Text>
 
           <Text style={styles.heading}>Full Job description</Text>
           <Text style={styles.info}> {item.fullDescription}</Text>

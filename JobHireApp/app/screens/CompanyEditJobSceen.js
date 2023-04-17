@@ -169,11 +169,13 @@ function CompanyEditJobScreen({ route, navigation }) {
     }
     console.log(noInputs);
     if (noInputs == noCorrectInputs) {
-      setDoc(doc(db, "Adverts", title), {
+      setDoc(doc(db, "Adverts", title + "_" + item.company), {
         title: title.trim(),
         info: info.trim(),
         wage: wage.trim(),
         type: type.trim(),
+        //Delte
+        storageName: title + "_" + item.company,
         company: item.company.trim(),
         location: location.trim(),
         fullDescription: fullDescription.trim(),
@@ -216,7 +218,8 @@ function CompanyEditJobScreen({ route, navigation }) {
     ]);
   }
   function deletePost() {
-    deleteDoc(doc(db, "Adverts", title));
+    deleteDoc(doc(db, "Adverts", item.id));
+
     navigation.navigate("CompanyHome", { cUsername: item.company });
   }
 

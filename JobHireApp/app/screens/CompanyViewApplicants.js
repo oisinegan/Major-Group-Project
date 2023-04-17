@@ -170,7 +170,7 @@ function CompanyViewApplicants({ route, navigation }) {
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.titleNav}>{item.id}</Text>
+        <Text style={styles.titleNav}>{item.title}</Text>
 
         <Text style={styles.blank}></Text>
       </View>
