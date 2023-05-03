@@ -151,7 +151,7 @@ function CompanyPostJob({ route, navigation }) {
     if (info == "") {
       setInfoErr("Information field is empty");
     } else if (info.length < 10) {
-      setInfoErr("Provide more information!");
+      setInfoErr("Provide more in formation!");
     } else if (info.length > 120) {
       setInfoErr("Too much information! (Max 120 char)");
     } else {
@@ -163,7 +163,7 @@ function CompanyPostJob({ route, navigation }) {
     if (wage == "") {
       setWageErr("Wage field is empty!");
     } else if (wage.length < 2) {
-      setWageErr("Wage must be longer than 2 character!");
+      setWageErr("Wage must be longer than 2 characters!");
     } else {
       noCorrectInputs++;
       setWageErr("");
@@ -189,7 +189,7 @@ function CompanyPostJob({ route, navigation }) {
     if (fullDescription == "") {
       setDescriptionErr("Description field is empty!");
     } else if (fullDescription.length < 15) {
-      setDescriptionErr("Description must be longer than 15 characters!");
+      setDescriptionErr("Description must be longer than 14 characters!");
     } else {
       noCorrectInputs++;
       setDescriptionErr("");
@@ -199,7 +199,7 @@ function CompanyPostJob({ route, navigation }) {
     if (schedule == "") {
       setScheduleErr("Schedule field is empty!");
     } else if (schedule.length < 3) {
-      setScheduleErr("Schedule must be longer than 3 characters!");
+      setScheduleErr("Schedule must be longer than 2 characters!");
     } else {
       noCorrectInputs++;
       setScheduleErr("");
@@ -219,7 +219,7 @@ function CompanyPostJob({ route, navigation }) {
     if (qualification == "") {
       setQualificationErr("Qualification field is empty!");
     } else if (qualification.length < 3) {
-      setQualificationErr("Qualification must be longer than 3 characters!");
+      setQualificationErr("Qualification must be longer than 2 characters!");
     } else {
       noCorrectInputs++;
       setQualificationErr("");
@@ -229,7 +229,7 @@ function CompanyPostJob({ route, navigation }) {
     if (knowledge == "") {
       setKnowledgeErr("Knowledge field is empty!");
     } else if (knowledge.length < 5) {
-      setKnowledgeErr("Knowledge must be longer than 5 characters!");
+      setKnowledgeErr("Knowledge must be longer than 4 characters!");
     } else {
       noCorrectInputs++;
       setKnowledgeErr("");

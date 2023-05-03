@@ -113,7 +113,7 @@ function CompanyMessages({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyPostJob")}
+          onPress={() => navigation.navigate("CompanyPostJob", { cUsername: username })}
         >
           <Image
             style={{ width: 30, height: 30 }}
@@ -123,7 +123,7 @@ function CompanyMessages({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyMessages")}
+          onPress={() => navigation.navigate("CompanyMessages", { cUsername: username })}
         >
           <Image
             style={{ width: 35, height: 35 }}
@@ -133,7 +133,7 @@ function CompanyMessages({ navigation }) {
 
         <TouchableOpacity
           style={styles.navButtons}
-          onPress={() => navigation.navigate("CompanyProfileScreen")}
+          onPress={() => navigation.navigate("CompanyProfileScreen", { cUsername: username })}
         >
           <Image
             style={{

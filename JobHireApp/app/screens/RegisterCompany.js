@@ -162,7 +162,7 @@ function RegisterCompany({ navigation }) {
     if (username == "") {
       setUsernameErr("Username field is empty");
     } else if (username.length < 4) {
-      setUsernameErr("Username must be longer than 5 characters!");
+      setUsernameErr("Username must be longer than 4 characters!");
     } else if (checkIfUsernameExists(username)) {
       setUsernameErr("Username already exists! Please choose another!");
     } else if (checkIfUsernameExistsInCompany(username)) {
@@ -176,7 +176,7 @@ function RegisterCompany({ navigation }) {
     if (pass == "") {
       setPassErr("Password field is empty!");
     } else if (pass.length < 6) {
-      setPassErr("password must be longer than 6 characters!");
+      setPassErr("password must be longer than 5 characters!");
       console.log("test1");
     } else if (upperCaseTest(pass) == false) {
       console.log("test2");
